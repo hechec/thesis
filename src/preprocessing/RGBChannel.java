@@ -4,24 +4,34 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 public class RGBChannel {
+	public static final int RED = 1, GREEN = 2, BLUE = 3;
 	
-	public static BufferedImage toRGBChannel(BufferedImage image, String color) {
+	public static BufferedImage toRGBChannel(BufferedImage image, int channel) {
 		
 		BufferedImage convertedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
-		int rgb, colorValue;
+		int rgb;
 		for( int i = 0; i < image.getHeight(); i++ ) 
 			for( int j = 0; j < image.getWidth(); j++ ) {
 				rgb = image.getRGB(j, i);
-				 //A is 0xFF000000
-		        //R is 0x00FF0000
-		        //G is 0x0000FF00
-		        //B is 0x000000FF        
-				//colorValue = getChannelColor(color, rgb);
-				rgb &= 0xFF0000FF;
+				rgb &= getChannelMask(channel);
 				convertedImage.setRGB(j, i, rgb);
 			}
 		return convertedImage;
 		
+	}
+	
+	//A is 0xFF000000
+    //R is 0x00FF0000
+    //G is 0x0000FF00
+    //B is 0x000000FF        
+	private static int getChannelMask(int channel) 
+	{
+		if( channel == RED )
+			return 0xFFFF0000;
+		else if( channel == BLUE )
+			return 0xFF0000FF;
+		else 
+			return 0xFF00FF00; //green
 	}
 	
 	public static BufferedImage toRGChannel(BufferedImage image, String color) {

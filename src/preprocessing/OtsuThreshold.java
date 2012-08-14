@@ -20,11 +20,11 @@ public class OtsuThreshold {
 	                // Get pixels
 	                red = new Color(original.getRGB(i, j)).getRed();
 	                int alpha = new Color(original.getRGB(i, j)).getAlpha();
-	                if(red <= threshold+1) {
-	                    newPixel = 255;
+	                if(red > threshold) {
+	                    newPixel = 0;
 	                }
 	                else {
-	                    newPixel = 0;
+	                    newPixel = 255;
 	                }
 	                newPixel = colorToRGB(alpha, newPixel, newPixel, newPixel);
 	                binarized.setRGB(i, j, newPixel); 

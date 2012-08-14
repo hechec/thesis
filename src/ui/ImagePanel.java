@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import preprocessing.GrayScale;
+import preprocessing.ImageManager;
 import preprocessing.ImageSegmentation;
 import preprocessing.MeanFilter;
 import preprocessing.OtsuThreshold;
@@ -27,8 +28,11 @@ public class ImagePanel extends JPanel {
 	private JLabel imageLabel = new JLabel(), imageLabel2 = new JLabel(), 
 			imageLabel3 = new JLabel(), imageLabel4 = new JLabel(), imageLabel5 = new JLabel(), imageLabel6 = new JLabel(),
 					 imageLabel7 = new JLabel(),  imageLabel8 = new JLabel();
+	
 	private BufferedImage image, blueChannel, blueFiltered, blueGrayScale, blueBinary, redChannel, redGrayScale, redBinary, segmentedBlue,
 						sobelEdge, labImage, lImage, redgreenChannel, redgreenGray, redgreenBinary, greenChannel, ORed;
+	
+	private BufferedImage resizedImage;
 	
 	public ImagePanel() {
 		this.add(imageLabel);	
@@ -56,20 +60,25 @@ public class ImagePanel extends JPanel {
 			imageLabel.setIcon(new ImageIcon(file.getAbsolutePath()));	
 		} catch (IOException e) {}
 		
-		blueChannel = RGBChannel.toRGBChannel(image, "BLUE");
-		blueFiltered = MeanFilter.convert2(blueChannel);
+		ImageManager im = new ImageManager(image);
+		
+		resizedImage = im.getResizedImage();
+		
+		blueChannel = RGBChannel.toRGBChannel(resizedImage, RGBChannel.BLUE);
+		blueFiltered = MeanFilter.filter(blueChannel);
 		blueGrayScale = GrayScale.grayScale(blueFiltered);
 		blueBinary = OtsuThreshold.binarize(blueGrayScale);
-		segmentedBlue = ImageSegmentation.extract(image, blueBinary);
-		
+		segmentedBlue = ImageSegmentation.extract(resizedImage, blueBinary);
+
 		imageLabel2.setIcon(new ImageIcon(blueChannel));
-		imageLabel3.setIcon(new ImageIcon(blueFiltered));
-		imageLabel4.setIcon(new ImageIcon(blueGrayScale));	
+		//imageLabel3.setIcon(new ImageIcon(blueFiltered));
+		//imageLabel4.setIcon(new ImageIcon(blueGrayScale));	
 		imageLabel5.setIcon(new ImageIcon(blueBinary));	
 		imageLabel6.setIcon(new ImageIcon(segmentedBlue));	
+		imageLabel3.setIcon(new ImageIcon(resizedImage));	
 		
 		redgreenChannel = RGBChannel.toRGChannel(segmentedBlue, "REDGREEN");
-		imageLabel7.setIcon(new ImageIcon(redgreenChannel));	
+		//imageLabel7.setIcon(new ImageIcon(redgreenChannel));	
 	    //redChannel = RGBChannel.toRGBChannel(image, "RED");
 	    //redGrayScale = GrayScale.grayScale(redChannel);
 	    //redBinary = OtsuThreshold.binarize(redGrayScale);

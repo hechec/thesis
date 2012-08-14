@@ -25,12 +25,10 @@ public class MainFrame extends JFrame {
 	private JFileChooser fc = new JFileChooser();
 	
 	public MainFrame() {
-		
-		initFrame();
 		initMenuBar();
-		
+		initFrame();
 		iPanel = new ImagePanel();
-		contentPane.add(iPanel, BorderLayout.CENTER);		
+		contentPane.add(iPanel, BorderLayout.CENTER);	
 	}
 
 
