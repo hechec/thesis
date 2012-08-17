@@ -26,9 +26,15 @@ public class MainFrame extends JFrame {
 	
 	public MainFrame() {
 		initMenuBar();
-		initFrame();
+		
+		contentPane = new JPanel();
+		setContentPane(contentPane);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout());
+		
 		iPanel = new ImagePanel();
 		contentPane.add(iPanel, BorderLayout.CENTER);	
+		initFrame();
 	}
 
 
@@ -73,11 +79,10 @@ public class MainFrame extends JFrame {
 				
 			}
 		});
-	
+		 
 	}
 
 	private void showFileChooser() {
-		 
 		 int retval = fc.showOpenDialog(this);
 		 if(retval == JFileChooser.APPROVE_OPTION) {
 			    File file = fc.getSelectedFile();
@@ -88,11 +93,6 @@ public class MainFrame extends JFrame {
 
 
 	private void initFrame() {
-		
-		contentPane = new JPanel();
-		setContentPane(contentPane);
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout());
 		
 		setTitle("Segmentation 1");
 		setSize(800, 600);

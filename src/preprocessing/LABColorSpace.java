@@ -48,7 +48,7 @@ public class LABColorSpace {
 			for( int j = 0; j < original.getWidth(); j++ ){
 				rgb = original.getRGB(j, i);
 				pixelValue = rgb & 0x00ffffff;
-				System.out.println(pixelValue);
+				//System.out.println(pixelValue);
 				if( pixelValue == 0 )
 					converted.setRGB(j, i, mixColor(0, 0, 0));
 				else{
@@ -56,7 +56,8 @@ public class LABColorSpace {
 					green = (rgb >> 8) & 0xFF;
 					blue = rgb & 0xFF;
 					lab = rgb2lab(red, green, blue);
-					converted.setRGB(j, i, lab[0]);
+					rgb = mixColor(lab[1], lab[1], lab[1]);
+					converted.setRGB(j, i, rgb);
 				}
 				//lab2 = RGBtoLAB(red, green, blue);
 				//converted.setRGB(j, i, (int)lab2[0]);

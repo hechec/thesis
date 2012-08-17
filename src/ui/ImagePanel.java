@@ -57,25 +57,26 @@ public class ImagePanel extends JPanel {
 	public void addImage(File file) {
 		try {
 			image = ImageIO.read(file);
-			imageLabel.setIcon(new ImageIcon(file.getAbsolutePath()));	
+			//imageLabel.setIcon(new ImageIcon(file.getAbsolutePath()));	
 		} catch (IOException e) {}
 		
 		ImageManager im = new ImageManager(image);
 		
 		resizedImage = im.getResizedImage();
-		
+	
 		blueChannel = RGBChannel.toRGBChannel(resizedImage, RGBChannel.BLUE);
 		blueFiltered = MeanFilter.filter(blueChannel);
-		blueGrayScale = GrayScale.grayScale(blueFiltered);
+		blueGrayScale = GrayScale.toGray(blueFiltered);
 		blueBinary = OtsuThreshold.binarize(blueGrayScale);
 		segmentedBlue = ImageSegmentation.extract(resizedImage, blueBinary);
-
+		
+		imageLabel.setIcon(new ImageIcon(resizedImage));	
 		imageLabel2.setIcon(new ImageIcon(blueChannel));
-		//imageLabel3.setIcon(new ImageIcon(blueFiltered));
-		//imageLabel4.setIcon(new ImageIcon(blueGrayScale));	
+		imageLabel3.setIcon(new ImageIcon(blueFiltered));
+		imageLabel4.setIcon(new ImageIcon(blueGrayScale));	
 		imageLabel5.setIcon(new ImageIcon(blueBinary));	
 		imageLabel6.setIcon(new ImageIcon(segmentedBlue));	
-		imageLabel3.setIcon(new ImageIcon(resizedImage));	
+		//imageLabel3.setIcon(new ImageIcon(resizedImage));	
 		
 		redgreenChannel = RGBChannel.toRGChannel(segmentedBlue, "REDGREEN");
 		//imageLabel7.setIcon(new ImageIcon(redgreenChannel));	

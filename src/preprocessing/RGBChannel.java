@@ -6,6 +6,12 @@ import java.awt.image.BufferedImage;
 public class RGBChannel {
 	public static final int RED = 1, GREEN = 2, BLUE = 3;
 	
+	/**
+	 * Extract R/G/B Channel
+	 * @param image
+	 * @param channel
+	 * @return specified RGB Channel
+	 */
 	public static BufferedImage toRGBChannel(BufferedImage image, int channel) {
 		
 		BufferedImage convertedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -27,12 +33,16 @@ public class RGBChannel {
 	private static int getChannelMask(int channel) 
 	{
 		if( channel == RED )
-			return 0xFFFF0000;
+			return 0x00FF0000;
 		else if( channel == BLUE )
-			return 0xFF0000FF;
+			return 0x000000FF;
 		else 
-			return 0xFF00FF00; //green
+			return 0x0000FF00; //green
 	}
+	
+	
+	
+	
 	
 	public static BufferedImage toRGChannel(BufferedImage image, String color) {
 		
