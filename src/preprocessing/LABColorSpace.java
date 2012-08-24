@@ -72,7 +72,7 @@ public class LABColorSpace {
      * @param B
      * @return
      */
-	private static int[] rgb2lab(int R, int G, int B) {
+	public static int[] rgb2lab(int R, int G, int B) {
 		//http://www.brucelindbloom.com
 		  
 		float r, g, b, X, Y, Z, fx, fy, fz, xr, yr, zr;

@@ -1,13 +1,26 @@
 package ui;
-import ui.MainFrame;
+import java.awt.EventQueue;
+
+import javax.swing.UIManager;
 
 public class Main {
 
 	/**
-	 * @param args
+	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		new MainFrame();
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+					Frame frame = new Frame();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		
 	}
-
 }

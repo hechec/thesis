@@ -14,6 +14,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -24,6 +26,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -43,24 +46,11 @@ public class Frame extends JFrame {
 	private JPanel outputPane;
 	private JLabel outputLabel;
 	
-	private ImageHandler iHandler = new ImageHandler();
+	//tabs
+	private JPanel testingTab;
+	private JPanel trainingTab;
 	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-					Frame frame = new Frame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private ImageHandler iHandler = new ImageHandler();
 
 	/**
 	 * Create the frame.
@@ -76,10 +66,20 @@ public class Frame extends JFrame {
 		setContentPane(contentPane);
 		
 		initMenuBar();
-
+		
+		testingTab = new JPanel();
+		trainingTab = new JPanel();
+		
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.add("Testing", testingTab);
+		tabbedPane.add("Training", trainingTab);
+		contentPane.add(tabbedPane, BorderLayout.CENTER);
+		
+		testingTab.setLayout(new BorderLayout());
+		
 		JPanel leftPane = new JPanel();
-		contentPane.add(leftPane, BorderLayout.WEST);
-		leftPane.setPreferredSize(new Dimension(200, 600));
+		testingTab.add(leftPane, BorderLayout.CENTER);
+		//leftPane.setPreferredSize(new Dimension(200, 500));
 		leftPane.setLayout(new BorderLayout(0, 0));
 		
 		JPanel inputPane = new JPanel();
@@ -98,14 +98,15 @@ public class Frame extends JFrame {
 		leftPane.add(outputPane, BorderLayout.SOUTH);
 		
 		outputLabel = new JLabel("");
-		outputLabel.setPreferredSize(new Dimension(100, 100));
+		outputLabel.setPreferredSize(new Dimension(64, 64));
 		outputLabel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
 		outputPane.add(outputLabel);
 		
 		ipanel = new IPanel();
 		
-		//JPanel rightPane = new JPanel();
-		contentPane.add(ipanel, BorderLayout.CENTER);
+		//testingTab.add(ipanel, BorderLayout.EAST);
+		FeaturesPane fp = new FeaturesPane();
+		testingTab.add(fp, BorderLayout.EAST);
 		
 	}
 
@@ -125,7 +126,9 @@ public class Frame extends JFrame {
 
 		});
 		
-		exitAction =  new JMenuItem("Exit");
+		exitAction =  new JMenuItem("Exit", KeyEvent.VK_T);
+		KeyStroke ctrlXKeyStroke = KeyStroke.getKeyStroke("control Q");
+		exitAction.setAccelerator(ctrlXKeyStroke);
 		exitAction.addActionListener(new ActionListener() {	
 			
 			@Override
