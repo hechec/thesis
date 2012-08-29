@@ -10,6 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import java.awt.FlowLayout;
 import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
 
 public class FeaturesPane extends JPanel {
 	private JTextField redTextField;
@@ -22,7 +24,7 @@ public class FeaturesPane extends JPanel {
 	 * Create the panel.
 	 */
 	public FeaturesPane() {
-		setBorder(new TitledBorder(null, "Features", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Features", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		setBounds(10, 11, 189, 378);
 		setLayout(null);
 		

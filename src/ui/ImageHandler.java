@@ -6,14 +6,17 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 
+import colorspace.CIELab;
+import colorspace.RGBChannel;
+
 import preprocessing.GrayScale;
 import preprocessing.ImageSegmentation;
-import preprocessing.LABColorSpace;
 import preprocessing.MeanFilter;
 import preprocessing.OtsuThreshold;
-import preprocessing.RGBChannel;
 
 public class ImageHandler {
+	
+	MyDialog dialog;
 	
 	public ImageHandler() {
 	}
@@ -37,7 +40,6 @@ public class ImageHandler {
 	} 
 	
 	public BufferedImage toBlue(BufferedImage original) {
-		
 		return RGBChannel.toRGBChannel(original, RGBChannel.BLUE);
 		
 	}
@@ -80,7 +82,7 @@ public class ImageHandler {
 
 	public BufferedImage convertToLab(BufferedImage original) {
 	
-		return LABColorSpace.convertToLab(original);
+		return CIELab.convertToLab(original);
 		
 	}
 
@@ -112,6 +114,23 @@ public class ImageHandler {
 	}
 
 	public BufferedImage extract(BufferedImage original) {
+		dialog = new MyDialog();
+		dialog.addImage(original);
+		BufferedImage result = toBlue(original);
+		dialog.addImage(result);
+		result = filter(result);
+		dialog.addImage(result);
+		result = toGray(result);
+		dialog.addImage(result);
+		result = binarize(result);
+		dialog.addImage(result);
+		result = segment(original, result);
+		dialog.addImage(result);
+		result = normalize(result);
+		dialog.addImage(result);
+		result = resize(result, 64, 64);
+		dialog.addImage(result);
+		dialog.setVisible(true);
 		return resize(normalize(segment(original, binarize(toGray(filter(toBlue(original)))))), 64, 64);
 	}
 
@@ -134,7 +153,7 @@ public class ImageHandler {
 		for( int i = 0; i < grayImage.getHeight(); i++ ) 
 			for( int j = 0; j < grayImage.getWidth(); j++ ) {
 				
-				System.out.println( r.getSample(j, i, 0) +" - "+((grayImage.getRGB(j, i)) & 0xff) );
+				//System.out.println( r.getSample(j, i, 0) +" - "+((grayImage.getRGB(j, i)) & 0xff) );
 				
 				if( r.getSample(j, i, 0) != 0 ) {
 					sum += r.getSample(j, i, 0);
@@ -174,7 +193,7 @@ public class ImageHandler {
 					red =  (rgb >> 16) & 0xFF;
 					green = (rgb >> 8) & 0xFF;
 					blue = rgb & 0xFF;
-					lab = LABColorSpace.RGBtoLAB(red, green, blue);
+					lab = CIELab.RGBtoLAB(red, green, blue);
 					sum += lab[1];
 					ctr++;
 				}

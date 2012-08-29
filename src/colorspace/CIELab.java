@@ -1,8 +1,8 @@
-package preprocessing;
+package colorspace;
 
 import java.awt.image.BufferedImage;
 
-public class LABColorSpace {
+public class CIELab {
 	
 	public static double[][] M   = {{0.4124, 0.3576,  0.1805},
             {0.2126, 0.7152,  0.0722},
@@ -245,5 +245,15 @@ public class LABColorSpace {
 	{
 		return red<<16|green<<8|blue;
 	}
+	
+	
+	public static void main(String[] args) {
+		
+		double[] lab = RGBtoLAB(255, 0, 0);
+		
+		System.out.println( lab[0] +" == "+lab[1]+" == "+lab[2]);
+		
+	}
+	
 
 }

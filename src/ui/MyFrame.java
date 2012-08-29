@@ -1,15 +1,13 @@
 package ui;
 
-import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.color.ColorSpace;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -22,7 +20,6 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import javax.swing.JTextArea;
 
 
@@ -34,6 +31,7 @@ public class MyFrame extends JFrame {
 	private JMenu fileMenu;
 	private JMenuItem openAction;
 	private JMenuItem exitAction;
+	private JMenuItem optionAction;
 	private JFileChooser fc;
 	private JPanel bottomPane;
 	
@@ -113,6 +111,7 @@ public class MyFrame extends JFrame {
 		fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
 		openAction =  new JMenuItem("Open", KeyEvent.VK_T);
+		openAction.setIcon(new ImageIcon("src/images/open.png"));
 		KeyStroke ctrlOKeyStroke = KeyStroke.getKeyStroke("control O");
 		openAction.setAccelerator(ctrlOKeyStroke);
 		openAction.addActionListener(new ActionListener() {
@@ -124,8 +123,10 @@ public class MyFrame extends JFrame {
 
 		});
 		
+		optionAction = new JMenuItem("Option");
+
 		exitAction =  new JMenuItem("Exit", KeyEvent.VK_T);
-		KeyStroke ctrlQKeyStroke = KeyStroke.getKeyStroke("control Q");
+		KeyStroke ctrlQKeyStroke = KeyStroke.getKeyStroke("control E");
 		exitAction.setAccelerator(ctrlQKeyStroke);
 		exitAction.addActionListener(new ActionListener() {	
 			
@@ -136,11 +137,14 @@ public class MyFrame extends JFrame {
 		});
 
 		fileMenu.add(openAction);
+		fileMenu.add(optionAction);
 		fileMenu.add(exitAction);	
 		
 		FileFilter filter = new FileNameExtensionFilter("JPEG file", "jpg", "jpeg", "png", "gif");
 		fc = new JFileChooser();
 		fc.setFileFilter(filter);
+		
+		
 		
 	}
 	

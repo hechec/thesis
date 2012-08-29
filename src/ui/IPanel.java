@@ -25,8 +25,6 @@ public class IPanel extends JPanel {
 	private BufferedImage meanRed, meanGreen, meanBlue;
 	private BufferedImage lab;
 	
-	private JSplitPane splitPane;
-	
 	private JScrollPane scroll1;
 	private JScrollPane scroll2;
 	

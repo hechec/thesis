@@ -11,6 +11,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
+import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
 
 
 public class ImagePane extends JPanel {
@@ -18,6 +20,8 @@ public class ImagePane extends JPanel {
 	private JPanel inputPane;
 	private JLabel inputLabel;
 	private JLabel extractedLabel;
+	
+	private JButton extractButton;
 	
 	private BufferedImage original;
 	
@@ -31,21 +35,22 @@ public class ImagePane extends JPanel {
 		setLayout(null);
 		
 		inputPane = new JPanel();
-		inputPane.setBorder(new TitledBorder(null, "Input", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		inputPane.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144), 1, true), "Input", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		inputPane.setBounds(105, 11, 286, 234);
 		add(inputPane);
 		
 		inputLabel = new JLabel("");
 		inputPane.add(inputLabel);
 		
-		JButton btnNewButton = new JButton("Extract");
-		btnNewButton.addActionListener(new ActionListener() {
+		extractButton = new JButton("Extract");
+		extractButton.setEnabled(false);
+		extractButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				segment();
 			}
 		});
-		btnNewButton.setBounds(105, 256, 89, 23);
-		add(btnNewButton);
+		extractButton.setBounds(105, 256, 89, 23);
+		add(extractButton);
 		
 		JButton btnNewButton_1 = new JButton("Reset");
 		btnNewButton_1.addActionListener(new ActionListener() {
@@ -57,7 +62,7 @@ public class ImagePane extends JPanel {
 		add(btnNewButton_1);
 		
 		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder(null, "Extracted", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		panel.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Extracted", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		panel.setBounds(196, 292, 106, 97);
 		add(panel);
 		
@@ -75,6 +80,7 @@ public class ImagePane extends JPanel {
 		this.original = iHandler.resize( original, (int) (200/((float)original.getHeight())*original.getWidth()), 200 );
 		inputLabel.setIcon(new ImageIcon(this.original));	
 		extractedLabel.setIcon(null);
+		extractButton.setEnabled(true);
 	}
 	
 	private void segment() {
@@ -107,6 +113,7 @@ public class ImagePane extends JPanel {
 		updateUI();
 		guiController.setMessage("reset.");
 		original = null;
+		extractButton.setEnabled(false);
 	}
 
 	
