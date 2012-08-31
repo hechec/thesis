@@ -3,16 +3,17 @@ package algorithm;
 public class BeeColony {
 	
 	/* Control Parameters of ABC algorithm*/
-	private int NP = 20;
+	private int NP = 100;
 	private int foodNumber = NP/2;
-	private int limit = 100;
+	
 	public int maxCycle = 2500;
 	
 	/* Problem specific variables*/
-	int dimension = 100; /*The number of parameters of the problem to be optimized*/
-	double lb = -5.12; /*lower bound of the parameters. */
-	double ub = 5.12; /*upper bound of the parameters. lb and ub can be defined as arrays for the problems of which parameters have different bounds*/
+	int dimension = 9;//100; /*The number of parameters of the problem to be optimized*/
+	double lb = -1.0; /*lower bound of the parameters. */
+	double ub = 1.0; /*upper bound of the parameters. lb and ub can be defined as arrays for the problems of which parameters have different bounds*/
 	
+	private int limit = foodNumber*dimension;
 
 	// number of training data?	
 	int runtime = 30;  /*Algorithm can be run many times in order to see its robustness*/
@@ -33,6 +34,8 @@ public class BeeColony {
 	double GlobalParams[]=new double[dimension];                   /*Parameters of the optimum solution*/
 	double GlobalMins[]=new double[runtime];       /*GlobalMins holds the GlobalMin of each run in multiple runs*/
 	
+	private MLPNetwork[] networks = new MLPNetwork[foodNumber];
+	
 	public BeeColony() {
 		//
 	}
@@ -43,7 +46,7 @@ public class BeeColony {
 	void initializePopulation() {
 		for(int i = 0; i < foodNumber; i++)
 			initEachFoodSource(i);
-		GlobalMin=f[0];
+		GlobalMin = f[0];
 	    for(int i = 0; i < dimension; i++)
 	    	GlobalParams[i] = foods[0][i];
 	}
@@ -84,13 +87,17 @@ public class BeeColony {
 	        /*v_{ij}=x_{ij}+\phi_{ij}*(x_{kj}-x_{ij}) */
 	        r = (   (double)Math.random()*32767 / ((double)(32767)+(double)(1)) );
 	        solution[param2change] = foods[i][param2change]+(foods[i][param2change]-foods[neighbour][param2change])*(r-0.5)*2;
-
+	        
 	        /*if generated parameter value is out of boundaries, it is shifted onto the boundaries*/
 	        if( solution[param2change] < lb )
 	           solution[param2change] = lb;
 	        if( solution[param2change] > ub)
 	           solution[param2change] = ub;
-	        ObjValSol = calculateFunction(solution);
+	        
+	        MLPNetwork n = new MLPNetwork();
+	        n.initWeights(solution);
+	        
+	        ObjValSol = calculateFunction(n);//calculateFunction(solution);
 	        FitnessSol = calculateFitness(ObjValSol);
 	        
 	        /*a greedy selection is applied between the current solution i and its mutant*/
@@ -151,8 +158,11 @@ public class BeeColony {
 		        if (solution[param2change]<lb)
 		           solution[param2change]=lb;
 		        if (solution[param2change]>ub)
-		           solution[param2change]=ub;
-		        ObjValSol = calculateFunction(solution);
+		           solution[param2change]=ub;   
+		        
+		        MLPNetwork n = new MLPNetwork();
+		        n.initWeights(solution);
+		        ObjValSol = calculateFunction(n); //calculateFunction(solution);
 		        FitnessSol = calculateFitness(ObjValSol);
 		        
 		        /*a greedy selection is applied between the current solution i and its mutant*/
@@ -192,8 +202,11 @@ public class BeeColony {
 	        r = ( (double)Math.random()*32767 / ((double)32767+(double)(1)) );
 	        foods[i][j] = r * ( ub - lb ) + lb;
 			solution[j] = foods[i][j];
-		}
-		f[i] = calculateFunction(solution);
+	    }
+	    networks[i] = new MLPNetwork();
+	    networks[i].initWeights(solution);
+	    
+		f[i] = calculateFunction(networks[i]);//f[i] = calculateFunction(solution);
 		fitness[i] = calculateFitness(f[i]);
 		trial[i] = 0;
 	}
@@ -218,6 +231,15 @@ public class BeeColony {
 			 top=top+(Math.pow(sol[j],(double)2)-10*Math.cos(2*Math.PI*sol[j])+10);
 		 }
 		 return top;
+	}
+	
+	private double calculateFunction(MLPNetwork network) {
+		return network.computeError();
+	}
+
+	public static void main(String[] args) {
+		BeeColony bee = new BeeColony();
+		bee.initializePopulation();
 	}
 	
 }

@@ -100,10 +100,12 @@ public class ImagePane extends JPanel {
 		int meanRed = iHandler.computeMeanRed(image);
 		int meanGreen = iHandler.computerMeanGreen(image);
 		int meanRG = iHandler.computeMeanRG(image);
+		int meanHue = iHandler.computeMeanHue(image);
 		int meanA = iHandler.computeMeanA(image);
 		guiController.setRedField(meanRed);
 		guiController.setGreenField(meanGreen);
 		guiController.setRGField(meanRG);
+		guiController.setHueField(meanHue);
 		guiController.setAField(meanA);
 	}
 	

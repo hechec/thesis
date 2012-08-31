@@ -34,4 +34,8 @@ public class GuiController {
 		fPane.setAField(meanA);
 	}
 
+	public void setHueField(int meanHue) {
+		fPane.setHueField(meanHue);
+	}
+
 }

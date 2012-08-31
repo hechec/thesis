@@ -5,14 +5,98 @@ import java.util.Random;
 
 public class MLPNeuron {
 	
-	private float[] weights;
-	private float value;
+	private MLPLayer prev_layer;
+	private double[] weights;
+	private double value;
+	private int number_of_weights;
 	
-	public MLPNeuron(int n_prev_nodes, boolean bias) {
-		weights = new float[n_prev_nodes];
-		initWeights();
+	/**
+	 * MLPNeuron constructor for hidden/output neuron
+	 * @param prev_layer
+	 * @param bias
+	 */
+	public MLPNeuron(MLPLayer prev_layer) {
+		this.prev_layer = prev_layer;
 	}
 	
+	/**
+	 * constructor for input neuron
+	 */
+	public MLPNeuron() {
+	}
+
+	/**
+	 * set all weights going to this node
+	 * @param index
+	 * @param foods
+	 * @return
+	 */
+	public int setWeights(int index, double[] foods) {
+		if( number_of_weights == 0 ) {
+			weights = new double[prev_layer.size()];
+			number_of_weights = prev_layer.size();
+		}
+		for( int i = 0; i < number_of_weights; i++, index++ )
+			weights[i] = foods[index];
+		// return current index
+		//initWeights();
+		return index;
+	}
+	
+	/**
+	 * sets the value of this node
+	 * @param value
+	 */
+	public void setValue(double val) {
+		value = val;		
+	}
+	/**
+	 * get the output value of this node
+	 * @return node output value
+	 */
+	public double getValue() {
+		return value;
+	}
+	
+	// sigmoid function
+	private double sigmoid(double x) {
+		return 1.0 / (1.0 + Math.exp(-x));
+	}
+	
+	/**
+	 *  activate hidden neuron
+	 * @param inputs
+	 * @param bias 
+	 */
+	public void activateHidden(ArrayList<MLPNeuron> inputs, boolean hasBias) {
+		double sum = getWeightedSum(inputs, hasBias);
+		value = sigmoid(sum);
+	}
+	
+	/**
+	 * 
+	 * @param inputs
+	 * @param hasBias
+	 */
+	public void activateOutput(ArrayList<MLPNeuron> inputs, boolean hasBias) {
+		value = getWeightedSum(inputs, hasBias);
+	}
+	
+	/**
+	 * calculate weighted sum
+	 */
+	private double getWeightedSum(ArrayList<MLPNeuron> inputs, boolean hasBias) {
+		double sum = 0;		
+		int index = 0, len = inputs.size();
+		if(hasBias)
+			sum += 1 * weights[index++];
+		for( int i = 0; i < len; i++, index++ ) {
+			sum += inputs.get(i).getValue() * weights[index];
+			//System.out.println( inputs.get(i).getValue() +" :: "+ weights[index] );
+		}
+		return sum;
+	}
+
 	// sample 
 	public void initWeights() {
 		Random random = new Random();
@@ -21,28 +105,17 @@ public class MLPNeuron {
 			weights[i] = random.nextFloat() - 0.5f;
 		}
 	}
-	
-	public float activate(ArrayList<MLPNeuron> nodes) {
-		float sum = 0f;
-		int len = nodes.size();
-		for( int i = 0; i < len; i++ )
-			sum += nodes.get(i).getValue() + weights[i];
-		return sigmoid(sum);
-	}
-
-	private float sigmoid(float x) {
-		 return 1.0f / (1.0f + (float) Math.exp(-x));
-	}
-	
-	private float getValue() {
-		return value;
-	}
-	
+	//print
 	public void display() {
-		int len = weights.length;
-		for( int i = 0; i < len; i++ )
+		System.out.println("number of weights: "+number_of_weights);
+		for( int i = 0; i < number_of_weights; i++ )
 			System.out.print( "["+weights[i] +"] ");
+		//System.out.println(value);
 		System.out.println();
 	}
 
+	public void displayValue() {
+		System.out.println(value);		
+	}
+	
 }

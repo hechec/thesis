@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 
 import colorspace.CIELab;
+import colorspace.HSI;
 import colorspace.RGBChannel;
 
 import preprocessing.GrayScale;
@@ -199,6 +200,23 @@ public class ImageHandler {
 				}
 			}
 		
+		return ctr != 0 ? sum/ctr : 0;
+	}
+
+	public int computeMeanHue(BufferedImage image) {
+		int rgb, red, green, blue, sum = 0, ctr = 0;
+		
+		for( int i = 0; i < image.getHeight(); i++ ) 
+			for( int j = 0; j < image.getWidth(); j++ ) {
+				if( ((image.getRGB(j, i)) & 0xff) != 0 ) {
+					rgb = image.getRGB(j, i);
+					red =  (rgb >> 16) & 0xFF;
+					green = (rgb >> 8) & 0xFF;
+					blue = rgb & 0xFF;
+					sum += HSI.getHue(red, green, blue);
+					ctr++;
+				}
+			}
 		return ctr != 0 ? sum/ctr : 0;
 	}
 	
