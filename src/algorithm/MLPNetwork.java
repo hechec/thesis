@@ -23,6 +23,12 @@ public class MLPNetwork {
 		createLayers();
 	}
 	
+	public MLPNetwork(double[] weights) {
+		layers = new ArrayList<MLPLayer>();
+		createLayers();
+		initWeights(weights);
+	}
+	
 	private void createLayers() {
 		for( int i = 0; i < NUMBER_OF_LAYERS; i++ ) 
 			layers.add( i == 0 ? new MLPLayer(NODES_PER_LAYER[i]) : new MLPLayer( NODES_PER_LAYER[i], layers.get(i-1) ));
