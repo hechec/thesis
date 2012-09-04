@@ -79,8 +79,10 @@ public class ABC {
 			meanRun += GlobalMin;
 			
 			Params[run] = GlobalParams;
-			if( GlobalMin <= bestMin )
+			if( GlobalMin <= bestMin ){
+				bestMin = GlobalMin;
 				bestIndex = run;
+			}
 			
 			System.out.println((run+1)+".run:"+GlobalMin);
 		}
@@ -121,8 +123,11 @@ public class ABC {
 	}
 	
 	private void sendEmployedBees() {
-		for( int i = 0; i < foodNumber; i++ )
+		for( int i = 0; i < foodNumber; i++ ) {
 			neighborhoodSearch(i);
+			evaluatePopulation();
+			greedySelection(i);
+		}
 	}
 
 	private void sendOnlookerBees() {
@@ -130,9 +135,11 @@ public class ABC {
 		double r;
 		while( t < foodNumber ) {
 			r = (   (double)Math.random()*32767 / ((double)(32767)+(double)(1)) );
-			if( r <prob[i]  ) {
+			if( r < prob[i]  ) {
 				t++;
 				neighborhoodSearch(i);
+				evaluatePopulation();
+				greedySelection(i);
 			}
 			i++;
 			if(i == foodNumber)
@@ -148,7 +155,7 @@ public class ABC {
 				maxtrialindex = i;
 		}
 		if(trial[maxtrialindex] >= limit)
-			initializeEachFood(maxtrialindex);		
+			initializeEachFood(maxtrialindex);		// only one bee becomes a scout bee
 	}
 
 	private void neighborhoodSearch(int foodIndex) {
@@ -165,29 +172,36 @@ public class ABC {
         /*v_{ij}=x_{ij}+\phi_{ij}*(x_{kj}-x_{ij}) */
         solution[param2change] = Foods[foodIndex][param2change]+(Foods[foodIndex][param2change]-Foods[neighbour][param2change])*(r-0.5)*2;
         //try other formula
-        if( solution[param2change] < lb )
-        	solution[param2change] = lb;
+//        System.out.println( foodIndex+" "+ MSE[foodIndex] +" "+calculateFitness(MSE[foodIndex]) +"  "+fitness[foodIndex] );
+//        System.out.println( foodIndex+" "+ ObjValSol+" "+FitnessSol);
+        
+	}
+	
+	/**
+	 *  evaluates current and new solution
+	 */
+	private void evaluatePopulation() {
+		if( solution[param2change] < lb )
+	        	solution[param2change] = lb;
         if( solution[param2change] > ub)
             solution[param2change] = ub;
 
         MLPNetwork temp = new MLPNetwork(solution);
         ObjValSol = calculateObjectiveFunction(temp);//calculateFunction(solution);
         FitnessSol = calculateFitness(ObjValSol);
-        
-//        System.out.println( foodIndex+" "+ MSE[foodIndex] +" "+calculateFitness(MSE[foodIndex]) +"  "+fitness[foodIndex] );
-        
+	}
+	
+	private void greedySelection(int foodIndex) {
         if( FitnessSol >= fitness[foodIndex] ) {
         	trial[foodIndex] = 0;
         	for( int j = 0; j < dimension; j++ )
         		Foods[foodIndex][j] = solution[j];
+        	
         	MSE[foodIndex] = ObjValSol;
         	fitness[foodIndex] = FitnessSol;
         }
         else
             trial[foodIndex] = trial[foodIndex]+1;
-            
-//        System.out.println( foodIndex+" "+ ObjValSol+" "+FitnessSol);
-        
 	}
 
 	private void calculateProbabilities() {
@@ -203,7 +217,7 @@ public class ABC {
 	}
 	
 	private double calculateObjectiveFunction(MLPNetwork mlpNetwork) {
-		return mlpNetwork.computeError();
+		return mlpNetwork.computeMSE();
 	}
 	
 	private double calculateFitness(double fun) {
@@ -215,23 +229,26 @@ public class ABC {
 		return result;
 	}
 	
+	
 	public static void main(String[] args){
-		int runtime = 10;
+		int runtime = 1;
 		int maxCycle = 2500;
 		int dimension = 9;
 		int foodNumber = 50;
 		ABC abc = new ABC(runtime, maxCycle, dimension, foodNumber);
 		abc.run();
 		
-		double[] input = {0, 1};
+		double[] input = {1, 0};
 		double[] result = abc.test(input);
 		
 		System.out.println("result: "+result[0] +" rounded: "+Math.round(result[0]));
 	}
 
 	private double[] test(double[] input) {
+		System.out.println("START...");
+		System.out.println(bestIndex +" "+GlobalMins[bestIndex]);
 		for( int i = 0; i < dimension; i++ )
-			System.out.println( Params[bestIndex][i] );
+			System.out.println( "p: "+Params[bestIndex][i] );
 		MLPNetwork best = new MLPNetwork( Params[bestIndex] );
 		return best.test(input);
 	}

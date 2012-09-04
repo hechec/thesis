@@ -1,16 +1,14 @@
-package ui;
+package dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JScrollPane;
 
 public class MyDialog extends JDialog {
 

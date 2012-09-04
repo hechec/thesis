@@ -234,7 +234,7 @@ public class BeeColony {
 	}
 	
 	private double calculateFunction(MLPNetwork network) {
-		return network.computeError();
+		return network.computeMSE();
 	}
 
 	public static void main(String[] args) {

@@ -1,14 +1,12 @@
 package ui;
 
-import java.awt.EventQueue;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -16,71 +14,43 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JTextArea;
+import javax.swing.JTabbedPane;
 
 
-public class MyFrame extends JFrame {
+public class AppFrame extends JFrame {
 
 	private JPanel contentPane;
+	private JTabbedPane tabbedPane;
+	private ExtractionPane extractionTab;
+	private ThePane trueTab;
 	
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
+	private JMenu optionMenu;
+	
 	private JMenuItem openAction;
 	private JMenuItem exitAction;
-	private JMenuItem optionAction;
-	private JFileChooser fc;
+	private JCheckBoxMenuItem showStepbyStep;
+	
 	private JPanel bottomPane;
 	
 	BufferedImage original;
 	
 	private GuiController gc;
-	private ImagePane iPane;
-	private FeaturesPane fPane;
 	private JTextArea dArea;
 	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					
-					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-					MyFrame frame = new MyFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	public static boolean showStepbyProcess = false;
 
 	/**
 	 * Create the frame.
 	 */
-	public MyFrame() {
+	public AppFrame() {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
-		
-		iPane = new ImagePane();
-		contentPane.add(iPane);
-		
-		JPanel rightPane = new JPanel();
-		rightPane.setBounds(475, 0, 209, 400);
-		contentPane.add(rightPane);
-		rightPane.setLayout(null);
-		
-		fPane = new FeaturesPane();
-		fPane.setBounds(10, 11, 199, 378);
-		rightPane.add(fPane);
+		contentPane.setLayout(new BorderLayout());
 		
 		bottomPane = new JPanel();
 		bottomPane.setBounds(0, 400, 684, 141);
@@ -88,17 +58,25 @@ public class MyFrame extends JFrame {
 		bottomPane.setLayout(null);
 		
 		dArea = new JTextArea();
-		dArea.setBounds(0, 0, 684, 141);
+		//dArea.setBounds(0, 0, 684, 141);
 		
 		JScrollPane spPane = new JScrollPane();
 		spPane.setBounds(8, 0, 674, 141);
 		spPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		spPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		spPane.setViewportView(dArea);
-		bottomPane.add(spPane);
+		bottomPane.add(spPane, BorderLayout.SOUTH);
 		
-		gc = new GuiController(iPane, fPane, dArea);
-		iPane.setController(gc);
+		extractionTab = new ExtractionPane(dArea);
+		trueTab = new ThePane(dArea);
+		
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.add("Extraction", extractionTab);
+		tabbedPane.add("True", trueTab);
+		contentPane.add(tabbedPane, BorderLayout.CENTER);
+		
+		gc = new GuiController(extractionTab, dArea);
+		extractionTab.setController(gc);
 		
 		initMenuBar();
 		config();
@@ -109,7 +87,10 @@ public class MyFrame extends JFrame {
 		setJMenuBar(menuBar);
 		
 		fileMenu = new JMenu("File");
+		optionMenu = new JMenu("Options");
 		menuBar.add(fileMenu);
+		menuBar.add(optionMenu);
+		
 		openAction =  new JMenuItem("Open", KeyEvent.VK_T);
 		openAction.setIcon(new ImageIcon("src/images/open.png"));
 		KeyStroke ctrlOKeyStroke = KeyStroke.getKeyStroke("control O");
@@ -118,18 +99,15 @@ public class MyFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				selectImage();
+				extractionTab.selectImage();
 			}
 
 		});
 		
-		optionAction = new JMenuItem("Option");
-
 		exitAction =  new JMenuItem("Exit", KeyEvent.VK_T);
 		KeyStroke ctrlQKeyStroke = KeyStroke.getKeyStroke("control E");
 		exitAction.setAccelerator(ctrlQKeyStroke);
 		exitAction.addActionListener(new ActionListener() {	
-			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				System.exit(0);				
@@ -137,32 +115,20 @@ public class MyFrame extends JFrame {
 		});
 
 		fileMenu.add(openAction);
-		fileMenu.add(optionAction);
 		fileMenu.add(exitAction);	
 		
-		FileFilter filter = new FileNameExtensionFilter("JPEG file", "jpg", "jpeg", "png", "gif");
-		fc = new JFileChooser();
-		fc.setFileFilter(filter);
-		
-		
-		
-	}
-	
-	private void selectImage() {
-		 dArea.append("opening...\n");
-		 if(fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-			 try {
-				 
-				 iPane.showInput(ImageIO.read(fc.getSelectedFile()));
-				 dArea.append("file opened: "+fc.getSelectedFile()+"\n");
-			} catch (IOException e) {
-				e.printStackTrace();
+		showStepbyStep = new JCheckBoxMenuItem("show step by step");
+		showStepbyStep.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				JCheckBoxMenuItem s = (JCheckBoxMenuItem) event.getSource();
+				showStepbyProcess = s.isSelected();
 			}
-		 }
-		 else
-			 dArea.append("aborted.\n");
+		});
+		
+		optionMenu.add(showStepbyStep);
+		
 	}
-
 
 	private void config() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

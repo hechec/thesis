@@ -9,6 +9,7 @@ import java.awt.image.Raster;
 import colorspace.CIELab;
 import colorspace.HSI;
 import colorspace.RGBChannel;
+import dialogs.MyDialog;
 
 import preprocessing.GrayScale;
 import preprocessing.ImageSegmentation;
@@ -17,7 +18,15 @@ import preprocessing.OtsuThreshold;
 
 public class ImageHandler {
 	
-	MyDialog dialog;
+	private MyDialog dialog;
+	private BufferedImage original;
+	private BufferedImage blueImage;
+	private BufferedImage filteredImage;
+	private BufferedImage grayImage;
+	private BufferedImage binaryImage;
+	private BufferedImage segmentedImage;
+	private BufferedImage normalizedImage;
+	private BufferedImage resizedImage;
 	
 	public ImageHandler() {
 	}
@@ -115,37 +124,43 @@ public class ImageHandler {
 	}
 
 	public BufferedImage extract(BufferedImage original) {
+		this.original = original;
+		blueImage = toBlue(original);
+		filteredImage = filter(blueImage);
+		grayImage = toGray(filteredImage);
+		binaryImage = binarize(grayImage);
+		segmentedImage = segment(original, binaryImage);
+		normalizedImage = normalize(segmentedImage);
+		resizedImage = resize(normalizedImage, 64, 64);
+		
+		return resizedImage;
+		//return resize(normalize(segment(original, binarize(toGray(filter(toBlue(original)))))), 64, 64);
+	}
+	
+	public void showStepByStep() {
 		dialog = new MyDialog();
 		dialog.addImage(original);
-		BufferedImage result = toBlue(original);
-		dialog.addImage(result);
-		result = filter(result);
-		dialog.addImage(result);
-		result = toGray(result);
-		dialog.addImage(result);
-		result = binarize(result);
-		dialog.addImage(result);
-		result = segment(original, result);
-		dialog.addImage(result);
-		result = normalize(result);
-		dialog.addImage(result);
-		result = resize(result, 64, 64);
-		dialog.addImage(result);
+		dialog.addImage(blueImage);
+		dialog.addImage(filteredImage);
+		dialog.addImage(grayImage);
+		dialog.addImage(binaryImage);
+		dialog.addImage(segmentedImage);
+		dialog.addImage(normalizedImage);
+		dialog.addImage(resizedImage);
 		dialog.setVisible(true);
-		return resize(normalize(segment(original, binarize(toGray(filter(toBlue(original)))))), 64, 64);
 	}
 
-	public int computeMeanRed(BufferedImage image) {
+	public double computeMeanRed(BufferedImage image) {
 		BufferedImage redImage = RGBChannel.toRGBChannel(image, RGBChannel.RED);
 		return getAverage(redImage);
 	}
 
-	public int computerMeanGreen(BufferedImage image) {
+	public double computerMeanGreen(BufferedImage image) {
 		BufferedImage greenImage = RGBChannel.toRGBChannel(image, RGBChannel.GREEN);
 		return getAverage(greenImage);
 	}
 	
-	public int getAverage(BufferedImage image) {
+	public double getAverage(BufferedImage image) {
 		BufferedImage grayImage = toGray(image);
 		int sum = 0, ctr = 0;
 		
@@ -166,7 +181,7 @@ public class ImageHandler {
 		return ctr != 0 ? sum/ctr : 0;
 	}
 
-	public int computeMeanRG(BufferedImage image) {
+	public double computeMeanRG(BufferedImage image) {
 		BufferedImage redGray =  toGray(RGBChannel.toRGBChannel(image, RGBChannel.RED));
 		BufferedImage greenGray = toGray(RGBChannel.toRGBChannel(image, RGBChannel.GREEN));
 		int sum = 0, ctr = 0;
@@ -183,7 +198,7 @@ public class ImageHandler {
 		return ctr != 0 ? sum/ctr : 0;
 	}
 
-	public int computeMeanA(BufferedImage image) {
+	public double computeMeanA(BufferedImage image) {
 		int sum = 0, ctr = 0, rgb, red, green, blue;
 		double[] lab = new double[3];
 		
@@ -203,7 +218,7 @@ public class ImageHandler {
 		return ctr != 0 ? sum/ctr : 0;
 	}
 
-	public int computeMeanHue(BufferedImage image) {
+	public double computeMeanHue(BufferedImage image) {
 		int rgb, red, green, blue, sum = 0, ctr = 0;
 		
 		for( int i = 0; i < image.getHeight(); i++ ) 

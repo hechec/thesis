@@ -12,7 +12,7 @@ public class MLPNetwork {
 	private int NUMBER_OF_LAYERS = 3;
 	private int[] NODES_PER_LAYER = {2, 2, 1};
 	
-	private double[][] input_data = { {0, 0}, {0, 1}, {1, 0}, {1, 1} };
+	private double[][] input_data = { {0, 0}, {0, 1}, {1, 0}, {1, 1} }; 
 	private double[][] output_data = { {0}, {1}, {1}, {0} };
 	
 	/**
@@ -53,7 +53,7 @@ public class MLPNetwork {
 	 * computer network error (MSE)
 	 * @return
 	 */
-	public double computeError() {
+	public double computeMSE() {
 		double error = 0;
 		int data_size = input_data.length;
 		
@@ -114,12 +114,12 @@ public class MLPNetwork {
 	 */
 	public static void main(String[] args) {
 		MLPNetwork network = new MLPNetwork();
-		double[] foods = {0.431, -0.921, 0.5332, 0.91232, -0.1121, 0.63412, 0.82932, -0.99323, -0.5645, .9, .9, .8};
+		double[] foods = {0.341232, 0.129952, -0.923123, -0.115223, 0.570345, -0.328932, -0.993423, 0.164732, 0.752621, .9, .9, .8};
 		network.initWeights(foods);
-		System.out.println( network.computeError() );
+		System.out.println( network.computeMSE() );
 		//network.feedforward();
 		//network.display();
-		//network.displayVaue();
+		network.displayVaue();
 	}
 	
 	// xor test

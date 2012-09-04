@@ -88,31 +88,39 @@ public class FeaturesPane extends JPanel {
 		aTextField.setBounds(104, 216, 59, 26);
 		add(aTextField);
 		
-		setRedField(0);
-		setGreenField(0);
-		setRedGreenField(0);
-		setHueField(0);
-		setAField(0);
+		setRedField(0.0);
+		setGreenField(0.0);
+		setRedGreenField(0.0);
+		setHueField(0.0);
+		setAField(0.0);
 	}
 	
-	public void setRedField(int value) {
+	public void setRedField(double value) {
 		redTextField.setText(""+value);
 	}
 	
-	public void setGreenField(int value) {
+	public void setGreenField(double value) {
 		greenTextField.setText(""+value);
 	}
 	
-	public void setRedGreenField(int value) {
+	public void setRedGreenField(double value) {
 		rgTextField.setText(""+value);
 	}
 	
-	public void setHueField(int value) {
+	public void setHueField(double value) {
 		hueTextField.setText(""+value);
 	}
 	
-	public void setAField(int value) {
+	public void setAField(double value) {
 		aTextField.setText(""+value);
+	}
+
+	public void reset() {
+		redTextField.setText("0.0");
+		greenTextField.setText("0.0");
+		rgTextField.setText("0.0");
+		hueTextField.setText("0.0");
+		aTextField.setText("0.0");
 	}
 	
 }
