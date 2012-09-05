@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.BorderLayout;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -15,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.DefaultCaret;
 import javax.swing.JTextArea;
 import javax.swing.JTabbedPane;
 
@@ -24,7 +26,7 @@ public class AppFrame extends JFrame {
 	private JPanel contentPane;
 	private JTabbedPane tabbedPane;
 	private ExtractionPane extractionTab;
-	private ThePane trueTab;
+	private ABCNNPane abcnnTab;
 	
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
@@ -47,6 +49,9 @@ public class AppFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public AppFrame() {
+		instance = this;
+		setTitle("Toto-Bee");
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -58,7 +63,12 @@ public class AppFrame extends JFrame {
 		bottomPane.setLayout(null);
 		
 		dArea = new JTextArea();
+		dArea.setEditable(false);
+		dArea.setFocusable(false);
 		//dArea.setBounds(0, 0, 684, 141);
+		DefaultCaret caret = (DefaultCaret)dArea.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		
 		
 		JScrollPane spPane = new JScrollPane();
 		spPane.setBounds(8, 0, 674, 141);
@@ -68,11 +78,11 @@ public class AppFrame extends JFrame {
 		bottomPane.add(spPane, BorderLayout.SOUTH);
 		
 		extractionTab = new ExtractionPane(dArea);
-		trueTab = new ThePane(dArea);
+		abcnnTab = new ABCNNPane(dArea);
 		
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.add("Extraction", extractionTab);
-		tabbedPane.add("True", trueTab);
+		tabbedPane.add("ABC+NN", abcnnTab);
 		contentPane.add(tabbedPane, BorderLayout.CENTER);
 		
 		gc = new GuiController(extractionTab, dArea);
@@ -136,4 +146,10 @@ public class AppFrame extends JFrame {
 		setLocationRelativeTo(null);		
 		setResizable(false);
 	}
+
+	public static Frame getInstance() {
+		return instance;
+	}
+	
+	private static AppFrame instance = null;
 }

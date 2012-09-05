@@ -24,7 +24,7 @@ public class FeaturesPane extends JPanel {
 	 * Create the panel.
 	 */
 	public FeaturesPane() {
-		setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Features", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		setBorder(new TitledBorder(null, "Features", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		setBounds(10, 11, 189, 378);
 		setLayout(null);
 		

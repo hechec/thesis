@@ -1,4 +1,6 @@
-package algorithm;
+package abcnn;
+
+import abcnn.MLPNetwork;
 
 public class BeeColony {
 	
@@ -94,11 +96,11 @@ public class BeeColony {
 	        if( solution[param2change] > ub)
 	           solution[param2change] = ub;
 	        
-	        MLPNetwork n = new MLPNetwork();
-	        n.initWeights(solution);
+	        //MLPNetwork n = new MLPNetwork();
+	        //n.initWeights(solution);
 	        
-	        ObjValSol = calculateFunction(n);//calculateFunction(solution);
-	        FitnessSol = calculateFitness(ObjValSol);
+	       // ObjValSol = calculateFunction(n);//calculateFunction(solution);
+	        //FitnessSol = calculateFitness(ObjValSol);
 	        
 	        /*a greedy selection is applied between the current solution i and its mutant*/
 	        if (FitnessSol > fitness[i]) {
@@ -160,10 +162,10 @@ public class BeeColony {
 		        if (solution[param2change]>ub)
 		           solution[param2change]=ub;   
 		        
-		        MLPNetwork n = new MLPNetwork();
-		        n.initWeights(solution);
-		        ObjValSol = calculateFunction(n); //calculateFunction(solution);
-		        FitnessSol = calculateFitness(ObjValSol);
+		        //MLPNetwork n = new MLPNetwork();
+		        //n.initWeights(solution);
+		        //ObjValSol = calculateFunction(n); //calculateFunction(solution);
+		        //FitnessSol = calculateFitness(ObjValSol);
 		        
 		        /*a greedy selection is applied between the current solution i and its mutant*/
 		        if(FitnessSol>fitness[i]) {
@@ -203,7 +205,7 @@ public class BeeColony {
 	        foods[i][j] = r * ( ub - lb ) + lb;
 			solution[j] = foods[i][j];
 	    }
-	    networks[i] = new MLPNetwork();
+	    //networks[i] = new MLPNetwork();
 	    networks[i].initWeights(solution);
 	    
 		f[i] = calculateFunction(networks[i]);//f[i] = calculateFunction(solution);

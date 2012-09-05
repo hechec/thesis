@@ -1,10 +1,13 @@
-package ui;
+package handlers;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
+import java.util.ArrayList;
+
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import colorspace.CIELab;
 import colorspace.HSI;
@@ -190,7 +193,6 @@ public class ImageHandler {
 			for( int j = 0; j < image.getWidth(); j++ ) {
 				if( ((image.getRGB(j, i)) & 0xff) != 0 ) {
 					sum += ( (redGray.getRGB(j, i) & 0xff) - (greenGray.getRGB(j, i) & 0xff) );
-					//System.out.println((grayRed.getRGB(j, i)) & 0xff);
 					ctr++;
 				}
 			}
@@ -233,6 +235,41 @@ public class ImageHandler {
 				}
 			}
 		return ctr != 0 ? sum/ctr : 0;
+	}
+	
+	public double[][] createInputVectorArray(ArrayList<BufferedImage> input_data) {
+		int patternSize = input_data.size();
+		double[][] inputArray = new double[patternSize][5];
+		
+		for( int i = 0; i < patternSize; i++ )  {
+			BufferedImage extractedInput = extract(input_data.get(i));
+			inputArray[i] = getFeatures(extractedInput);
+		}
+	
+		return inputArray;
+	}
+	
+	public double[][] createOutputVectorArray(ArrayList<Integer> output_data) {
+		int patternSize = output_data.size();
+		double[][] outputArray = new double[patternSize][6];
+		
+		for( int i = 0; i < patternSize; i++ ) 
+			outputArray[i][output_data.get(i)-1] = 1.0;
+		
+		return outputArray;
+	}
+	
+	
+	public double[] getFeatures(BufferedImage extractedInput) {
+		double[] features = new double[5];
+		
+		features[0] = computeMeanRed(extractedInput);
+		features[1] = computerMeanGreen(extractedInput);
+		features[2] = computeMeanRG(extractedInput);
+		features[3] = computeMeanHue(extractedInput);
+		features[4] = computeMeanA(extractedInput);
+		
+		return features;
 	}
 	
 }

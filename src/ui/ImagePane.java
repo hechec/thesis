@@ -1,5 +1,7 @@
 package ui;
 
+import handlers.ImageHandler;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -35,7 +37,7 @@ public class ImagePane extends JPanel {
 		setLayout(null);
 		
 		inputPane = new JPanel();
-		inputPane.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144), 1, true), "Input", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		inputPane.setBorder(new TitledBorder(null, "Input", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		inputPane.setBounds(91, 11, 262, 209);
 		add(inputPane);
 		
@@ -64,7 +66,7 @@ public class ImagePane extends JPanel {
 		add(btnNewButton_1);
 		
 		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Extracted", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		panel.setBorder(new TitledBorder(null, "Extracted", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		panel.setBounds(167, 265, 106, 97);
 		add(panel);
 		
@@ -108,7 +110,7 @@ public class ImagePane extends JPanel {
 	private void reset() {
 		inputLabel.setIcon(null);
 		extractedLabel.setIcon(null);
-		updateUI();
+		//updateUI();
 		
 		guiController.resetExtraction();
 		original = null;

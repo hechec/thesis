@@ -1,4 +1,4 @@
-package algorithm;
+package abcnn;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -36,6 +36,7 @@ public class MLPNeuron {
 			weights = new double[prev_layer.size()];
 			number_of_weights = prev_layer.size();
 		}
+		
 		for( int i = 0; i < number_of_weights; i++, index++ )
 			weights[i] = foods[index];
 		// return current index

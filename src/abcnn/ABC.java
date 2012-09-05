@@ -1,8 +1,15 @@
-package algorithm;
+package abcnn;
 
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Random;
 
-public class ABC {
+import javax.swing.JOptionPane;
+
+import ui.AppFrame;
+import ui.ABCNNPane;
+
+public class ABC extends Thread {
 	
 	private int runtime 	 = 0,
 				maxCycle 	 = 0,
@@ -19,7 +26,7 @@ public class ABC {
 			       ObjValSol	= 0,            
 				   FitnessSol	= 0,
 				   meanRun		= 0,
-				   bestMin		= 99;
+				   bestMin		= 1000;
 	
 	private double[] MSE,
 					 GlobalParams,
@@ -34,8 +41,14 @@ public class ABC {
 	
 	private MLPNetwork[] networks;
 	private Random rand = new Random();
+		
+	private ABCNNPane abcnnPane;
+	private double[][] input_data;
+	private double[][] output_data;
 	
-	public ABC(int runtime, int maxCycle, int dimension, int foodNumber) {
+	public ABC(ABCNNPane abcnnPane, int runtime, int maxCycle, int foodNumber, int dimension) {
+		this.abcnnPane = abcnnPane;
+		
 		this.runtime = runtime;
 		this.maxCycle = maxCycle;
 		this.dimension = dimension;
@@ -58,9 +71,21 @@ public class ABC {
 	}
 	
 	/**
+	 * sets the training data
+	 * @param training_input
+	 * @param training_output
+	 */
+	public void setTrainingData(double[][] input_data, double[][] output_data) {
+		this.input_data = input_data;
+		this.output_data = output_data;
+	}
+	
+	/**
 	 * start ABC
 	 */
-	public void run() {
+	@Override
+    public void run(){		
+		abcnnPane.print("*****************TRAINING START****************\n");
 		for( int run = 0; run < runtime; run++ ) {
 			initializePopulation();
 			memorizeBestSource();
@@ -70,8 +95,9 @@ public class ABC {
 				sendOnlookerBees();
 				memorizeBestSource();
 				sendScoutBees();
+				abcnnPane.incrementCycle(cycle+1);
 			}
-			
+			abcnnPane.incrementRuntime(run+1);
 			//for( int i = 0; i < GlobalParams.length; i++ )
 				//System.out.println( GlobalParams[i] );
 			
@@ -83,10 +109,11 @@ public class ABC {
 				bestMin = GlobalMin;
 				bestIndex = run;
 			}
-			
-			System.out.println((run+1)+".run:"+GlobalMin);
+			abcnnPane.print("run "+(run+1)+": "+GlobalMin+"\n");
 		}
-		System.out.println( "mean run: "+meanRun/runtime );
+		abcnnPane.print("mean run: "+meanRun/runtime +"\n");
+		abcnnPane.print("*****************TRAINING END*****************\n");
+		JOptionPane.showMessageDialog(AppFrame.getInstance(), "Done training.");
 	}
 	
 	/**
@@ -107,7 +134,7 @@ public class ABC {
 			Foods[index][j] = r * ( ub - lb ) + lb;
 			solution[j] = Foods[index][j];
 		}
-		networks[index] = new MLPNetwork(solution);
+		networks[index] = new MLPNetwork(solution, input_data, output_data);
 		MSE[index] = calculateObjectiveFunction(networks[index]);
 		fitness[index] = calculateFitness(MSE[index]);
 		trial[index] = 0;
@@ -155,7 +182,19 @@ public class ABC {
 				maxtrialindex = i;
 		}
 		if(trial[maxtrialindex] >= limit)
-			initializeEachFood(maxtrialindex);		// only one bee becomes a scout bee
+			initializeEachFood(maxtrialindex);		// only one bee becomes a scout bee ?
+		/*int  ctr = 0;
+		for( int i = 0; i < foodNumber; i++ ) {
+			if( trial[i] >= limit ) {
+				initializeEachFood(i);
+				neighborhoodSearch(i);
+				evaluatePopulation();
+				greedySelection(i);
+				ctr++;
+			}
+			//System.out.println( trial[i] );
+		}
+		System.out.println("SCOUT: "+ctr);*/
 	}
 
 	private void neighborhoodSearch(int foodIndex) {
@@ -186,7 +225,7 @@ public class ABC {
         if( solution[param2change] > ub)
             solution[param2change] = ub;
 
-        MLPNetwork temp = new MLPNetwork(solution);
+        MLPNetwork temp = new MLPNetwork(solution, input_data, output_data);
         ObjValSol = calculateObjectiveFunction(temp);//calculateFunction(solution);
         FitnessSol = calculateFitness(ObjValSol);
 	}
@@ -229,26 +268,24 @@ public class ABC {
 		return result;
 	}
 	
-	
 	public static void main(String[] args){
-		int runtime = 1;
-		int maxCycle = 2500;
+		int runtime = 30;
+		int maxCycle = 1000;
 		int dimension = 9;
-		int foodNumber = 50;
-		ABC abc = new ABC(runtime, maxCycle, dimension, foodNumber);
+		int foodNumber = 10;
+		ABC abc = new ABC(null, runtime, maxCycle, foodNumber, dimension);
 		abc.run();
 		
-		double[] input = {1, 0};
+		double[] input = {0, 1};
 		double[] result = abc.test(input);
 		
 		System.out.println("result: "+result[0] +" rounded: "+Math.round(result[0]));
 	}
 
-	private double[] test(double[] input) {
-		System.out.println("START...");
-		System.out.println(bestIndex +" "+GlobalMins[bestIndex]);
-		for( int i = 0; i < dimension; i++ )
-			System.out.println( "p: "+Params[bestIndex][i] );
+	public double[] test(double[] input) {
+		//System.out.println(bestIndex+1 +" "+GlobalMins[bestIndex]);
+		//for( int i = 0; i < dimension; i++ )
+			//System.out.println( "p: "+Params[bestIndex][i] );
 		MLPNetwork best = new MLPNetwork( Params[bestIndex] );
 		return best.test(input);
 	}

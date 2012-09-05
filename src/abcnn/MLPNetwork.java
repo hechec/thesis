@@ -1,5 +1,6 @@
-package algorithm;
+package abcnn;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import com.sun.corba.se.spi.orbutil.fsm.Input;
@@ -10,18 +11,17 @@ public class MLPNetwork {
 	private MLPLayer outputLayer;
 	private MLPLayer inputLayer;
 	private int NUMBER_OF_LAYERS = 3;
-	private int[] NODES_PER_LAYER = {2, 2, 1};
+	private int[] NODES_PER_LAYER = {5, 5, 6};
 	
-	private double[][] input_data = { {0, 0}, {0, 1}, {1, 0}, {1, 1} }; 
-	private double[][] output_data = { {0}, {1}, {1}, {0} };
+	private double[][] input_data;// = { {0, 0}, {0, 1}, {1, 0}, {1, 1} }; 
+	private double[][] output_data;// = { {0}, {1}, {1}, {0} };
 	
 	/**
 	 * MLPNetwork constructor
+	 * @param training_output 
+	 * @param training_input 
+	 * @param solution 
 	 */
-	public MLPNetwork() {
-		layers = new ArrayList<MLPLayer>();
-		createLayers();
-	}
 	
 	public MLPNetwork(double[] weights) {
 		layers = new ArrayList<MLPLayer>();
@@ -29,6 +29,14 @@ public class MLPNetwork {
 		initWeights(weights);
 	}
 	
+	public MLPNetwork(double[] weights, double[][] input_data, double[][] output_data) {
+		this.input_data = input_data;
+		this.output_data = output_data;
+		layers = new ArrayList<MLPLayer>();
+		createLayers();
+		initWeights(weights);
+	}
+
 	private void createLayers() {
 		for( int i = 0; i < NUMBER_OF_LAYERS; i++ ) 
 			layers.add( i == 0 ? new MLPLayer(NODES_PER_LAYER[i]) : new MLPLayer( NODES_PER_LAYER[i], layers.get(i-1) ));
@@ -97,29 +105,18 @@ public class MLPNetwork {
 		return error/output_size;
 	}
 
-	public void initTrainingData() {
-		// sample data
-		int number_of_data = 4;
-		int number_of_input = NODES_PER_LAYER[0];
-		int number_of_output = NODES_PER_LAYER[NODES_PER_LAYER.length-1];
-		//input_data = new double[number_of_data][number_of_input];
-		//input_data[0][0] = 1;
-		//input_data[0][1] = 0;
-		output_data = new double[number_of_data][number_of_output];
-	}
-	
 	/**
 	 *  main method
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		MLPNetwork network = new MLPNetwork();
-		double[] foods = {0.341232, 0.129952, -0.923123, -0.115223, 0.570345, -0.328932, -0.993423, 0.164732, 0.752621, .9, .9, .8};
-		network.initWeights(foods);
-		System.out.println( network.computeMSE() );
+		//MLPNetwork network = new MLPNetwork();
+		//double[] foods = {0.341232, 0.129952, -0.923123, -0.115223, 0.570345, -0.328932, -0.993423, 0.164732, 0.752621, .9, .9, .8};
+		//network.initWeights(foods);
+		//System.out.println( network.computeMSE() );
 		//network.feedforward();
 		//network.display();
-		network.displayVaue();
+		//network.displayVaue();
 	}
 	
 	// xor test

@@ -15,7 +15,6 @@ public class Main {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					
 					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 					AppFrame frame = new AppFrame();
 					frame.setVisible(true);
