@@ -57,11 +57,6 @@ public class AppFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout());
 		
-		bottomPane = new JPanel();
-		bottomPane.setBounds(0, 400, 684, 141);
-		contentPane.add(bottomPane);
-		bottomPane.setLayout(null);
-		
 		dArea = new JTextArea();
 		dArea.setEditable(false);
 		dArea.setFocusable(false);
@@ -75,14 +70,14 @@ public class AppFrame extends JFrame {
 		spPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		spPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		spPane.setViewportView(dArea);
-		bottomPane.add(spPane, BorderLayout.SOUTH);
+		//bottomPane.add(spPane, BorderLayout.SOUTH);
 		
 		extractionTab = new ExtractionPane(dArea);
-		abcnnTab = new ABCNNPane(dArea);
+		abcnnTab = new ABCNNPane(this);
 		
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.add("Extraction", extractionTab);
 		tabbedPane.add("ABC+NN", abcnnTab);
+		tabbedPane.add("Extraction", extractionTab);
 		contentPane.add(tabbedPane, BorderLayout.CENTER);
 		
 		gc = new GuiController(extractionTab, dArea);

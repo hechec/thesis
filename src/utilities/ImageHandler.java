@@ -1,4 +1,4 @@
-package handlers;
+package utilities;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
@@ -13,6 +13,7 @@ import colorspace.CIELab;
 import colorspace.HSI;
 import colorspace.RGBChannel;
 import dialogs.MyDialog;
+import dialogs.PreparingDialog;
 
 import preprocessing.GrayScale;
 import preprocessing.ImageSegmentation;
@@ -237,13 +238,14 @@ public class ImageHandler {
 		return ctr != 0 ? sum/ctr : 0;
 	}
 	
-	public double[][] createInputVectorArray(ArrayList<BufferedImage> input_data) {
+	public double[][] createInputVectorArray(ArrayList<BufferedImage> input_data, PreparingDialog prog) {
 		int patternSize = input_data.size();
-		double[][] inputArray = new double[patternSize][5];
+		double[][] inputArray = new double[patternSize][NetworkConfiguration.NUMBER_OF_INPUT];
 		
 		for( int i = 0; i < patternSize; i++ )  {
 			BufferedImage extractedInput = extract(input_data.get(i));
 			inputArray[i] = getFeatures(extractedInput);
+			prog.setValue(patternSize+1+i);
 		}
 	
 		return inputArray;
@@ -251,8 +253,9 @@ public class ImageHandler {
 	
 	public double[][] createOutputVectorArray(ArrayList<Integer> output_data) {
 		int patternSize = output_data.size();
-		double[][] outputArray = new double[patternSize][6];
+		double[][] outputArray = new double[patternSize][NetworkConfiguration.NUMBER_OF_OUTPUT];
 		
+		// set the output node value of the expected class to 1
 		for( int i = 0; i < patternSize; i++ ) 
 			outputArray[i][output_data.get(i)-1] = 1.0;
 		
@@ -261,13 +264,13 @@ public class ImageHandler {
 	
 	
 	public double[] getFeatures(BufferedImage extractedInput) {
-		double[] features = new double[5];
+		double[] features = new double[NetworkConfiguration.NUMBER_OF_INPUT];
 		
-		features[0] = computeMeanRed(extractedInput);
-		features[1] = computerMeanGreen(extractedInput);
-		features[2] = computeMeanRG(extractedInput);
-		features[3] = computeMeanHue(extractedInput);
-		features[4] = computeMeanA(extractedInput);
+		//features[0] = computeMeanRed(extractedInput);
+		//features[1] = computerMeanGreen(extractedInput);
+		features[0] = computeMeanRG(extractedInput);
+		features[1] = computeMeanHue(extractedInput);
+		features[2] = computeMeanA(extractedInput);
 		
 		return features;
 	}

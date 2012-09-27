@@ -80,9 +80,9 @@ public class MLPNeuron {
 	 * @param hasBias
 	 */
 	public void activateOutput(ArrayList<MLPNeuron> inputs, boolean hasBias) {
-		//double sum = getWeightedSum(inputs, hasBias);
-		//value = sigmoid(sum);
-		value = getWeightedSum(inputs, hasBias);
+		double sum = getWeightedSum(inputs, hasBias);
+		value = sigmoid(sum);
+		//value = getWeightedSum(inputs, hasBias);
 	}
 	
 	/**

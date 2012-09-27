@@ -103,6 +103,7 @@ public class MLPLayer {
 			node.activateOutput(inputs, prev_layer.hasBias());
 	}
 	
+	///// print
 
 	// print
 	public void display(int n) {

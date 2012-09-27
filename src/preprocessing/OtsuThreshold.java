@@ -99,7 +99,7 @@ public class OtsuThreshold {
         newPixel += red; newPixel = newPixel << 8;
         newPixel += green; newPixel = newPixel << 8;
         newPixel += blue;
- 
+        	
         return newPixel;
  
     }

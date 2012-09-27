@@ -1,6 +1,5 @@
 package ui;
 
-import handlers.ImageHandler;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,6 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
+
+import utilities.ImageHandler;
 
 
 public class ImagePane extends JPanel {

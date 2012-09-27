@@ -20,12 +20,13 @@ public class PreparingDialog extends JDialog {
 	
 	/**
 	 * Create the dialog.
+	 * @param appFrame 
 	 * @param thePane 
 	 */
-	public PreparingDialog() {
+	public PreparingDialog(AppFrame appFrame) {
 		setTitle("Preparing...");
 		setAlwaysOnTop(true);
-	
+		
 		setBounds(100, 100, 311, 57);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -38,8 +39,36 @@ public class PreparingDialog extends JDialog {
 		
 		progressBar.setMinimum(0);
 		
-
-		setLocationRelativeTo(AppFrame.getInstance());
+		setLocationRelativeTo(appFrame);
+	}
+	
+	public void start(int max) {
+		progressBar.setMaximum(max);
+		setVisible(true);
+		new Thread() {
+			public void run() {
+				int ctr = 1;
+				while( isShowing() ) {
+					if( ctr == 5 )
+						ctr -= 4;
+					updateTitle(ctr);
+					try {
+						ctr++;
+						Thread.sleep(400);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					
+				}				
+			}
+		}.start();
+	}
+	
+	private void updateTitle(int ctr) {
+		String dot = "";
+		for( int i = 0; i < ctr; i++ )
+			dot += ".";
+		setTitle("Preparing"+dot);
 	}
 	
 	public void setValue(int percent) {

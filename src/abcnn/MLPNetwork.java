@@ -3,6 +3,8 @@ package abcnn;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import utilities.NetworkConfiguration;
+
 import com.sun.corba.se.spi.orbutil.fsm.Input;
 
 public class MLPNetwork {
@@ -11,7 +13,9 @@ public class MLPNetwork {
 	private MLPLayer outputLayer;
 	private MLPLayer inputLayer;
 	private int NUMBER_OF_LAYERS = 3;
-	private int[] NODES_PER_LAYER = {5, 5, 6};
+	private int[] NODES_PER_LAYER = { NetworkConfiguration.NUMBER_OF_INPUT, 
+								      NetworkConfiguration.NODES_PER_HIDDEN, 
+								      NetworkConfiguration.NUMBER_OF_OUTPUT};
 	
 	private double[][] input_data;// = { {0, 0}, {0, 1}, {1, 0}, {1, 1} }; 
 	private double[][] output_data;// = { {0}, {1}, {1}, {0} };
@@ -84,24 +88,21 @@ public class MLPNetwork {
 	 * @return
 	 */
 	private void feedforward(double[] input_data) {
-		inputLayer.setInputs(input_data); 			// plug inputs
-		for( int i = 1; i < NUMBER_OF_LAYERS-1; i++ ) 		// activate hidden layer/s
+		inputLayer.setInputs(input_data); 							// plug inputs
+		for( int i = 1; i < NUMBER_OF_LAYERS-1; i++ ) 				// activate hidden layer/s
 			layers.get(i).activateHidden(layers.get(i-1));
-		outputLayer.activateOutput(layers.get(NUMBER_OF_LAYERS-2));  // activate output
+		outputLayer.activateOutput(layers.get(NUMBER_OF_LAYERS-2)); // activate output
 		//outputLayer.displayValue(1);
 	}
 	
 	private double feedforwardError(double[] input_data, double[] output_data, int index) {
-		ArrayList<MLPNeuron> output = outputLayer.getNodes();
+		ArrayList<MLPNeuron> outputNodes = outputLayer.getNodes();
 		double error = 0;
-		int output_size = output.size();
+		int output_size = outputNodes.size();
 		for( int j = 0; j < output_size; j++ ) {
-			error +=  Math.pow(output_data[j] - output.get(j).getValue(), 2) ; // (target-actual)^2
+			error +=  Math.pow(output_data[j] - outputNodes.get(j).getValue(), 2) ; // (target-actual)^2
 			//System.out.println( output_data[j] +" "+ output.get(j).getValue() +" "+error );
 		}
-			//System.out.println( input_data[0] +" - "+input_data[1] +" ==> "+output_data[0] );
-		//outputLayer.displayValue(3);
-		//System.out.println("error for data "+(index+1)+": "+ error/output_size );
 		return error/output_size;
 	}
 

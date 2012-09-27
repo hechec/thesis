@@ -85,10 +85,11 @@ public class ABC extends Thread {
 	 */
 	@Override
     public void run(){		
-		abcnnPane.print("*****************TRAINING START****************\n");
+		double start = System.currentTimeMillis();
 		for( int run = 0; run < runtime; run++ ) {
 			initializePopulation();
 			memorizeBestSource();
+			
 			for( int cycle = 0; cycle < maxCycle; cycle++ ) {
 				sendEmployedBees();
 				calculateProbabilities();
@@ -109,10 +110,13 @@ public class ABC extends Thread {
 				bestMin = GlobalMin;
 				bestIndex = run;
 			}
-			abcnnPane.print("run "+(run+1)+": "+GlobalMin+"\n");
+			//abcnnPane.print("run "+(run+1)+": "+GlobalMin+"\n");
 		}
-		abcnnPane.print("mean run: "+meanRun/runtime +"\n");
-		abcnnPane.print("*****************TRAINING END*****************\n");
+		double elapsedTime = (System.currentTimeMillis() - start) / 1000;
+		abcnnPane.showResult(bestMin, elapsedTime);
+		//abcnnPane.print("mean run: "+meanRun/runtime +"\n");
+		
+		//abcnnPane.print("*****************TRAINING END*****************\n");
 		JOptionPane.showMessageDialog(AppFrame.getInstance(), "Done training.");
 	}
 	
@@ -286,8 +290,14 @@ public class ABC extends Thread {
 		//System.out.println(bestIndex+1 +" "+GlobalMins[bestIndex]);
 		//for( int i = 0; i < dimension; i++ )
 			//System.out.println( "p: "+Params[bestIndex][i] );
+		
 		MLPNetwork best = new MLPNetwork( Params[bestIndex] );
 		return best.test(input);
+		
+	}
+
+	public MLPNetwork getBestBee() {
+		return new MLPNetwork( Params[bestIndex] );
 	}
 
 }
