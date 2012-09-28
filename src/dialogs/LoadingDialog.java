@@ -12,7 +12,7 @@ import javax.swing.JProgressBar;
 import ui.AppFrame;
 import ui.ABCNNPane;
 
-public class PreparingDialog extends JDialog {
+public class LoadingDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 
@@ -23,7 +23,7 @@ public class PreparingDialog extends JDialog {
 	 * @param appFrame 
 	 * @param thePane 
 	 */
-	public PreparingDialog(AppFrame appFrame) {
+	public LoadingDialog(AppFrame appFrame) {
 		setTitle("Preparing...");
 		setAlwaysOnTop(true);
 		

@@ -105,6 +105,20 @@ public class MLPNetwork {
 		}
 		return error/output_size;
 	}
+	
+	/**
+	 *  classifier
+	 * @param input
+	 * @return
+	 */
+	public double[] test(double[] input) {
+		feedforward(input);
+		double[] output = new double[outputLayer.size()];
+		ArrayList<MLPNeuron> outs = outputLayer.getNodes();
+		for( int i = 0; i < outs.size(); i++ )
+			output[i] = outs.get(i).getValue();
+		return output;
+	}
 
 	/**
 	 *  main method
@@ -118,16 +132,6 @@ public class MLPNetwork {
 		//network.feedforward();
 		//network.display();
 		//network.displayVaue();
-	}
-	
-	// xor test
-	public double[] test(double[] input) {
-		feedforward(input);
-		double[] output = new double[outputLayer.size()];
-		ArrayList<MLPNeuron> outs = outputLayer.getNodes();
-		for( int i = 0; i < outs.size(); i++ )
-			output[i] = outs.get(i).getValue();
-		return output;
 	}
 	
 	private void displayVaue() {

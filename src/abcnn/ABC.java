@@ -1,13 +1,22 @@
 package abcnn;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 
 import ui.AppFrame;
 import ui.ABCNNPane;
+import utilities.FileTypeFilter;
 
 public class ABC extends Thread {
 	
@@ -45,6 +54,8 @@ public class ABC extends Thread {
 	private ABCNNPane abcnnPane;
 	private double[][] input_data;
 	private double[][] output_data;
+	
+	private JFileChooser chooser;
 	
 	public ABC(ABCNNPane abcnnPane, int runtime, int maxCycle, int foodNumber, int dimension) {
 		this.abcnnPane = abcnnPane;
@@ -113,11 +124,47 @@ public class ABC extends Thread {
 			//abcnnPane.print("run "+(run+1)+": "+GlobalMin+"\n");
 		}
 		double elapsedTime = (System.currentTimeMillis() - start) / 1000;
-		abcnnPane.showResult(bestMin, elapsedTime);
+		abcnnPane.returnResult(bestMin, Params[bestIndex], elapsedTime);
+		
+		int r = JOptionPane.showConfirmDialog(abcnnPane, "Finished training. Do you want to save the result?", "Confirmation", JOptionPane.YES_NO_OPTION);
+		if( r == JOptionPane.YES_OPTION ) {
+			FileFilter filter = new FileTypeFilter(".txt", "Text files");
+			chooser = new JFileChooser();
+			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+			chooser.setFileFilter(filter);
+			chooser.setAcceptAllFileFilterUsed(false);
+			
+			BufferedWriter bufferedWriter = null;
+			if(chooser.showSaveDialog(abcnnPane) == JFileChooser.APPROVE_OPTION) {
+			    File file = chooser.getSelectedFile();
+			    FileWriter fileWriter;
+				try {
+					fileWriter = new FileWriter(file);
+					bufferedWriter = new BufferedWriter(fileWriter);
+					for( int i = 0; i < Params[bestIndex].length; i++ ) {
+						bufferedWriter.write(Params[bestIndex][i]+"");
+						bufferedWriter.newLine();
+					}
+				} catch (FileNotFoundException ex) {
+		            ex.printStackTrace();
+		        } catch (IOException e) {
+					e.printStackTrace();
+				}finally {
+		            try {
+		                if (bufferedWriter != null) {
+		                    bufferedWriter.flush();
+		                    bufferedWriter.close();
+		                }
+		            } catch (IOException ex) {
+		                ex.printStackTrace();
+		            }
+		        }
+				
+			}
+		}
 		//abcnnPane.print("mean run: "+meanRun/runtime +"\n");
 		
 		//abcnnPane.print("*****************TRAINING END*****************\n");
-		JOptionPane.showMessageDialog(AppFrame.getInstance(), "Done training.");
 	}
 	
 	/**

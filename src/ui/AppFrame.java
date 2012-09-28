@@ -20,6 +20,8 @@ import javax.swing.text.DefaultCaret;
 import javax.swing.JTextArea;
 import javax.swing.JTabbedPane;
 
+import com.jtattoo.plaf.texture.TextureUtils;
+
 
 public class AppFrame extends JFrame {
 
@@ -56,6 +58,7 @@ public class AppFrame extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout());
+		contentPane.putClientProperty("textureType", new Integer(TextureUtils.WINDOW_TEXTURE_TYPE));
 		
 		dArea = new JTextArea();
 		dArea.setEditable(false);
@@ -137,7 +140,7 @@ public class AppFrame extends JFrame {
 
 	private void config() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(700, 600);
+		setSize(745, 650);
 		setLocationRelativeTo(null);		
 		setResizable(false);
 	}

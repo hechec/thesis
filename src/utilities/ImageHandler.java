@@ -13,7 +13,7 @@ import colorspace.CIELab;
 import colorspace.HSI;
 import colorspace.RGBChannel;
 import dialogs.MyDialog;
-import dialogs.PreparingDialog;
+import dialogs.LoadingDialog;
 
 import preprocessing.GrayScale;
 import preprocessing.ImageSegmentation;
@@ -238,7 +238,7 @@ public class ImageHandler {
 		return ctr != 0 ? sum/ctr : 0;
 	}
 	
-	public double[][] createInputVectorArray(ArrayList<BufferedImage> input_data, PreparingDialog prog) {
+	public double[][] createInputVectorArray(ArrayList<BufferedImage> input_data, LoadingDialog prog) {
 		int patternSize = input_data.size();
 		double[][] inputArray = new double[patternSize][NetworkConfiguration.NUMBER_OF_INPUT];
 		
