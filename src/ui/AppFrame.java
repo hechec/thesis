@@ -1,7 +1,12 @@
 package ui;
 
+import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -57,7 +62,7 @@ public class AppFrame extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout());
+		contentPane.setLayout(null);
 		contentPane.putClientProperty("textureType", new Integer(TextureUtils.WINDOW_TEXTURE_TYPE));
 		
 		dArea = new JTextArea();
@@ -81,10 +86,31 @@ public class AppFrame extends JFrame {
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.add("ABC+NN", abcnnTab);
 		tabbedPane.add("Extraction", extractionTab);
-		contentPane.add(tabbedPane, BorderLayout.CENTER);
+		
+		tabbedPane.setBounds(4, 4, 745, 683);
+		//tabbedPane.putClientProperty("textureType", new Integer(TextureUtils.WINDOW_TEXTURE_TYPE));
 		
 		gc = new GuiController(extractionTab, dArea);
 		extractionTab.setController(gc);
+		
+		JPanel glass = new JPanel() {
+			@Override
+			public void paintComponent(Graphics g) {
+				 Graphics2D g2d = (Graphics2D) g;
+				 g2d.setRenderingHint(
+			            RenderingHints.KEY_ANTIALIASING,
+			            RenderingHints.VALUE_ANTIALIAS_ON);
+			        g2d.setComposite(AlphaComposite.getInstance(
+			            AlphaComposite.SRC_OVER, 0.1f));
+			        g2d.setColor(Color.GRAY);
+			        g2d.fillRect(0, 0, 745, 683);
+			}
+		};
+		
+		glass.setBounds(0, 0, 745, 683);
+		
+		contentPane.add(tabbedPane, 0);
+		//contentPane.add(glass, 0);
 		
 		initMenuBar();
 		config();
@@ -107,7 +133,7 @@ public class AppFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				extractionTab.selectImage();
+				//extractionTab.selectImage();
 			}
 
 		});
@@ -122,7 +148,7 @@ public class AppFrame extends JFrame {
 			}
 		});
 
-		fileMenu.add(openAction);
+		//fileMenu.add(openAction);
 		fileMenu.add(exitAction);	
 		
 		showStepbyStep = new JCheckBoxMenuItem("show step by step");
@@ -140,11 +166,11 @@ public class AppFrame extends JFrame {
 
 	private void config() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(745, 650);
+		setSize(745, 683);
 		setLocationRelativeTo(null);		
 		setResizable(false);
 	}
-
+	
 	public static Frame getInstance() {
 		return instance;
 	}

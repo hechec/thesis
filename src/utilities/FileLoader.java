@@ -37,7 +37,7 @@ public class FileLoader {
 			return null;
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			return null;
 		}finally {
             try {
                 if (bufferedReader != null) {

@@ -5,21 +5,21 @@ import java.awt.image.BufferedImage;
 
 public class OtsuThreshold {
 	
-	 public static BufferedImage binarize(BufferedImage original) {
+	 public static BufferedImage binarize(BufferedImage grayImage) {
 		 
 	        int red;
 	        int newPixel;
 	 
-	        int threshold = otsuTreshold(original);
+	        int threshold = otsuTreshold(grayImage);
 	 
-	        BufferedImage binarized = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
+	        BufferedImage binarized = new BufferedImage(grayImage.getWidth(), grayImage.getHeight(), grayImage.getType());
 	 
-	        for(int i=0; i<original.getWidth(); i++) {
-	            for(int j=0; j<original.getHeight(); j++) {
+	        for(int i=0; i<grayImage.getWidth(); i++) {
+	            for(int j=0; j<grayImage.getHeight(); j++) {
 	 
 	                // Get pixels
-	                red = new Color(original.getRGB(i, j)).getRed();
-	                int alpha = new Color(original.getRGB(i, j)).getAlpha();
+	                red = new Color(grayImage.getRGB(i, j)).getRed();
+	                int alpha = new Color(grayImage.getRGB(i, j)).getAlpha();
 	                if(red > threshold) {
 	                    newPixel = 0;
 	                }
@@ -35,10 +35,10 @@ public class OtsuThreshold {
 	        return binarized;
 	 }
 	 
-	 private static int otsuTreshold(BufferedImage original) {
+	 private static int otsuTreshold(BufferedImage grayImage) {
 		 
-	        int[] histogram = imageHistogram(original);
-	        int total = original.getHeight() * original.getWidth();
+	        int[] histogram = imageHistogram(grayImage);
+	        int total = grayImage.getHeight() * grayImage.getWidth();
 	 
 	        float sum = 0;
 	        for(int i=0; i<256; i++) sum += i * histogram[i];
@@ -73,15 +73,15 @@ public class OtsuThreshold {
 	 
 	 }
 	 
-	 public static int[] imageHistogram(BufferedImage input) {
+	 public static int[] imageHistogram(BufferedImage grayImage) {
 		 
 	        int[] histogram = new int[256];
 	 
 	        for(int i=0; i<histogram.length; i++) histogram[i] = 0;
 	 
-	        for(int i=0; i<input.getWidth(); i++) {
-	            for(int j=0; j<input.getHeight(); j++) {
-	                int red = new Color(input.getRGB (i, j)).getRed();
+	        for(int i=0; i<grayImage.getWidth(); i++) {
+	            for(int j=0; j<grayImage.getHeight(); j++) {
+	                int red = new Color(grayImage.getRGB (i, j)).getRed();
 	                histogram[red]++;
 	            }
 	        }

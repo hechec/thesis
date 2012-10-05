@@ -4,6 +4,7 @@ package ui;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import utilities.DataLoader;
 import utilities.FileLoader;
 import utilities.FileTypeFilter;
 import utilities.ImageLoader;
@@ -11,13 +12,16 @@ import utilities.ImageHandler;
 import utilities.NetworkConfiguration;
 
 import dialogs.LoadingDialog;
+import dialogs.SettingDialog;
 
 import abcnn.ABC;
+import abcnn.Classifier;
 import abcnn.MLPNetwork;
 
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -35,9 +39,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -56,8 +62,6 @@ import com.jtattoo.plaf.texture.TextureUtils;
 
 public class ABCNNPane extends JPanel {
 
-	private LoadingDialog dialog;
-	
 	private JFileChooser chooser;
 
 	private JPanel tPane;
@@ -70,7 +74,6 @@ public class ABCNNPane extends JPanel {
 	private JButton loadB, prepareB, trainB, resetB;
 	
 	private JSpinner employedSpinner;
-	private JSpinner onlookerSpinner;
 	private JSpinner cycleSpinner;
 	private JSpinner runtimeSpinner;
 	
@@ -78,49 +81,47 @@ public class ABCNNPane extends JPanel {
 	private JProgressBar runtimeBar;
 	private JTextField directoryField;
 	
-	private double[][] input_data;
-	private double[][] output_data;
-	
 	private String[] testingTypes = {"Batch", "One by One"};
-	private String status1 = "Load trained data or train network.";
-	private String status2 = "Loaded trained data. Ready for testing.";
-	private String status3 = "Network trained. Ready for testing.";
-	private String status4 = "Training data loaded. Ready for training.";
+	private static String STAT1 = "Load trained data or train network.";
+	private static String STAT2 = "Loaded trained data. Ready for testing.";
+	private static String STAT3 = "Network trained. Ready for testing.";
+	public static String STAT4 = "Training data loaded. Ready for training.";
 	
 	private double[] weights = new double[NetworkConfiguration.DIMENSIONS];
 	private FileLoader fileLoader;
 	
 	private AppFrame appFrame;
 
-	private ImageHandler iHandler = new ImageHandler();
-	private ImageLoader iLoader;
 	
-	private ABC abc;
-	
-	public boolean isTrained = false;
-	private boolean isPrepared = false;
+	private Classifier classifier;
+	DataLoader dataLoader;
 	
 	
 	public ABCNNPane(AppFrame appFrame) {
 		this.appFrame = appFrame;
-		this.setSize(740, 570);
+		this.setSize(740, 600);
 		setLayout(null);
 		putClientProperty("textureType", new Integer(TextureUtils.WINDOW_TEXTURE_TYPE));
+		
+		classifier = new Classifier(appFrame, this);
 		
 		chooser = new JFileChooser();
 	    chooser.setAcceptAllFileFilterUsed(false);
 		fileLoader = new FileLoader(appFrame);
-
+		
+		
+		
 		initToolbar();
 		initLeftPane();
 		initRightPane();
 		initStatPanel();
+		
 	}
 	
 	private void initStatPanel() {
 		JPanel statPanel = new JPanel();
 		statPanel.setBorder(new LineBorder(SystemColor.activeCaptionBorder));
-		statPanel.setBounds(0, 522, 730, 27);
+		statPanel.setBounds(-1, 562, 730, 27);
 		add(statPanel);
 		statPanel.setLayout(null);
 		
@@ -131,17 +132,25 @@ public class ABCNNPane extends JPanel {
 		lblStatus.setBounds(0, 4, 43, 20);
 		statPanel.add(lblStatus);
 		
-		statusLabel = new JLabel(status1);
-		statusLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		statusLabel = new JLabel(STAT1);
 		statusLabel.setForeground(new Color(153, 0, 0));
 		statusLabel.setBounds(48, 4, 243, 20);
 		statPanel.add(statusLabel);
+		
+		JPanel panel = new JPanel();
+		panel.setBounds(363, 84, 33, 467);
+		add(panel);
+		panel.setLayout(null);
+		
+		JLabel label = new JLabel(new ImageIcon("src/images/center.png"));
+		label.setBounds(0, 0, 33, 467);
+		panel.add(label);
 		
 	}
 
 	private void initLeftPane() {
 		leftPane = new JPanel();
-		leftPane.setBounds(10, 50, 373, 461);
+		leftPane.setBounds(-1, 84, 373, 467);
 		add(leftPane);
 		leftPane.setLayout(null);
 		
@@ -177,15 +186,10 @@ public class ABCNNPane extends JPanel {
 		paramPanel.setBorder(new TitledBorder(null, "ABC Parameters", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		paramPanel.setLayout(null);
 		
-		JLabel lblEmployedBees = new JLabel("Employed Bees:");
+		JLabel lblEmployedBees = new JLabel("Population Size:");
 		lblEmployedBees.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblEmployedBees.setBounds(11, 30, 98, 20);
+		lblEmployedBees.setBounds(11, 30, 111, 20);
 		paramPanel.add(lblEmployedBees);
-		
-		JLabel lblOnlookerBees = new JLabel("Onlooker Bees:");
-		lblOnlookerBees.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblOnlookerBees.setBounds(11, 74, 98, 24);
-		paramPanel.add(lblOnlookerBees);
 		
 		JLabel lblMacCycle = new JLabel("cycle:");
 		lblMacCycle.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -199,32 +203,27 @@ public class ABCNNPane extends JPanel {
 		
 		employedSpinner = new JSpinner();
 		employedSpinner.setModel(new SpinnerNumberModel(new Integer(50), null, null, new Integer(1)));
-		employedSpinner.setBounds(119, 28, 50, 24);
+		employedSpinner.setBounds(132, 28, 50, 24);
 		paramPanel.add(employedSpinner);
-		
-		onlookerSpinner = new JSpinner();
-		onlookerSpinner.setModel(new SpinnerNumberModel(new Integer(50), null, null, new Integer(1)));
-		onlookerSpinner.setBounds(119, 74, 50, 24);
-		paramPanel.add(onlookerSpinner);
 		
 		JLabel lblMacCycle_1 = new JLabel("Mac Cycle:");
 		lblMacCycle_1.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblMacCycle_1.setBounds(168, 30, 88, 20);
+		lblMacCycle_1.setBounds(21, 76, 101, 20);
 		paramPanel.add(lblMacCycle_1);
 		
 		JLabel lblRuntime_1 = new JLabel("Runtime:");
 		lblRuntime_1.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblRuntime_1.setBounds(168, 74, 88, 24);
+		lblRuntime_1.setBounds(169, 28, 88, 24);
 		paramPanel.add(lblRuntime_1);
 		
 		cycleSpinner = new JSpinner();
 		cycleSpinner.setModel(new SpinnerNumberModel(new Integer(2500), null, null, new Integer(1)));
-		cycleSpinner.setBounds(266, 28, 50, 24);
+		cycleSpinner.setBounds(132, 74, 50, 24);
 		paramPanel.add(cycleSpinner);
 		
 		runtimeSpinner = new JSpinner();
-		runtimeSpinner.setModel(new SpinnerNumberModel(new Integer(5), null, null, new Integer(1)));
-		runtimeSpinner.setBounds(266, 74, 50, 24);
+		runtimeSpinner.setModel(new SpinnerNumberModel(new Integer(1), null, null, new Integer(1)));
+		runtimeSpinner.setBounds(267, 28, 50, 24);
 		paramPanel.add(runtimeSpinner);
 		
 		cycleBar = new JProgressBar();
@@ -240,7 +239,7 @@ public class ABCNNPane extends JPanel {
 		leftPane.add(lblTrainingTime);
 		lblTrainingTime.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		JLabel lblMeanSquereError = new JLabel("Mean Squere Error:");
+		JLabel lblMeanSquereError = new JLabel("Mean Square Error:");
 		lblMeanSquereError.setBounds(29, 413, 132, 22);
 		leftPane.add(lblMeanSquereError);
 		lblMeanSquereError.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -256,38 +255,18 @@ public class ABCNNPane extends JPanel {
 
 	private void initRightPane() {
 		JPanel rightPane = new JPanel();
-		rightPane.setBounds(393, 50, 325, 461);
+		rightPane.setBounds(382, 84, 347, 467);
 		add(rightPane);
 		rightPane.setLayout(null);
-		//add(btnPrepare);
-		
-		JLabel lblTestBy = new JLabel("Test by:");
-		lblTestBy.setBounds(27, 22, 77, 18);
-		rightPane.add(lblTestBy);
-		
-		JComboBox comboBox_1 = new JComboBox(testingTypes);
-		comboBox_1.setBounds(100, 20, 197, 23);
-		rightPane.add(comboBox_1);
 		
 		tPane = new JPanel();
-		tPane.setBounds(27, 51, 292, 396);
+		tPane.setBounds(27, 11, 298, 436);
 		rightPane.add(tPane);
 		tPane.setLayout(null);
-		batchPane = new BatchPane(appFrame, this, chooser);
+		batchPane = new BatchPane(this, chooser, classifier);
 		tPane.add(batchPane);
 		
-		soloPane = new SoloPane(this, chooser);
-		
-		comboBox_1.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				JComboBox comboBox = (JComboBox) event.getSource();
-				if( comboBox.getSelectedIndex() == 1 ) 
-					updateRightPane(batchPane, soloPane);
-				else 
-					updateRightPane(soloPane, batchPane);
-			}
-		});
+		soloPane = new SoloPane(this, chooser, classifier);
 	}
 
 	/**
@@ -297,12 +276,12 @@ public class ABCNNPane extends JPanel {
 	private void initToolbar() {
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(false);
-		toolBar.setBounds(0, 0, 740, 40);
+		toolBar.setBounds(-1, 0, 731, 40);
 		add(toolBar);
 		//toolBar.putClientProperty("textureType", new Integer(TextureUtils.WINDOW_TEXTURE_TYPE));
 		
-		loadB = new JButton(new ImageIcon("src/images/load.png"));
-		loadB.setToolTipText("Load Trained Data");
+		loadB = new JButton(new ImageIcon("src/images/f.png"));
+		loadB.setToolTipText("Load data");
 		toolBar.add(loadB);
 		loadB.addActionListener(new ActionListener() {
 			@Override
@@ -311,37 +290,77 @@ public class ABCNNPane extends JPanel {
 			}
 		});
 		
-		toolBar.addSeparator();
-		toolBar.addSeparator();
-		
-		prepareB = new JButton("Prepare");
+
+		prepareB = new JButton(new ImageIcon("src/images/prepare.png"));
+		prepareB.setToolTipText("Prepare");
 		toolBar.add(prepareB);
 		prepareB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				prepareTrainingData();
+				//prepareTrainingData();
+				classifier.loadImages();
 			}
 		});
 		
-		trainB = new JButton(new ImageIcon("src/images/play.png"));
-		trainB.setToolTipText("Train NN");
-		toolBar.add(trainB);
-		trainB.addActionListener(new ActionListener() {
+		
+		JButton saveButton = new JButton(new ImageIcon("src/images/save.png"));
+		saveButton.setToolTipText("Save");
+		toolBar.add(saveButton);
+		saveButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				trainNetwork();
+			public void actionPerformed(ActionEvent arg0) {
+				saveWeights();
 			}
 		});
 		
-		resetB = new JButton(new ImageIcon("src/images/reset.png"));
+		final SettingDialog settingDialog = new SettingDialog(this);
+		
+		JButton settingsButton = new JButton(new ImageIcon("src/images/setting.png"));
+		settingsButton.setToolTipText("Setting");
+		toolBar.add(settingsButton);
+		settingsButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				settingDialog.setVisible(true);
+			}
+		});		
+		
+		for( int i = 0; i<52; i++ )
+			toolBar.addSeparator();
+
+		resetB = new JButton(new ImageIcon("src/images/reset2.png"));
 		resetB.setToolTipText("Reset");
 		resetB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				reset();
 				soloPane.reset();
+				batchPane.reset();
 			}
 		});
 		toolBar.add(resetB);
+		
+		JToolBar toolBar2 = new JToolBar();
+		toolBar2.setFloatable(false);
+		toolBar2.setBounds(-1, 41, 731, 32);
+		add(toolBar2);
+		toolBar2.setBorder(new LineBorder(SystemColor.activeCaptionBorder));
+		
+		toolBar2.addSeparator();
+		
+		trainB = new JButton(new ImageIcon("src/images/play2.png"));
+		trainB.setToolTipText("Train NN");
+		toolBar2.add(trainB);
+		trainB.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				classifier.train((int)runtimeSpinner.getValue(), (int)cycleSpinner.getValue(), (int)employedSpinner.getValue());
+			}
+		});
+		
+
+		JButton stopButton = new JButton(new ImageIcon("src/images/stop2.png"));
+		toolBar2.add(stopButton);
+		
 	}
 
 	private void updateRightPane(JPanel toRemove, JPanel toAdd) {
@@ -356,36 +375,54 @@ public class ABCNNPane extends JPanel {
 			directoryField.setText(chooser.getSelectedFile()+"");
 	}
 	
-	private void prepareTrainingData() {
-		if( directoryField.getText().equals("") ) {
-			JOptionPane.showMessageDialog(this, "No directory selected.");
-			return;
+	private void saveWeights() {
+		if(!classifier.isNewTraining()) 
+			JOptionPane.showMessageDialog(appFrame, "No training has be done recently.", "Error", JOptionPane.WARNING_MESSAGE);
+		else {
+			FileFilter filter = new FileTypeFilter(".txt", "Text files");
+			chooser = new JFileChooser();
+			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+			chooser.setFileFilter(filter);
+			chooser.setAcceptAllFileFilterUsed(false);
+			
+			BufferedWriter bufferedWriter = null;
+			if(chooser.showSaveDialog(appFrame) == JFileChooser.APPROVE_OPTION) {
+			    File file = chooser.getSelectedFile();
+			    FileWriter fileWriter;
+				try {
+					fileWriter = new FileWriter(file);
+					bufferedWriter = new BufferedWriter(fileWriter);
+					weights = classifier.getWeights();
+					for( int i = 0; i < weights.length; i++ ) {
+						bufferedWriter.write(weights[i]+"");
+						bufferedWriter.newLine();
+					}
+				} catch (FileNotFoundException ex) {
+		            ex.printStackTrace();
+		        } catch (IOException e) {
+					e.printStackTrace();
+				}finally {
+		            try {
+		                if (bufferedWriter != null) {
+		                    bufferedWriter.flush();
+		                    bufferedWriter.close();
+		                }
+		            } catch (IOException ex) {
+		                ex.printStackTrace();
+		            }
+		        }
+				
+			}
 		}
-		dialog = new LoadingDialog(appFrame);
-		iLoader = new ImageLoader(this, directoryField.getText(), dialog);
 	}
 	
-	private void trainNetwork() {
-		if(!isPrepared) {
-			JOptionPane.showMessageDialog(appFrame, "No Training Data Loaded.", "Error", JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-		setComponents();
-		abc = new ABC( this, (int)runtimeSpinner.getValue(), (int)cycleSpinner.getValue(), (int)employedSpinner.getValue(), NetworkConfiguration.DIMENSIONS); //126);
-		abc.setTrainingData(input_data, output_data);
-		abc.start();
-	}
-	
-	/**
-	 *  set gui when training
-	 */
-	private void setComponents() {
+	public void initComponents() {
 		cycleBar.setMinimum(0);
 		cycleBar.setMaximum((int)cycleSpinner.getValue());
 		runtimeBar.setMinimum(0);
 		runtimeBar.setMaximum((int)runtimeSpinner.getValue());	
-		input_data = iLoader.getInputVector();//iHandler.createInputVectorArray(training_input);
-		output_data = iLoader.getOutputVector();//iHandler.createOutputVectorArray(training_output);
+		cycleBar.setValue(0);
+		runtimeBar.setValue(0);
 	}
 
 	public void incrementCycle(int percent) {
@@ -395,15 +432,13 @@ public class ABCNNPane extends JPanel {
 	public void incrementRuntime(int percent) {
 		runtimeBar.setValue(percent);
 	}
-
-	public void returnResult(double MSE, double[] weights, double elapsedTime) {
+	
+	public void displayTrainingResult(double MSE, double elapsedTime) {
 		timeLabel.setText( elapsedTime + "" );
 		mseLabel.setText( MSE + "" );
-		statusLabel.setText(status3);
-		statusLabel.setForeground(Color.GREEN);
-		isTrained = true;
+		setStatus(STAT3, Color.BLUE);
 	}
-	
+
 	private void loadTrainedData() {
 		FileFilter filter = new FileTypeFilter(".txt", "Text files");
 		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -413,49 +448,36 @@ public class ABCNNPane extends JPanel {
 			weights = fileLoader.loadTrainedData(chooser.getSelectedFile());
 			if( weights == null )
 				return;
-			isTrained = true;
-			statusLabel.setText(status2);
-			statusLabel.setForeground(Color.BLUE);
+			classifier.loadWeights(weights);
+			setStatus(STAT2, Color.BLUE);
 			JOptionPane.showMessageDialog(appFrame, "Loaded trained data.", "Message", JOptionPane.PLAIN_MESSAGE);
 		}
 	}
-
-	public void setPrepared(boolean b) {
-		isPrepared = b;
-		statusLabel.setText(status4);
-		statusLabel.setForeground(Color.GREEN);
+	
+	public void setStatus(String status, Color color) {
+		statusLabel.setText(status);
+		statusLabel.setForeground(color);
 	}
 	
-	public int classify(double[] input) {
-		
-		MLPNetwork classifier = new MLPNetwork(weights);
-		double[] output = classifier.test(input);
-		
-		int classIndex = normalizeOutput(output);
-		
-		return classIndex;
+	public String getFilePath() {
+		return directoryField.getText();
 	}
 	
-	private int normalizeOutput(double[] output) {
-		int maxIndex = 0;	
-		for( int i = 1; i < output.length; i++ )
-			if( output[i] > output[maxIndex] )
-				maxIndex = i;
-		return maxIndex;
-	}
-
 	private void reset() {
-		isTrained = false;
-		isPrepared = false;
-		statusLabel.setText(status1);
-		statusLabel.setForeground(new Color(153, 0, 0));
+		setStatus(STAT1,new Color(153, 0, 0));
 		cycleBar.setValue(0);
 		runtimeBar.setValue(0);
 		timeLabel.setText("0");
 		mseLabel.setText("0.0");
+		classifier.reset();
 	}
 
-	public double[] getOptimalWeights() {
-		return weights;
+	public void setTestOption(int selected) {
+		if( selected == SettingDialog.INDIVIDUAL ) {
+			updateRightPane(batchPane, soloPane);
+		}
+		else {
+			updateRightPane(soloPane, batchPane);
+		}
 	}
 }

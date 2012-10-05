@@ -4,18 +4,18 @@ import java.awt.image.BufferedImage;
 
 public class ImageSegmentation {
 	
-	public static BufferedImage extract(BufferedImage image, BufferedImage mask) 
+	public static BufferedImage extract(BufferedImage original, BufferedImage mask) 
 	{
-		BufferedImage img = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+		BufferedImage img = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_RGB);
 		int pixelValue;
 		int bgValue = mixColor(0, 0, 0);
-		for( int i = 0; i < image.getHeight(); i++ )
-			for( int j = 0; j < image.getWidth(); j++ ) {
+		for( int i = 0; i < original.getHeight(); i++ )
+			for( int j = 0; j < original.getWidth(); j++ ) {
 				pixelValue = mask.getRGB(j, i) & 0x00ffffff;
 				if( pixelValue == bgValue )
 					img.setRGB(j, i, mixColor(0, 0, 0));
 				else{
-					img.setRGB(j, i, image.getRGB(j, i) );
+					img.setRGB(j, i, original.getRGB(j, i) );
 				}
 			}
 		return img;

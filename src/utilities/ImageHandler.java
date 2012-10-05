@@ -141,6 +141,28 @@ public class ImageHandler {
 		//return resize(normalize(segment(original, binarize(toGray(filter(toBlue(original)))))), 64, 64);
 	}
 	
+	public BufferedImage getBlueImage() {
+		return blueImage;
+	}
+	public BufferedImage getFilteredImage() {
+		return filteredImage;
+	}
+	public BufferedImage getGrayImage() {
+		return grayImage;
+	}
+	public BufferedImage getBinaryImage() {
+		return binaryImage;
+	}
+	public BufferedImage getSegmentedImage() {
+		return segmentedImage;
+	}
+	public BufferedImage getNormalizedImage() {
+		return normalizedImage;
+	}
+	public BufferedImage getResizedImage() {
+		return resizedImage;
+	}
+	
 	public void showStepByStep() {
 		dialog = new MyDialog();
 		dialog.addImage(original);
@@ -159,7 +181,7 @@ public class ImageHandler {
 		return getAverage(redImage);
 	}
 
-	public double computerMeanGreen(BufferedImage image) {
+	public double computeMeanGreen(BufferedImage image) {
 		BufferedImage greenImage = RGBChannel.toRGBChannel(image, RGBChannel.GREEN);
 		return getAverage(greenImage);
 	}
@@ -245,7 +267,8 @@ public class ImageHandler {
 		for( int i = 0; i < patternSize; i++ )  {
 			BufferedImage extractedInput = extract(input_data.get(i));
 			inputArray[i] = getFeatures(extractedInput);
-			prog.setValue(patternSize+1+i);
+			//prog.setValue(patternSize+1+i);
+			prog.increment();
 		}
 	
 		return inputArray;
@@ -266,11 +289,11 @@ public class ImageHandler {
 	public double[] getFeatures(BufferedImage extractedInput) {
 		double[] features = new double[NetworkConfiguration.NUMBER_OF_INPUT];
 		
-		//features[0] = computeMeanRed(extractedInput);
-		//features[1] = computerMeanGreen(extractedInput);
-		features[0] = computeMeanRG(extractedInput);
-		features[1] = computeMeanHue(extractedInput);
-		features[2] = computeMeanA(extractedInput);
+		features[0] = computeMeanRed(extractedInput);
+		features[1] = computeMeanGreen(extractedInput);
+		features[2] = computeMeanRG(extractedInput);
+		features[3] = computeMeanHue(extractedInput);
+		features[4] = computeMeanA(extractedInput);
 		
 		return features;
 	}

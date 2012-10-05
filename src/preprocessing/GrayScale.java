@@ -16,40 +16,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 public class GrayScale {
-	
-	public static BufferedImage grayScale(BufferedImage image) {
-		BufferedImage img = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-		//ColorConvertOp colorConvert = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
-	    //colorConvert.filter(image, img);
-	    
-	   /* BufferedImageOp grayscaleConv = 
-	    	      new ColorConvertOp(image.getColorModel().getColorSpace(), 
-	    	                         img.getColorModel().getColorSpace(), null);
-	    	   grayscaleConv.filter(image, img);
-	    */	
-		int alpha, red, green, blue;
-        int newPixel;
 
-        WritableRaster raster = img.getRaster();
-        
-        for(int i=0; i<image.getWidth(); i++) {
-            for(int j=0; j<image.getHeight(); j++) {
- 
-                // Get pixels by R, G, B
-                red = new Color(image.getRGB(i, j)).getRed();
-                green = new Color(image.getRGB(i, j)).getGreen();
-                blue = new Color(image.getRGB(i, j)).getBlue();
- 
-                newPixel = (int)(red + green + blue)/3;
-                
-                raster.setSample(i, j, 0, newPixel);
-            }
-        }
- 
-	    return img;
-	}
-	
-	public static BufferedImage toGray(BufferedImage original) {
+	public static BufferedImage toGray(BufferedImage image) {
 		 
 	    /*int alpha, red, green, blue;
 	    int newPixel;
@@ -80,18 +48,18 @@ public class GrayScale {
 	        int alpha, red, green, blue;
 	        int newPixel;
 	 
-	        BufferedImage avg_gray = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
+	        BufferedImage avg_gray = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
 	        int[] avgLUT = new int[766];
 	        for(int i=0; i<avgLUT.length; i++) avgLUT[i] = (int) (i / 3);
 	 
-	        for(int i=0; i<original.getWidth(); i++) {
-	            for(int j=0; j<original.getHeight(); j++) {
+	        for(int i=0; i<image.getWidth(); i++) {
+	            for(int j=0; j<image.getHeight(); j++) {
 	 
 	                // Get pixels by R, G, B
-	                alpha = new Color(original.getRGB(i, j)).getAlpha();
-	                red = new Color(original.getRGB(i, j)).getRed();
-	                green = new Color(original.getRGB(i, j)).getGreen();
-	                blue = new Color(original.getRGB(i, j)).getBlue();
+	                alpha = new Color(image.getRGB(i, j)).getAlpha();
+	                red = new Color(image.getRGB(i, j)).getRed();
+	                green = new Color(image.getRGB(i, j)).getGreen();
+	                blue = new Color(image.getRGB(i, j)).getBlue();
 	 
 	                newPixel = red + green + blue;
 	                newPixel = avgLUT[newPixel];
@@ -103,11 +71,8 @@ public class GrayScale {
 	 
 	            }
 	        }
-	        
 	        return avg_gray;
 	}
-	
-	
 	
 	// Convert R, G, B, Alpha to standard 8 bit
     private static int colorToRGB(int alpha, int red, int green, int blue) {
@@ -123,35 +88,4 @@ public class GrayScale {
  
     }
     
-    public static BufferedImage trueGray(BufferedImage image) {
-    	BufferedImage bImg = new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_BYTE_GRAY);
-    	Graphics2D g=bImg.createGraphics();
-    	g.drawImage(image,null,null);
-
-    	Raster r = bImg.getData();
-    	
-    	System.out.println( r.getSample(110, 10, 0) );
-    	
-    	return bImg;
-    	
-    }
-    
-    public static void main(String[] args) {
-    	
-    	JFrame frame = new JFrame();
-    	BufferedImage image = null;
-		try {
-			image = ImageIO.read(new File("C:/Users/hechec/Desktop/kamatisan/6-red/6.1.jpg"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		image = trueGray(image);
-		
-    	frame.getContentPane().add(new JLabel(new ImageIcon(image)));
-    	frame.pack();
-    	frame.setVisible(true);
-    }
-	
 }

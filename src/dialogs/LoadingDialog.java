@@ -78,5 +78,9 @@ public class LoadingDialog extends JDialog {
 	public void setMax(int max) {
 		progressBar.setMaximum(max);
 	}
+
+	public void increment() {
+		progressBar.setValue(progressBar.getValue()+1);
+	}
 	
 }

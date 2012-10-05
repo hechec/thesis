@@ -56,9 +56,11 @@ public class ABC extends Thread {
 	private double[][] output_data;
 	
 	private JFileChooser chooser;
+	private Classifier classifier;
 	
-	public ABC(ABCNNPane abcnnPane, int runtime, int maxCycle, int foodNumber, int dimension) {
+	public ABC(ABCNNPane abcnnPane, Classifier classifier, int runtime, int maxCycle, int foodNumber, int dimension) {
 		this.abcnnPane = abcnnPane;
+		this.classifier = classifier;
 		
 		this.runtime = runtime;
 		this.maxCycle = maxCycle;
@@ -124,44 +126,11 @@ public class ABC extends Thread {
 			//abcnnPane.print("run "+(run+1)+": "+GlobalMin+"\n");
 		}
 		double elapsedTime = (System.currentTimeMillis() - start) / 1000;
-		abcnnPane.returnResult(bestMin, Params[bestIndex], elapsedTime);
+		classifier.finishTraining(bestMin, Params[bestIndex], elapsedTime);
+		//abcnnPane.returnResult(bestMin, Params[bestIndex], elapsedTime);
 		
-		int r = JOptionPane.showConfirmDialog(abcnnPane, "Finished training. Do you want to save the result?", "Confirmation", JOptionPane.YES_NO_OPTION);
-		if( r == JOptionPane.YES_OPTION ) {
-			FileFilter filter = new FileTypeFilter(".txt", "Text files");
-			chooser = new JFileChooser();
-			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-			chooser.setFileFilter(filter);
-			chooser.setAcceptAllFileFilterUsed(false);
-			
-			BufferedWriter bufferedWriter = null;
-			if(chooser.showSaveDialog(abcnnPane) == JFileChooser.APPROVE_OPTION) {
-			    File file = chooser.getSelectedFile();
-			    FileWriter fileWriter;
-				try {
-					fileWriter = new FileWriter(file);
-					bufferedWriter = new BufferedWriter(fileWriter);
-					for( int i = 0; i < Params[bestIndex].length; i++ ) {
-						bufferedWriter.write(Params[bestIndex][i]+"");
-						bufferedWriter.newLine();
-					}
-				} catch (FileNotFoundException ex) {
-		            ex.printStackTrace();
-		        } catch (IOException e) {
-					e.printStackTrace();
-				}finally {
-		            try {
-		                if (bufferedWriter != null) {
-		                    bufferedWriter.flush();
-		                    bufferedWriter.close();
-		                }
-		            } catch (IOException ex) {
-		                ex.printStackTrace();
-		            }
-		        }
-				
-			}
-		}
+		JOptionPane.showMessageDialog(abcnnPane, "Finished training the network.");
+		
 		//abcnnPane.print("mean run: "+meanRun/runtime +"\n");
 		
 		//abcnnPane.print("*****************TRAINING END*****************\n");
@@ -271,10 +240,10 @@ public class ABC extends Thread {
 	 *  evaluates current and new solution
 	 */
 	private void evaluatePopulation() {
-		if( solution[param2change] < lb )
-	        	solution[param2change] = lb;
-        if( solution[param2change] > ub)
-            solution[param2change] = ub;
+		//if( solution[param2change] < lb )
+	    //   	solution[param2change] = lb;
+        //if( solution[param2change] > ub)
+        //    solution[param2change] = ub;
 
         MLPNetwork temp = new MLPNetwork(solution, input_data, output_data);
         ObjValSol = calculateObjectiveFunction(temp);//calculateFunction(solution);
@@ -324,13 +293,13 @@ public class ABC extends Thread {
 		int maxCycle = 1000;
 		int dimension = 9;
 		int foodNumber = 10;
-		ABC abc = new ABC(null, runtime, maxCycle, foodNumber, dimension);
-		abc.run();
+		//ABC abc = new ABC(null, runtime, maxCycle, foodNumber, dimension);
+		//abc.run();
 		
-		double[] input = {0, 1};
-		double[] result = abc.test(input);
+		//double[] input = {0, 1};
+		//double[] result = abc.test(input);
 		
-		System.out.println("result: "+result[0] +" rounded: "+Math.round(result[0]));
+		//System.out.println("result: "+result[0] +" rounded: "+Math.round(result[0]));
 	}
 
 	public double[] test(double[] input) {

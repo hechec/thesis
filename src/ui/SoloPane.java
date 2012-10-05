@@ -21,6 +21,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import abcnn.Classifier;
 import abcnn.MLPNetwork;
 
 import utilities.ImageHandler;
@@ -36,8 +37,9 @@ public class SoloPane extends JPanel {
 	private boolean hasInput = false;
 	
 	private ABCNNPane abcnnPane;
+	private Classifier classifier;
 	
-	public SoloPane(final ABCNNPane abcnnPane, JFileChooser chooser) {
+	public SoloPane(final ABCNNPane abcnnPane, JFileChooser chooser, Classifier classifier) {
 		setBounds(0, 0, 290, 442);
 		setLayout(null);
 		
@@ -83,6 +85,7 @@ public class SoloPane extends JPanel {
 		resultsPane.add(classLabel);
 		
 		this.abcnnPane = abcnnPane;
+		this.classifier = classifier;
 		this.chooser = chooser;
 		fileFilter = new FileNameExtensionFilter("JPEG file", "jpg", "jpeg", "png", "gif");
 	}
@@ -111,7 +114,7 @@ public class SoloPane extends JPanel {
 	}
 	
 	private void classify() {
-		if(!abcnnPane.isTrained) {
+		if(!classifier.isTrained()) {
 			JOptionPane.showMessageDialog(abcnnPane, "Please train the network or load training result.", "Error Message", JOptionPane.WARNING_MESSAGE);
 			return;
 		}		
@@ -119,10 +122,12 @@ public class SoloPane extends JPanel {
 			JOptionPane.showMessageDialog(abcnnPane, "Please input a tomato image.", "Error Message", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		forTesting = iHandler.extract(forTesting);
-		double[] features = iHandler.getFeatures(forTesting);
 		
-		int classIndex = abcnnPane.classify(features);
+		BufferedImage temp = forTesting;
+		temp = iHandler.extract(temp);
+		double[] features = iHandler.getFeatures(temp);
+		
+		int classIndex = classifier.classify(features);//abcnnPane.classify(features);
 		setResult(classes[classIndex]);
 		
 	}

@@ -9,7 +9,7 @@ public class GuiController {
 	
 	public GuiController(ExtractionPane extractionTab, JTextArea dArea) {
 		this.dArea = dArea;
-		this.fPane = extractionTab.getFeaturesPane();		
+		//this.fPane = extractionTab.getFeaturesPane();		
 	}
 
 	public void setMessage(String message) {

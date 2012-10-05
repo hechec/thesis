@@ -6,33 +6,31 @@ public class MeanFilter {
 	
 	private static final int KERNEL_SIZE = 3;
 	
-	
-	
 	/*
 	 *  filter 2
 	 * 
 	 */
-	public static BufferedImage filter(BufferedImage original) {
-		BufferedImage filtered = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_RGB);
+	public static BufferedImage filter(BufferedImage blueImage) {
+		BufferedImage filtered = new BufferedImage(blueImage.getWidth(), blueImage.getHeight(), BufferedImage.TYPE_INT_RGB);
 		int mean;
-		int[][] inputArray = toArray(original, original.getWidth(), original.getHeight());
-		int w = original.getWidth();
-		int h = original.getHeight();
-		for( int i = 0; i < original.getHeight(); i++ ) 
-			for( int j = 0; j < original.getWidth(); j++ ){
+		int[][] inputArray = toArray(blueImage, blueImage.getWidth(), blueImage.getHeight());
+		int w = blueImage.getWidth();
+		int h = blueImage.getHeight();
+		for( int i = 0; i < blueImage.getHeight(); i++ ) 
+			for( int j = 0; j < blueImage.getWidth(); j++ ){
 				mean = meanArithmetic(inputArray, KERNEL_SIZE, h, w, i, j);
 				filtered.setRGB(j, i, mean);
 			}
 		return filtered;
 	}
 	
-	private static int[][] toArray(BufferedImage image, int width, int height) 
+	private static int[][] toArray(BufferedImage blueImage, int width, int height) 
 	{
 		int[][] arr = new int[height][width];
 		
 		for( int i = 0; i < height; i++ )
 			for( int j = 0; j < width; j++ ) 
-				arr[i][j] = image.getRGB(j, i);
+				arr[i][j] = blueImage.getRGB(j, i);
 		return arr;
 	}
 	

@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.EventQueue;
+import java.awt.Font;
 
 import javax.swing.UIManager;
 
@@ -32,14 +33,7 @@ public class Main {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					/*UIManager.setLookAndFeel(new SubstanceGreenMagicLookAndFeel());
-                    javax.swing.JDialog.setDefaultLookAndFeelDecorated(true);
-                    javax.swing.JFrame.setDefaultLookAndFeelDecorated(true);
-                    //SubstanceLookAndFeel.setCurrentTitlePainter(new RandomCubesTitlePainter());
-                    SubstanceLookAndFeel.setCurrentGradientPainter(new GlassGradientPainter());
-                    SubstanceLookAndFeel.setCurrentTitlePainter(new ArcHeaderPainter());
-                    SubstanceLookAndFeel.setCurrentWatermark(new SubstanceKatakanaWatermark());
-					*/
+					setUIFont (new javax.swing.plaf.FontUIResource("Calibri", Font.PLAIN, 14));
 					UIManager.setLookAndFeel("com.jtattoo.plaf.texture.TextureLookAndFeel");
 					AppFrame frame = new AppFrame();
 					frame.setVisible(true);
@@ -48,6 +42,19 @@ public class Main {
 				}
 			}
 		});
+	}
+	
+	private static void setUIFont(javax.swing.plaf.FontUIResource f) {
+	    java.util.Enumeration keys = UIManager.getDefaults().keys();
+	    while (keys.hasMoreElements())
+	    {
+	        Object key = keys.nextElement();
+	        Object value = UIManager.get(key);
+	        if (value instanceof javax.swing.plaf.FontUIResource)
+	        {
+	            UIManager.put(key, f);
+	        }
+	    }
 	}
 
 }
