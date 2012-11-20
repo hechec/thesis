@@ -1,7 +1,8 @@
 package ui;
 
 
-import java.awt.Color;
+import imageProcessing.ImageProcessor;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,11 +13,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
-import javax.swing.UIManager;
-import javax.swing.border.LineBorder;
-
-import utilities.ImageHandler;
-
 
 public class ImagePane extends JPanel {
 	
@@ -26,9 +22,9 @@ public class ImagePane extends JPanel {
 	
 	private JButton extractButton;
 	
-	private BufferedImage original;
+	private BufferedImage inputImage;
 	
-	private ImageHandler iHandler = new ImageHandler();
+	private ImageProcessor iProcessor = ImageProcessor.getInstance();
 	private GuiController guiController;
 	
 	
@@ -50,8 +46,8 @@ public class ImagePane extends JPanel {
 		extractButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				segment();
-				if( AppFrame.showStepbyProcess )
-					iHandler.showStepByStep();
+				//if( AppFrame.showStepbyProcess )
+					//iHandler.showStepByStep();
 			}
 		});
 		extractButton.setBounds(330, 106, 113, 40);
@@ -86,25 +82,25 @@ public class ImagePane extends JPanel {
 	}	
 	
 	public void showInput(BufferedImage original) {
-		this.original = iHandler.resize( original, (int) (180/((float)original.getHeight())*original.getWidth()), 180 );
-		inputLabel.setIcon(new ImageIcon(this.original));	
+		this.inputImage =  iProcessor.resizeImage(original, ImageProcessor.WIDTH, ImageProcessor.HEIGHT); //iHandler.resize( original, (int) (180/((float)original.getHeight())*original.getWidth()), 180 );
+		inputLabel.setIcon(new ImageIcon(this.inputImage));	
 		extractedLabel.setIcon(null);
 		extractButton.setEnabled(true);
 	}
 	
 	private void segment() {
-		BufferedImage extracted = iHandler.extract(original);
+		BufferedImage extracted = iProcessor.process(inputImage);//iHandler.extract(original);
 		extractedLabel.setIcon(new ImageIcon(extracted));
 		guiController.setMessage("done extracting.");
 		extractFeatures(extracted);
 	}
 	
 	private void extractFeatures(BufferedImage image) {
-		double meanRed = iHandler.computeMeanRed(image);
-		double meanGreen = iHandler.computeMeanGreen(image);
-		double meanRG = iHandler.computeMeanRG(image);
-		double meanHue = iHandler.computeMeanHue(image);
-		double meanA = iHandler.computeMeanA(image);
+		double meanRed = iProcessor.computeMeanRed(image);//iHandler.computeMeanRed(image);
+		double meanGreen = iProcessor.computeMeanGreen(image);
+		double meanRG = iProcessor.computeMeanRG(image);
+		double meanHue = iProcessor.computeMeanHue(image);
+		double meanA = iProcessor.computeMeanA(image);
 		guiController.setRedField(meanRed);
 		guiController.setGreenField(meanGreen);
 		guiController.setRGField(meanRG);
@@ -118,7 +114,7 @@ public class ImagePane extends JPanel {
 		//updateUI();
 		
 		guiController.resetExtraction();
-		original = null;
+		inputImage = null;
 		extractButton.setEnabled(false);
 	}
 }

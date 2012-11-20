@@ -90,8 +90,8 @@ public class AppFrame extends JFrame {
 		tabbedPane.setBounds(4, 4, 745, 683);
 		//tabbedPane.putClientProperty("textureType", new Integer(TextureUtils.WINDOW_TEXTURE_TYPE));
 		
-		gc = new GuiController(extractionTab, dArea);
-		extractionTab.setController(gc);
+		//gc = new GuiController(extractionTab, dArea);
+		//extractionTab.setController(gc);
 		
 		JPanel glass = new JPanel() {
 			@Override

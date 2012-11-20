@@ -1,5 +1,7 @@
 package utilities;
 
+import imageProcessing.ImageProcessor;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +26,7 @@ public class ImageLoader{
 	private ArrayList<BufferedImage> inputList = new ArrayList<BufferedImage>();
 	private ArrayList<Integer> outputList = new ArrayList<Integer>();
 	
-	private ImageHandler iHandler = new ImageHandler();
+	private ImageProcessor iProcessor = ImageProcessor.getInstance();
 	private JTextArea dArea;
 	
 	private LoadingDialog prog;
@@ -66,8 +68,8 @@ public class ImageLoader{
 				prog.start(max*2);
 				loadAllImages(folder);
 				
-				input_data = iHandler.createInputVectorArray(inputList, prog);
-				output_data = iHandler.createOutputVectorArray(outputList);
+				input_data = iProcessor.createInputVectorArray(inputList, prog);
+				output_data = iProcessor.createOutputVectorArray(outputList);
 				prog.dispose();
 				
 				if(loadType == TRAINING)
@@ -90,7 +92,7 @@ public class ImageLoader{
 	        else {
 	        	try {
 	        		BufferedImage img = ImageIO.read(new File( folder.getAbsoluteFile()+"/"+fileEntry.getName()));
-					img = iHandler.resize(img, 256, 256);
+					img = iProcessor.resizeImage(img, ImageProcessor.WIDTH, ImageProcessor.HEIGHT);
 					inputList.add(img);
 					outputList.add( Integer.parseInt(folder.getName()) );
 					

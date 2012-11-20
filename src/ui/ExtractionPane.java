@@ -1,11 +1,8 @@
 package ui;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
+import imageProcessing.ImageProcessor;
+
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -20,25 +17,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 
-import utilities.ImageHandler;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import javax.swing.SwingConstants;
 
+
 public class ExtractionPane extends JPanel {
 	
-	private ImagePane iPane;
-	private FeaturesPane fPane;
-
-	private JTextArea dArea;
 	private JFileChooser fc;
-	
-	private GuiController gc;
 	
 	private JPanel processPanel;
 	private JPanel featuresPanel = null;
@@ -47,6 +34,12 @@ public class ExtractionPane extends JPanel {
 	private JLabel outputLabel;
 	
 	private JLabel meanRLabel, meanGLabel, meanRGLabel, meanHLabel, meanALabel;
+	
+	private BufferedImage inputImage;
+	
+	private ImageProcessor iProcessor = ImageProcessor.getInstance();
+	
+	//private ImageHandler iHandler = new ImageHandler();
 	
 	public ExtractionPane(JTextArea dArea) {
 		this.setLayout(null);
@@ -67,7 +60,7 @@ public class ExtractionPane extends JPanel {
 		
 		JPanel inputPane = new JPanel();
 		inputPane.setBorder(new TitledBorder(null, "Input", TitledBorder.CENTER, TitledBorder.TOP, null, null));
-		inputPane.setBounds(44, 41, 262, 209);
+		inputPane.setBounds(44, 41, 262, 241);
 		add(inputPane);
 		
 		inputLabel = new JLabel();
@@ -112,9 +105,9 @@ public class ExtractionPane extends JPanel {
 		processPanel = new JPanel();
 		
 		JScrollPane scrollPane = new JScrollPane(processPanel);
-		scrollPane.setBounds(44, 337, 640, 209);
+		scrollPane.setBounds(45, 330, 639, 229);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		add(scrollPane);
 		
 		featuresPanel = new JPanel();
@@ -159,27 +152,27 @@ public class ExtractionPane extends JPanel {
 		lblMeanA.setBounds(10, 115, 66, 30);
 		featuresPanel.add(lblMeanA);
 		
-		meanRLabel = new JLabel("0");
+		meanRLabel = new JLabel("0.0");
 		meanRLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		meanRLabel.setBounds(87, 5, 66, 30);
 		featuresPanel.add(meanRLabel);
 		
-		meanGLabel = new JLabel("0");
+		meanGLabel = new JLabel("0.0");
 		meanGLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		meanGLabel.setBounds(86, 34, 66, 30);
 		featuresPanel.add(meanGLabel);
 		
-		meanRGLabel = new JLabel("0");
+		meanRGLabel = new JLabel("0.0");
 		meanRGLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		meanRGLabel.setBounds(86, 61, 66, 30);
 		featuresPanel.add(meanRGLabel);
 		
-		meanHLabel = new JLabel("0");
+		meanHLabel = new JLabel("0.0");
 		meanHLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		meanHLabel.setBounds(86, 90, 66, 30);
 		featuresPanel.add(meanHLabel);
 		
-		meanALabel = new JLabel("0");
+		meanALabel = new JLabel("0.0");
 		meanALabel.setHorizontalAlignment(SwingConstants.LEFT);
 		meanALabel.setBounds(86, 115, 66, 30);
 		featuresPanel.add(meanALabel);
@@ -189,20 +182,15 @@ public class ExtractionPane extends JPanel {
 		fc.setFileFilter(filter);
 	}
 	
-	public void setController(GuiController gc) {
-		//this.gc = gc;
-		//iPane.setController(gc);
-	}
-
-	private BufferedImage inputImage;
-	private ImageHandler iHandler = new ImageHandler();
 	private void selectImage() {
 		
 		 if(fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 			 try {
 				 inputImage = ImageIO.read(fc.getSelectedFile());
 				 
-				 inputImage = iHandler.resize( inputImage, (int) (180/((float)inputImage.getHeight())*inputImage.getWidth()), 180 );
+				 inputImage = iProcessor.resizeImage( inputImage, ImageProcessor.WIDTH, ImageProcessor.HEIGHT );
+				 
+				 //inputImage = iProcessor.resizeImage( inputImage, (int) (180/((float)inputImage.getHeight())*inputImage.getWidth()), 180 );
 				 
 				 inputLabel.setIcon(new ImageIcon(inputImage));
 			} catch (IOException e) {
@@ -212,44 +200,45 @@ public class ExtractionPane extends JPanel {
 		
 	}
 	
+	BufferedImage processed;
 	private void process() {
-		BufferedImage extracted = iHandler.extract(inputImage);
-		outputLabel.setIcon(new ImageIcon(extracted));
-		extractFeatures(extracted);
+		processed = iProcessor.process(inputImage);
+		outputLabel.setIcon(new ImageIcon(processed));
+		extractFeatures(processed);
 		showProcess();
 	}
 	
 	private void showProcess() {
 		processPanel.removeAll();
 		processPanel.add(new JLabel(new ImageIcon(inputImage)));
-		processPanel.add(new JLabel(new ImageIcon(iHandler.getBlueImage())));
-		processPanel.add(new JLabel(new ImageIcon(iHandler.getFilteredImage())));
-		processPanel.add(new JLabel(new ImageIcon(iHandler.getGrayImage())));
-		processPanel.add(new JLabel(new ImageIcon(iHandler.getBinaryImage())));
-		processPanel.add(new JLabel(new ImageIcon(iHandler.getSegmentedImage())));
-		processPanel.add(new JLabel(new ImageIcon(iHandler.getNormalizedImage())));
-		processPanel.add(new JLabel(new ImageIcon(iHandler.getResizedImage())));
+		processPanel.add(new JLabel(new ImageIcon(iProcessor.getBlueChannel())));
+		processPanel.add(new JLabel(new ImageIcon(iProcessor.getFilteredBlue())));
+		processPanel.add(new JLabel(new ImageIcon(iProcessor.getGrayscale())));
+		processPanel.add(new JLabel(new ImageIcon(iProcessor.getBinaryMask())));
+		processPanel.add(new JLabel(new ImageIcon(iProcessor.getSegmented())));
+		processPanel.add(new JLabel(new ImageIcon(iProcessor.getCropped())));
+		processPanel.add(new JLabel(new ImageIcon(processed)));
 		updateUI();
 	
 	}
 
 	private void extractFeatures(BufferedImage image) {
-		meanRLabel.setText(""+(int)iHandler.computeMeanRed(image));
-		meanGLabel.setText(""+(int)iHandler.computeMeanGreen(image));
-		meanRGLabel.setText(""+(int)iHandler.computeMeanRG(image));
-		meanHLabel.setText(""+(int)iHandler.computeMeanHue(image));
-		meanALabel.setText(""+(int)iHandler.computeMeanA(image));
+		meanRLabel.setText(""+iProcessor.computeMeanRed(image));
+		meanGLabel.setText(""+iProcessor.computeMeanGreen(image));
+		meanRGLabel.setText(""+iProcessor.computeMeanRG(image));
+		meanHLabel.setText(""+iProcessor.computeMeanHue(image));
+		meanALabel.setText(""+iProcessor.computeMeanA(image));
 	}
 
 	private void reset() {
 		processPanel.removeAll();
 		inputLabel.setIcon(null);
 		outputLabel.setIcon(null);
-		meanRLabel.setText("0");
-		meanGLabel.setText("0");
-		meanRGLabel.setText("0");
-		meanHLabel.setText("0");
-		meanALabel.setText("0");
+		meanRLabel.setText("0.0");
+		meanGLabel.setText("0.0");
+		meanRGLabel.setText("0.0");
+		meanHLabel.setText("0.0");
+		meanALabel.setText("0.0");
 		updateUI();
 	}
 }

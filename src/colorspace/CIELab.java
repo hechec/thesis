@@ -2,8 +2,8 @@ package colorspace;
 
 import java.awt.image.BufferedImage;
 
-public class CIELab {
-	
+public class CIELab 
+{
 	public static double[][] M   = {{0.4124, 0.3576,  0.1805},
             {0.2126, 0.7152,  0.0722},
             {0.0193, 0.1192,  0.9505}};
@@ -16,7 +16,8 @@ public class CIELab {
     private static double[] whitePoint = D65;
     
 
-	public static BufferedImage convert(BufferedImage original) {
+	public static BufferedImage convert(BufferedImage original) 
+	{
 		BufferedImage converted = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_RGB);
 		int red = 0, green = 0, blue = 0, rgb = 0;
 		int[] lab = new int[3];
@@ -36,7 +37,8 @@ public class CIELab {
 		return converted;
 	}
 	
-	public static BufferedImage convertToLab(BufferedImage original) {
+	public static BufferedImage convertToLab(BufferedImage original) 
+	{
 		BufferedImage converted = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_RGB);
 		int red = 0, green = 0, blue = 0, rgb = 0;
 		int[] lab = new int[3];
@@ -233,7 +235,6 @@ public class CIELab {
 				if( pixelValue != 0 ) {
 					sum += pixelValue;
 					ctr++;
-					System.out.println(pixelValue+" "+ctr);
 				}
 			
 			}
@@ -246,14 +247,4 @@ public class CIELab {
 		return red<<16|green<<8|blue;
 	}
 	
-	
-	public static void main(String[] args) {
-		
-		double[] lab = RGBtoLAB(255, 0, 0);
-		
-		System.out.println( lab[0] +" == "+lab[1]+" == "+lab[2]);
-		
-	}
-	
-
 }

@@ -1,5 +1,7 @@
 package ui;
 
+import imageProcessing.ImageProcessor;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -24,8 +26,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import abcnn.Classifier;
 import abcnn.MLPNetwork;
 
-import utilities.ImageHandler;
-
 public class SoloPane extends JPanel {
 	
 	private JLabel classLabel, inputLabel;
@@ -38,6 +38,9 @@ public class SoloPane extends JPanel {
 	
 	private ABCNNPane abcnnPane;
 	private Classifier classifier;
+	
+	private BufferedImage forTesting;
+	ImageProcessor iProcessor = ImageProcessor.getInstance();
 	
 	public SoloPane(final ABCNNPane abcnnPane, JFileChooser chooser, Classifier classifier) {
 		setBounds(0, 0, 290, 442);
@@ -90,9 +93,6 @@ public class SoloPane extends JPanel {
 		fileFilter = new FileNameExtensionFilter("JPEG file", "jpg", "jpeg", "png", "gif");
 	}
 	
-	private BufferedImage forTesting;
-	ImageHandler iHandler = new ImageHandler();
-	
 	public void browseInput() {
 		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		chooser.setFileFilter(fileFilter);
@@ -100,7 +100,7 @@ public class SoloPane extends JPanel {
 		if(chooser.showOpenDialog(abcnnPane) == JFileChooser.APPROVE_OPTION) {
 			try {
 				forTesting = ImageIO.read(new File(chooser.getSelectedFile()+""));
-				forTesting = iHandler.resize(forTesting, (int) (180/((float)forTesting.getHeight())*forTesting.getWidth()), 180);
+				forTesting = iProcessor.resizeImage(forTesting, ImageProcessor.WIDTH, ImageProcessor.HEIGHT);//iHandler.resize(forTesting, (int) (180/((float)forTesting.getHeight())*forTesting.getWidth()), 180);
 				inputLabel.setIcon(new ImageIcon(forTesting));
 				hasInput = true;
 			} catch (IIOException e) {
@@ -124,8 +124,8 @@ public class SoloPane extends JPanel {
 		}
 		
 		BufferedImage temp = forTesting;
-		temp = iHandler.extract(temp);
-		double[] features = iHandler.getFeatures(temp);
+		temp = iProcessor.process(temp);//iHandler.extract(temp);
+		double[] features = iProcessor.getFeatures(temp);//iHandler.getFeatures(temp);
 		
 		int classIndex = classifier.classify(features);//abcnnPane.classify(features);
 		setResult(classes[classIndex]);

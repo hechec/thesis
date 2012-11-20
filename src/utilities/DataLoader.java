@@ -1,5 +1,7 @@
 package utilities;
 
+import imageProcessing.ImageProcessor;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -8,14 +10,15 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
-import javax.swing.plaf.metal.MetalIconFactory.FolderIcon16;
 
 import abcnn.Classifier;
-
-import com.sun.org.apache.bcel.internal.generic.NEW;
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
-
 import dialogs.LoadingDialog;
+
+/**
+ * class that loads images for training and testing
+ * @author Harvey Jake Opena
+ *
+ */
 
 public class DataLoader {
 	
@@ -37,6 +40,7 @@ public class DataLoader {
 	
 	private Classifier classifier;
 	private LoadingDialog prog;
+	private ImageProcessor iProcessor = ImageProcessor.getInstance();
 	
 	private int counter = 0;
 	
@@ -54,10 +58,10 @@ public class DataLoader {
 				
 				loadAllImages(file);
 				
-				training_input = iHandler.createInputVectorArray(training_input_list, prog);
-	        	training_output = iHandler.createOutputVectorArray(training_output_list);
+				training_input = iProcessor.createInputVectorArray(training_input_list, prog);
+	        	training_output = iProcessor.createOutputVectorArray(training_output_list);
 	        	
-	        	testing_input = iHandler.createInputVectorArray(testing_input_list, prog);
+	        	testing_input = iProcessor.createInputVectorArray(testing_input_list, prog);
 	        	convertOutputList();
 	        	
 	        	classifier.setPrepared(training_input, training_output);
@@ -83,16 +87,6 @@ public class DataLoader {
 	        }
 	}
 	
-	ImageHandler iHandler = new ImageHandler();
-	
-	/**
-	 * loads training or testing data from the folder and store them into the specified input/output list
-	 * 
-	 * @param folder
-	 * @param indices
-	 * @param input_list
-	 * @param output_list
-	 */
 	private void loadDataSet(File folder, int[] indices, ArrayList<BufferedImage> input_list, ArrayList<Integer> output_list) {
 
 		File[] files = folder.listFiles();
@@ -101,7 +95,7 @@ public class DataLoader {
 		for( int i = 0; i < len; i++ ) {
 			try {
 				BufferedImage image = ImageIO.read(files[indices[i]].getAbsoluteFile());
-				image = iHandler.resize(image, 256, 256);
+				image = iProcessor.resizeImage(image, ImageProcessor.WIDTH, ImageProcessor.HEIGHT);
 				
 				input_list.add(image);
 				output_list.add( Integer.parseInt(folder.getName()) );

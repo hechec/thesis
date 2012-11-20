@@ -1,8 +1,9 @@
 package colorspace;
 
-public class HSI {
-	
-	public static double getHue(int R, int G, int B)  {
+public class HSI 
+{
+	public static double getHue(int R, int G, int B)  
+	{
 		double r = getNormalizedRed(R, G, B);
 		double g = getNormalizedGreen(R, G, B);
 		double b = getNormalizedBlue(R, G, B);
@@ -30,20 +31,19 @@ public class HSI {
 		return hue;
 	}
 	
-	private static double getNormalizedRed(int r, int g, int b) {
+	private static double getNormalizedRed(int r, int g, int b) 
+	{
 		return (double)r / (double)(r+g+b);
 	}
 	
-	private static double getNormalizedGreen(int r, int g, int b) {
+	private static double getNormalizedGreen(int r, int g, int b) 
+	{
 		return (double)g / (double)(r+g+b);
 	}
 	
-	private static double getNormalizedBlue(int r, int g, int b) {
+	private static double getNormalizedBlue(int r, int g, int b) 
+	{
 		return (double)b / (double)(r+g+b);
-	}
-	
-	public static void main(String[] args) {
-		System.out.println(getHue(0, 0, 255));
 	}
 
 }

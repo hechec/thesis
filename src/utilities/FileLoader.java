@@ -10,6 +10,13 @@ import javax.swing.JOptionPane;
 
 import ui.AppFrame;
 
+/**
+ * class that loads trained data to be used for classification
+ * 
+ * @author Harvey Jake Opena
+ *
+ */
+
 public class FileLoader {
 
 	private AppFrame appFrame;	
@@ -50,5 +57,4 @@ public class FileLoader {
 		return weights;
 	}
 	
-
 }

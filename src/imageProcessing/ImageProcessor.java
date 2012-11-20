@@ -1,4 +1,172 @@
-package utilities;
+package imageProcessing;
+
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
+import utilities.NetworkConfiguration;
+import dialogs.LoadingDialog;
+
+public class ImageProcessor 
+{
+	
+	private static ImageProcessor instance = null;
+	private BackgroundRemover bRemover = null;
+	private FeatureExtractor fExtractor = null;
+	
+	public static final int WIDTH = 200;
+	public static final int HEIGHT = 200;
+	
+	private BufferedImage cropped;
+	
+	public ImageProcessor() 
+	{
+		bRemover = BackgroundRemover.getInstance();
+		fExtractor = FeatureExtractor.getInstance();
+	}
+	
+	public static ImageProcessor getInstance() 
+	{
+		if( instance == null )
+			instance = new ImageProcessor();
+		return instance;
+	}
+	
+	public BufferedImage process(BufferedImage image)
+	{
+		return resizeImage(cropImage(removeBackground(resizeImage(image, WIDTH, HEIGHT))), 64, 64);
+	}
+	
+	public BufferedImage resizeImage(BufferedImage image, int scaledWidth, int scaledHeight) 
+	{
+		BufferedImage resizedImage = new BufferedImage(scaledWidth, scaledHeight, image.getType());
+		Graphics2D g = resizedImage.createGraphics();
+		g.drawImage(image, 0, 0, scaledWidth, scaledHeight, null);
+		g.setComposite(AlphaComposite.Src);
+		g.dispose();	
+		return resizedImage;
+	}
+	
+	public BufferedImage removeBackground(BufferedImage image)
+	{
+		return bRemover.removeBackground(image);
+	}
+	
+	public BufferedImage cropImage(BufferedImage image)
+	{
+		cropped = Cropper.crop(image);
+		return cropped;
+	}
+	
+	public BufferedImage getCropped()
+	{
+		return cropped;
+	}
+	
+	/*******************************************/
+	/*	    getters to FeatureExtractor        */ 
+	/*******************************************/
+	public double computeMeanRed(BufferedImage image) 
+	{
+		return fExtractor.computeMeanRed(image);
+	}
+	
+	public double computeMeanGreen(BufferedImage image) 
+	{
+		return fExtractor.computeMeanGreen(image);
+	}
+	
+	public double computeMeanRG(BufferedImage image) 
+	{
+		return fExtractor.computeMeanRG(image);
+	}
+	
+	public double computeMeanA(BufferedImage image) 
+	{
+		return fExtractor.computeMeanA(image);
+	}
+	
+	public double computeMeanHue(BufferedImage image) 
+	{
+		return fExtractor.computeMeanHue(image);
+	}
+	
+	/*******************************************/
+	/*		getters to BackgroundRemover       */ 
+	/*******************************************/
+	public BufferedImage getBlueChannel() 
+	{
+		return bRemover.getBlueChannel();
+	}
+
+	public BufferedImage getFilteredBlue() 
+	{
+		return bRemover.getFilteredBlue();
+	}
+
+	public BufferedImage getGrayscale() 
+	{
+		return bRemover.getGrayscale();
+	}
+	
+	public BufferedImage getBinaryMask() 
+	{
+		return bRemover.getBinaryMask();
+	}
+
+	public BufferedImage getSegmented() {
+		return bRemover.getSegmented();
+	}
+	
+	public double[][] createInputVectorArray(ArrayList<BufferedImage> input_data, LoadingDialog prog) {
+		int patternSize = input_data.size();
+		double[][] inputArray = new double[patternSize][NetworkConfiguration.NUMBER_OF_INPUT];
+		
+		for( int i = 0; i < patternSize; i++ )  {
+			BufferedImage extractedInput = process(input_data.get(i));
+			inputArray[i] = getFeatures(extractedInput);
+			//prog.setValue(patternSize+1+i);
+			prog.increment();
+		}
+	
+		return inputArray;
+	}
+	
+	public double[][] createOutputVectorArray(ArrayList<Integer> output_data) {
+		int patternSize = output_data.size();
+		double[][] outputArray = new double[patternSize][NetworkConfiguration.NUMBER_OF_OUTPUT];
+		
+		// set the output node value of the expected class to 1
+		for( int i = 0; i < patternSize; i++ ) 
+			outputArray[i][output_data.get(i)-1] = 1.0;
+		
+		return outputArray;
+	}
+	
+	
+	public double[] getFeatures(BufferedImage extractedInput) {
+		double[] features = new double[NetworkConfiguration.NUMBER_OF_INPUT];
+		
+		features[0] = computeMeanRed(extractedInput);
+		features[1] = computeMeanGreen(extractedInput);
+		features[2] = computeMeanRG(extractedInput);
+		features[3] = computeMeanHue(extractedInput);
+		features[4] = computeMeanA(extractedInput);
+		
+		return features;
+	}
+	
+}
+
+
+/**
+ package utilities;
+
+import imageProcessing.Masking;
+import imageProcessing.GrayScale;
+import imageProcessing.MeanFilter;
+import imageProcessing.OtsuThreshold;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
@@ -15,10 +183,6 @@ import colorspace.RGBChannel;
 import dialogs.MyDialog;
 import dialogs.LoadingDialog;
 
-import preprocessing.GrayScale;
-import preprocessing.ImageSegmentation;
-import preprocessing.MeanFilter;
-import preprocessing.OtsuThreshold;
 
 public class ImageHandler {
 	
@@ -35,13 +199,7 @@ public class ImageHandler {
 	public ImageHandler() {
 	}
 	
-	/**
-	 * 
-	 * @param BufferedImage
-	 * @param WIDTH
-	 * @param HEIGHT
-	 * @return BufferedImage
-	 */
+
 	public BufferedImage resize(BufferedImage original, int scaledWidth, int scaledHeight) {
 		
 		BufferedImage resizedImage = new BufferedImage(scaledWidth, scaledHeight, original.getType());
@@ -78,7 +236,7 @@ public class ImageHandler {
 	
 	public BufferedImage segment(BufferedImage original, BufferedImage mask) {
 		
-		return ImageSegmentation.extract(original, mask);
+		return Masking.extract(original, mask);
 		
 	}
 
@@ -299,3 +457,5 @@ public class ImageHandler {
 	}
 	
 }
+ 
+*/

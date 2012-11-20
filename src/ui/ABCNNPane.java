@@ -8,7 +8,6 @@ import utilities.DataLoader;
 import utilities.FileLoader;
 import utilities.FileTypeFilter;
 import utilities.ImageLoader;
-import utilities.ImageHandler;
 import utilities.NetworkConfiguration;
 
 import dialogs.LoadingDialog;
@@ -92,10 +91,7 @@ public class ABCNNPane extends JPanel {
 	
 	private AppFrame appFrame;
 
-	
 	private Classifier classifier;
-	DataLoader dataLoader;
-	
 	
 	public ABCNNPane(AppFrame appFrame) {
 		this.appFrame = appFrame;
@@ -108,8 +104,6 @@ public class ABCNNPane extends JPanel {
 		chooser = new JFileChooser();
 	    chooser.setAcceptAllFileFilterUsed(false);
 		fileLoader = new FileLoader(appFrame);
-		
-		
 		
 		initToolbar();
 		initLeftPane();
