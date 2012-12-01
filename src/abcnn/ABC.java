@@ -16,7 +16,7 @@ import javax.swing.filechooser.FileFilter;
 
 import ui.AppFrame;
 import ui.ABCNNPane;
-import utilities.FileTypeFilter;
+import util.FileTypeFilter;
 
 public class ABC extends Thread {
 	
@@ -80,7 +80,7 @@ public class ABC extends Thread {
 		
 		networks = new MLPNetwork[foodNumber];
 		
-		limit = foodNumber*dimension;
+		limit = dimension;//foodNumber*dimension;
 	}
 	
 	/**
@@ -153,6 +153,7 @@ public class ABC extends Thread {
 			r = ( (double)Math.random()*32767 / ((double)32767+(double)(1)) );
 			Foods[index][j] = r * ( ub - lb ) + lb;
 			solution[j] = Foods[index][j];
+			//System.out.println( j+" :"+ Foods[index][j]);
 		}
 		networks[index] = new MLPNetwork(solution, input_data, output_data);
 		MSE[index] = calculateObjectiveFunction(networks[index]);
@@ -170,6 +171,7 @@ public class ABC extends Thread {
 	}
 	
 	private void sendEmployedBees() {
+		//System.out.println("Employed Bees:");
 		for( int i = 0; i < foodNumber; i++ ) {
 			neighborhoodSearch(i);
 			evaluatePopulation();
@@ -178,6 +180,7 @@ public class ABC extends Thread {
 	}
 
 	private void sendOnlookerBees() {
+		//System.out.println("Onlooker Bees:");
 		int t = 0, i = 0;
 		double r;
 		while( t < foodNumber ) {
@@ -192,7 +195,15 @@ public class ABC extends Thread {
 			if(i == foodNumber)
 	        	i = 0;
 		}
-		
+		/*int onlookerSize;
+		for( int i = 0; i < foodNumber; i++ ) {
+			onlookerSize = (int)(prob[i] * foodNumber);
+			for( int j = 0; j < onlookerSize; j++ ) {
+				neighborhoodSearch(i);
+				evaluatePopulation();
+				greedySelection(i);
+			}
+		}	*/
 	}
 
 	private void sendScoutBees() {
@@ -258,6 +269,7 @@ public class ABC extends Thread {
         	
         	MSE[foodIndex] = ObjValSol;
         	fitness[foodIndex] = FitnessSol;
+        	//System.out.println(foodIndex);
         }
         else
             trial[foodIndex] = trial[foodIndex]+1;
@@ -291,10 +303,10 @@ public class ABC extends Thread {
 	public static void main(String[] args){
 		int runtime = 30;
 		int maxCycle = 1000;
-		int dimension = 9;
-		int foodNumber = 10;
-		//ABC abc = new ABC(null, runtime, maxCycle, foodNumber, dimension);
-		//abc.run();
+		int dimension = 126;
+		int foodNumber = 1;
+		ABC abc = new ABC(null, null, runtime, maxCycle, foodNumber, dimension);
+		abc.run();
 		
 		//double[] input = {0, 1};
 		//double[] result = abc.test(input);

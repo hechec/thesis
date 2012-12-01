@@ -2,7 +2,7 @@ package abcnn;
 
 import abcnn.MLPNetwork;
 
-public class BeeColony {
+public class BeeColony_Original {
 	
 	/* Control Parameters of ABC algorithm*/
 	private int NP = 100;
@@ -38,7 +38,7 @@ public class BeeColony {
 	
 	private MLPNetwork[] networks = new MLPNetwork[foodNumber];
 	
-	public BeeColony() {
+	public BeeColony_Original() {
 		//
 	}
 	
@@ -240,7 +240,7 @@ public class BeeColony {
 	}
 
 	public static void main(String[] args) {
-		BeeColony bee = new BeeColony();
+		BeeColony_Original bee = new BeeColony_Original();
 		bee.initializePopulation();
 	}
 	

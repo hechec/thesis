@@ -17,10 +17,12 @@ import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
 
 import abcnn.Classifier;
+import abcnn.Result;
 
 import dialogs.LoadingDialog;
 
-import utilities.ImageLoader;
+import util.ImageLoader;
+
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.SwingConstants;
@@ -164,21 +166,30 @@ public class BatchPane extends JPanel {
 		//}
 		//input_data = iLoader.getInputVector();
 		//expectedOutput = iLoader.getExpectedOutput();
+		Result result = null;
+		
 		if( testDefault ) {
-			input_data = classifier.getTestingInput();
-			expectedOutput = classifier.getTestingOutput();
+			//input_data = classifier.getTestingInput();
+			//expectedOutput = classifier.getTestingOutput();
+			result = classifier.test_batch();
 		}
 		else {
 			input_data = iLoader.getInputVector();
 			expectedOutput = iLoader.getExpectedOutput();
 		}
 		
-		int actualIndex;
+		for( int i = 0; i < result.size(); i++ ) 
+			textArea.append( "test " + (i+1) + ": " + "expected: "+result.getExpected(i)+"\tactual:" +result.getActual(i)+ "\n");
+		
+		result1.setText((int)result.getScore() +" out of "+result.size()+" are classified correctly \n");
+		result2.setText("Accuracy: " + result.getAccuracy() + "%\n");
+		
+		/*int actualIndex;
 		double correct = 0;
 		for( int i = 0; i < input_data.length; i++ ) {
 			actualIndex = classifier.classify(input_data[i]);
 			correct += (actualIndex == expectedOutput[i] ? 1 : 0);
-			textArea.append( "test " + (i+1) + ": " + "expected: "+expectedOutput[i]+"\tactual:" +actualIndex + "\n");
+			
 		}
 		
 		double acc = ((correct/input_data.length)*100);
@@ -188,7 +199,7 @@ public class BatchPane extends JPanel {
 		
 		result1.setText((int)correct +" out of "+input_data.length +" are classified correctly \n");
 		result2.setText("Accuracy: " + acc + "%\n");
-		
+		*/
 	}
 	
 	private double[][] input_data;

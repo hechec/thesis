@@ -1,26 +1,20 @@
 package ui;
 
 
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-import utilities.DataLoader;
-import utilities.FileLoader;
-import utilities.FileTypeFilter;
-import utilities.ImageLoader;
-import utilities.NetworkConfiguration;
+import util.FileTypeFilter;
+import util.FixedDataLoader;
+import util.NNWeightsLoader;
+import util.NetworkConfiguration;
 
-import dialogs.LoadingDialog;
+
 import dialogs.SettingDialog;
 
-import abcnn.ABC;
 import abcnn.Classifier;
-import abcnn.MLPNetwork;
 
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -35,27 +29,18 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.swing.JTextField;
 import java.awt.Font;
-import javax.swing.UIManager;
-import javax.swing.JComboBox;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.SystemColor;
 import javax.swing.JToolBar;
-
-import org.jvnet.substance.SubstanceLookAndFeel;
 
 import com.jtattoo.plaf.texture.TextureUtils;
 
@@ -87,11 +72,12 @@ public class ABCNNPane extends JPanel {
 	public static String STAT4 = "Training data loaded. Ready for training.";
 	
 	private double[] weights = new double[NetworkConfiguration.DIMENSIONS];
-	private FileLoader fileLoader;
+	private NNWeightsLoader fileLoader;
 	
 	private AppFrame appFrame;
 
 	private Classifier classifier;
+	private LoadingPanel loadingPanel; 	
 	
 	public ABCNNPane(AppFrame appFrame) {
 		this.appFrame = appFrame;
@@ -103,7 +89,7 @@ public class ABCNNPane extends JPanel {
 		
 		chooser = new JFileChooser();
 	    chooser.setAcceptAllFileFilterUsed(false);
-		fileLoader = new FileLoader(appFrame);
+		fileLoader = new NNWeightsLoader(appFrame);
 		
 		initToolbar();
 		initLeftPane();
@@ -130,6 +116,10 @@ public class ABCNNPane extends JPanel {
 		statusLabel.setForeground(new Color(153, 0, 0));
 		statusLabel.setBounds(48, 4, 243, 20);
 		statPanel.add(statusLabel);
+		
+		loadingPanel = LoadingPanel.getInstance();
+		loadingPanel.setBounds(412, 5, 275, 18);
+		statPanel.add(loadingPanel);
 		
 		JPanel panel = new JPanel();
 		panel.setBounds(363, 84, 33, 467);
@@ -291,8 +281,16 @@ public class ABCNNPane extends JPanel {
 		prepareB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				File file = new File("D:/kamatisan/training");
+				File file2 = new File("D:/kamatisan/testing");
+				
+				FixedDataLoader fdl = new FixedDataLoader(ABCNNPane.this, classifier, file, file2);
+								
+				Thread thread = new Thread(fdl);
+				thread.start();
+				
 				//prepareTrainingData();
-				classifier.loadImages();
+				//classifier.loadImages();
 			}
 		});
 		
@@ -410,7 +408,8 @@ public class ABCNNPane extends JPanel {
 		}
 	}
 	
-	public void initComponents() {
+	public void initComponents() 
+	{
 		cycleBar.setMinimum(0);
 		cycleBar.setMaximum((int)cycleSpinner.getValue());
 		runtimeBar.setMinimum(0);
@@ -419,21 +418,25 @@ public class ABCNNPane extends JPanel {
 		runtimeBar.setValue(0);
 	}
 
-	public void incrementCycle(int percent) {
+	public void incrementCycle(int percent) 
+	{
 		cycleBar.setValue(percent);
 	}
 	
-	public void incrementRuntime(int percent) {
+	public void incrementRuntime(int percent) 
+	{
 		runtimeBar.setValue(percent);
 	}
 	
-	public void displayTrainingResult(double MSE, double elapsedTime) {
+	public void displayTrainingResult(double MSE, double elapsedTime) 
+	{
 		timeLabel.setText( elapsedTime + "" );
 		mseLabel.setText( MSE + "" );
 		setStatus(STAT3, Color.BLUE);
 	}
 
-	private void loadTrainedData() {
+	private void loadTrainedData() 
+	{
 		FileFilter filter = new FileTypeFilter(".txt", "Text files");
 		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		chooser.setFileFilter(filter);
@@ -448,16 +451,24 @@ public class ABCNNPane extends JPanel {
 		}
 	}
 	
-	public void setStatus(String status, Color color) {
+	public void setStatus(String status, Color color) 
+	{
 		statusLabel.setText(status);
 		statusLabel.setForeground(color);
 	}
 	
-	public String getFilePath() {
+	public String getFilePath() 
+	{
 		return directoryField.getText();
 	}
 	
-	private void reset() {
+	public LoadingPanel getLoadingPanel()
+	{
+		return loadingPanel;
+	}
+	
+	private void reset() 
+	{
 		setStatus(STAT1,new Color(153, 0, 0));
 		cycleBar.setValue(0);
 		runtimeBar.setValue(0);
@@ -466,12 +477,11 @@ public class ABCNNPane extends JPanel {
 		classifier.reset();
 	}
 
-	public void setTestOption(int selected) {
-		if( selected == SettingDialog.INDIVIDUAL ) {
+	public void setTestOption(int selected) 
+	{
+		if( selected == SettingDialog.INDIVIDUAL ) 
 			updateRightPane(batchPane, soloPane);
-		}
-		else {
+		else 
 			updateRightPane(soloPane, batchPane);
-		}
 	}
 }

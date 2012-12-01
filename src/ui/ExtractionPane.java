@@ -1,8 +1,11 @@
 package ui;
 
+import imageProcessing.BilinearInterpolation;
 import imageProcessing.ImageProcessor;
 
 import java.awt.Dimension;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -188,7 +191,8 @@ public class ExtractionPane extends JPanel {
 			 try {
 				 inputImage = ImageIO.read(fc.getSelectedFile());
 				 
-				 inputImage = iProcessor.resizeImage( inputImage, ImageProcessor.WIDTH, ImageProcessor.HEIGHT );
+				 //inputImage = iProcessor.resizeImage( inputImage, ImageProcessor.WIDTH, ImageProcessor.HEIGHT );
+				 inputImage = BilinearInterpolation.resize(inputImage, 200, 200);
 				 
 				 //inputImage = iProcessor.resizeImage( inputImage, (int) (180/((float)inputImage.getHeight())*inputImage.getWidth()), 180 );
 				 
@@ -206,6 +210,13 @@ public class ExtractionPane extends JPanel {
 		outputLabel.setIcon(new ImageIcon(processed));
 		extractFeatures(processed);
 		showProcess();
+		
+		/*try {
+		    File outputfile = new File("C:/Users/hechec/Desktop/saved.jpeg");
+		    ImageIO.write(processed, "jpeg", outputfile);
+		} catch (IOException e) {
+		}*/
+		
 	}
 	
 	private void showProcess() {

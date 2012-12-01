@@ -1,4 +1,4 @@
-package utilities;
+package util;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,13 +17,13 @@ import ui.AppFrame;
  *
  */
 
-public class FileLoader {
+public class NNWeightsLoader {
 
 	private AppFrame appFrame;	
 	
 	private double[] weights = new double[NetworkConfiguration.DIMENSIONS];
 	
-	public FileLoader(AppFrame appFrame) {
+	public NNWeightsLoader(AppFrame appFrame) {
 		this.appFrame = appFrame;
 	}
 

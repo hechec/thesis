@@ -1,6 +1,6 @@
 package colorspace;
 
-public class RGBManipulator 
+public abstract class RGBManipulator 
 {
 	protected static int mixColor(int red, int green, int blue) 
 	{

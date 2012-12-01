@@ -1,4 +1,4 @@
-package utilities;
+package util;
 
 import imageProcessing.ImageProcessor;
 
@@ -68,7 +68,7 @@ public class ImageLoader{
 				prog.start(max*2);
 				loadAllImages(folder);
 				
-				input_data = iProcessor.createInputVectorArray(inputList, prog);
+				//input_data = iProcessor.createInputVectorArray(inputList, prog);
 				output_data = iProcessor.createOutputVectorArray(outputList);
 				prog.dispose();
 				

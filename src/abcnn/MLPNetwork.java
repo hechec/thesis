@@ -3,7 +3,7 @@ package abcnn;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import utilities.NetworkConfiguration;
+import util.NetworkConfiguration;
 
 import com.sun.corba.se.spi.orbutil.fsm.Input;
 

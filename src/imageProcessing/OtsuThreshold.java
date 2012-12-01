@@ -69,9 +69,13 @@ public class OtsuThreshold extends RGBManipulator
 	                varMax = varBetween;
 	                threshold = i;
 	            }
+	            //if( i == 36 )
+	            //	System.out.println( wF+" "+mF +" "+varBetween);
 	        }
 	        return threshold;
 	 }
+	 
+	 public static int[] hist;
 	 
 	 public static int[] imageHistogram(BufferedImage grayImage) 
 	 {
@@ -85,6 +89,7 @@ public class OtsuThreshold extends RGBManipulator
 	                histogram[red]++;
 	            }
 	        }
+	        hist = histogram;
 	        return histogram;
 	}
 	

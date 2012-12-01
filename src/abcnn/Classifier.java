@@ -9,12 +9,12 @@ import dialogs.LoadingDialog;
 
 import ui.ABCNNPane;
 import ui.AppFrame;
-import utilities.DataLoader;
-import utilities.ImageLoader;
-import utilities.NetworkConfiguration;
+import util.DataLoader;
+import util.ImageLoader;
+import util.NetworkConfiguration;
 
-public class Classifier {
-
+public class Classifier 
+{
 	private AppFrame appFrame;	
 	private ABCNNPane abcnnPane;
 	
@@ -32,12 +32,64 @@ public class Classifier {
 	private boolean isTrained;
 	private boolean isNew;
 	
-	public Classifier(AppFrame appFrame, ABCNNPane abcnnPane) {
+	private double[][] train_input;
+	private double[][] train_output;
+	private double[][] test_input;
+	private int[] test_expected;
+	
+	
+	public Classifier(AppFrame appFrame, ABCNNPane abcnnPane) 
+	{
 		this.appFrame = appFrame;
 		this.abcnnPane = abcnnPane;
 	}
 	
-	public void train(int runtime, int maxCycle, int populationSize) {
+	public void setTrainData(double[][] train_input, double[][] train_output)
+	{
+		this.train_input = train_input;
+		this.train_output = train_output;
+		isPrepared = true;
+	}
+	
+	public void setTestData(double[][] test_input, int[] test_output)
+	{
+		this.test_input = test_input;
+		this.test_expected = test_output;
+	}
+	
+	public void train(int runtime, int maxCycle, int populationSize)
+	{
+		if(isPrepared) {
+			abcnnPane.initComponents();
+			abc = new ABC( abcnnPane, this, runtime, maxCycle, populationSize, NetworkConfiguration.DIMENSIONS); 
+			abc.setTrainingData(train_input, train_output);
+			abc.start();
+		}
+		else
+			System.out.println("LOAD DATA.");
+		
+	}
+	
+	public Result test_batch()
+	{
+		int[] actual = new int[test_expected.length];
+
+		for( int i = 0; i < test_input.length; i++ ) 
+			actual[i] = classify( test_input[i] );
+		
+		return new Result(test_expected, actual);
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////
+	
+	public void setTestData(double[][] training_data)
+	{
+		this.training_data = training_data;
+	}
+	
+	
+	
+	/*public void train(int runtime, int maxCycle, int populationSize) {
 		if(!isPrepared) 
 			JOptionPane.showMessageDialog(appFrame, "No Training Data Loaded.", "Error", JOptionPane.WARNING_MESSAGE);
 		else{
@@ -48,7 +100,7 @@ public class Classifier {
 			abc.setTrainingData(training_data, output_data);
 			abc.start();
 		}
-	}
+	}*/
 	
 	public int classify(double[] input) {
 		
@@ -96,7 +148,7 @@ public class Classifier {
 		else if( !file.exists()  )
 			JOptionPane.showMessageDialog(appFrame, "The directory does not exist.", "Error", JOptionPane.WARNING_MESSAGE);
 		else {
-			dialog = new LoadingDialog(appFrame);
+			//dialog = new LoadingDialog(appFrame);
 			//new ImageLoader(this, filepath, dialog);
 			dataLoader = new DataLoader(this, dialog);
 			dataLoader.load(file);
