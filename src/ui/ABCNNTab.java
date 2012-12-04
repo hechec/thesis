@@ -1,85 +1,55 @@
 package ui;
 
+import com.jtattoo.plaf.texture.TextureUtils;
 
-import javax.swing.JPanel;
+import custom.MyTextField;
 
+import javax.swing.*;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import javax.swing.border.*;
+import javax.swing.filechooser.FileFilter;
+
+import dialogs.SettingDialog;
+import abcnn.Classifier;
+import ui.dialogs.Settings;
 import util.FileTypeFilter;
 import util.FixedDataLoader;
 import util.NNWeightsLoader;
-import util.NetworkConfiguration;
 
+import static util.NNConstants.*;
 
-import dialogs.SettingDialog;
-
-import abcnn.Classifier;
-
-import javax.swing.border.TitledBorder;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.JProgressBar;
-import javax.swing.JButton;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import javax.swing.JTextField;
-import java.awt.Font;
-import javax.swing.border.LineBorder;
-import java.awt.Color;
-import java.awt.SystemColor;
-import javax.swing.JToolBar;
-
-import com.jtattoo.plaf.texture.TextureUtils;
-
-public class ABCNNPane extends JPanel {
-
+public class ABCNNTab extends JPanel 
+{
 	private JFileChooser chooser;
 
-	private JPanel tPane;
-	private BatchPane batchPane;
-	private SoloPane soloPane;
-	private JPanel leftPane;
-	
-	private JLabel timeLabel, mseLabel, statusLabel;
-
+	private JLabel timeLabel, mseLabel;
 	private JButton loadB, prepareB, trainB, resetB;
+	private JPanel userdefinedPanel, randomPanel, tPane, leftPane;
 	
-	private JSpinner employedSpinner;
-	private JSpinner cycleSpinner;
-	private JSpinner runtimeSpinner;
+	private JSpinner employedSpinner, cycleSpinner, runtimeSpinner;
 	
 	private JProgressBar cycleBar;
 	private JProgressBar runtimeBar;
-	private JTextField directoryField;
+	private JTextField randomTextField;
 	
-	private String[] testingTypes = {"Batch", "One by One"};
-	private static String STAT1 = "Load trained data or train network.";
-	private static String STAT2 = "Loaded trained data. Ready for testing.";
-	private static String STAT3 = "Network trained. Ready for testing.";
-	public static String STAT4 = "Training data loaded. Ready for training.";
-	
-	private double[] weights = new double[NetworkConfiguration.DIMENSIONS];
+	//private String[] testingTypes = {"Batch", "One by One"};
+	private double[] weights = new double[DIMENSIONS];
 	private NNWeightsLoader fileLoader;
 	
 	private AppFrame appFrame;
-
 	private Classifier classifier;
-	private LoadingPanel loadingPanel; 	
+	private BottomPane bottomPane;
+	private BatchPane batchPane;
+	private SoloPane soloPane;
+	private Settings settings;
+	private JTextField trainDataTextField;
+	private JTextField testDataTextField;
 	
-	public ABCNNPane(AppFrame appFrame) {
+	public ABCNNTab(AppFrame appFrame) 
+	{
 		this.appFrame = appFrame;
 		this.setSize(740, 600);
 		setLayout(null);
@@ -98,28 +68,10 @@ public class ABCNNPane extends JPanel {
 		
 	}
 	
-	private void initStatPanel() {
-		JPanel statPanel = new JPanel();
-		statPanel.setBorder(new LineBorder(SystemColor.activeCaptionBorder));
-		statPanel.setBounds(-1, 562, 730, 27);
-		add(statPanel);
-		statPanel.setLayout(null);
-		
-		JLabel lblStatus = new JLabel("Status:");
-		lblStatus.setForeground(Color.BLACK);
-		lblStatus.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblStatus.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblStatus.setBounds(0, 4, 43, 20);
-		statPanel.add(lblStatus);
-		
-		statusLabel = new JLabel(STAT1);
-		statusLabel.setForeground(new Color(153, 0, 0));
-		statusLabel.setBounds(48, 4, 243, 20);
-		statPanel.add(statusLabel);
-		
-		loadingPanel = LoadingPanel.getInstance();
-		loadingPanel.setBounds(412, 5, 275, 18);
-		statPanel.add(loadingPanel);
+	private void initStatPanel() 
+	{
+		bottomPane = new BottomPane(this);
+		add(bottomPane);
 		
 		JPanel panel = new JPanel();
 		panel.setBounds(363, 84, 33, 467);
@@ -130,42 +82,82 @@ public class ABCNNPane extends JPanel {
 		label.setBounds(0, 0, 33, 467);
 		panel.add(label);
 		
-	}
-
-	private void initLeftPane() {
-		leftPane = new JPanel();
-		leftPane.setBounds(-1, 84, 373, 467);
-		add(leftPane);
-		leftPane.setLayout(null);
+		userdefinedPanel = new JPanel();
+		userdefinedPanel.setBounds(-1, 84, 367, 128);
+		add(userdefinedPanel);
+		userdefinedPanel.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Image Directory:");
-		lblNewLabel.setBounds(20, 45, 118, 22);
-		leftPane.add(lblNewLabel);
+		trainDataTextField = new MyTextField("Select training data location");
+		trainDataTextField.setBounds(20, 45, 242, 27);
+		userdefinedPanel.add(trainDataTextField);
+		trainDataTextField.setColumns(10);
 		
-		directoryField = new JTextField();
-		directoryField.setBounds(20, 72, 242, 27);
-		leftPane.add(directoryField);
-		directoryField.setColumns(10);
-		directoryField.setFocusable(false);
-		directoryField.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				selectDirectory();
+		testDataTextField = new MyTextField("Select testing data location");
+		testDataTextField.setColumns(10);
+		testDataTextField.setBounds(20, 94, 242, 27);
+		userdefinedPanel.add(testDataTextField);
+		
+		JButton trainDataButton = new JButton("CUSTOM");
+		trainDataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				selectDirectory(trainDataTextField);
 			}
 		});
+		trainDataButton.setBounds(268, 45, 77, 27);
+		userdefinedPanel.add(trainDataButton);
+		
+		JButton testDataButton = new JButton("CUSTOM");
+		testDataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				selectDirectory(testDataTextField);
+			}
+		});
+		testDataButton.setBounds(268, 96, 77, 27);
+		userdefinedPanel.add(testDataButton);
+		
+		randomPanel = new JPanel();
+		randomPanel.setBounds(0, 84, 366, 133);
+		add(randomPanel);
+		randomPanel.setLayout(null);
+		randomPanel.setVisible(false);
+		
+		JLabel lblNewLabel = new JLabel("Training/testing data location:");
+		lblNewLabel.setBounds(25, 45, 191, 22);
+		randomPanel.add(lblNewLabel);
+		
+		randomTextField = new MyTextField("");
+		randomTextField.setBounds(25, 76, 242, 27);
+		randomPanel.add(randomTextField);
+		randomTextField.setColumns(10);
+		randomTextField.setFocusable(false);
 		
 		JButton selectButton = new JButton("CUSTOM");
-		selectButton.setBounds(268, 72, 77, 27);
-		leftPane.add(selectButton);
+		selectButton.setBounds(279, 76, 77, 27);
+		randomPanel.add(selectButton);
 		
 		selectButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				selectDirectory();
+				selectDirectory(randomTextField);
+			}
+		});
+		randomTextField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				selectDirectory(randomTextField);
 			}
 		});
 		
+	}
+
+	private void initLeftPane() 
+	{
+		leftPane = new JPanel();
+		leftPane.setBounds(-1, 212, 367, 339);
+		add(leftPane);
+		leftPane.setLayout(null);
+		
 		JPanel paramPanel = new JPanel();
-		paramPanel.setBounds(19, 150, 329, 230);
+		paramPanel.setBounds(14, 32, 338, 230);
 		leftPane.add(paramPanel);
 		paramPanel.setBorder(new TitledBorder(null, "ABC Parameters", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		paramPanel.setLayout(null);
@@ -186,7 +178,7 @@ public class ABCNNPane extends JPanel {
 		paramPanel.add(lblRuntime);
 		
 		employedSpinner = new JSpinner();
-		employedSpinner.setModel(new SpinnerNumberModel(new Integer(50), null, null, new Integer(1)));
+		employedSpinner.setModel(new SpinnerNumberModel(new Integer(10), null, null, new Integer(1)));
 		employedSpinner.setBounds(132, 28, 50, 24);
 		paramPanel.add(employedSpinner);
 		
@@ -201,7 +193,7 @@ public class ABCNNPane extends JPanel {
 		paramPanel.add(lblRuntime_1);
 		
 		cycleSpinner = new JSpinner();
-		cycleSpinner.setModel(new SpinnerNumberModel(new Integer(2500), null, null, new Integer(1)));
+		cycleSpinner.setModel(new SpinnerNumberModel(new Integer(500), null, null, new Integer(1)));
 		cycleSpinner.setBounds(132, 74, 50, 24);
 		paramPanel.add(cycleSpinner);
 		
@@ -212,39 +204,42 @@ public class ABCNNPane extends JPanel {
 		
 		cycleBar = new JProgressBar();
 		cycleBar.setBounds(70, 141, 229, 20);
+		cycleBar.setForeground(SystemColor.textHighlight);
 		paramPanel.add(cycleBar);
 		
 		runtimeBar = new JProgressBar();
 		runtimeBar.setBounds(70, 180, 229, 20);
+		runtimeBar.setForeground(SystemColor.textHighlight);
 		paramPanel.add(runtimeBar);
 		
 		JLabel lblTrainingTime = new JLabel("Training Time (seconds):");
-		lblTrainingTime.setBounds(14, 391, 147, 22);
+		lblTrainingTime.setBounds(10, 273, 147, 22);
 		leftPane.add(lblTrainingTime);
 		lblTrainingTime.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		JLabel lblMeanSquereError = new JLabel("Mean Square Error:");
-		lblMeanSquereError.setBounds(29, 413, 132, 22);
+		lblMeanSquereError.setBounds(25, 295, 132, 22);
 		leftPane.add(lblMeanSquereError);
 		lblMeanSquereError.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		timeLabel = new JLabel("0");
-		timeLabel.setBounds(171, 391, 169, 22);
+		timeLabel.setBounds(167, 273, 169, 22);
 		leftPane.add(timeLabel);
 		
 		mseLabel = new JLabel("0.0");
-		mseLabel.setBounds(171, 413, 169, 22);
+		mseLabel.setBounds(167, 295, 169, 22);
 		leftPane.add(mseLabel);
 	}
 
-	private void initRightPane() {
+	private void initRightPane() 
+	{
 		JPanel rightPane = new JPanel();
-		rightPane.setBounds(382, 84, 347, 467);
+		rightPane.setBounds(394, 84, 335, 467);
 		add(rightPane);
 		rightPane.setLayout(null);
 		
 		tPane = new JPanel();
-		tPane.setBounds(27, 11, 298, 436);
+		tPane.setBounds(0, 0, 335, 467);
 		rightPane.add(tPane);
 		tPane.setLayout(null);
 		batchPane = new BatchPane(this, chooser, classifier);
@@ -257,7 +252,8 @@ public class ABCNNPane extends JPanel {
 	 * 
 	 * init toolbar
 	 */
-	private void initToolbar() {
+	private void initToolbar() 
+	{
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(false);
 		toolBar.setBounds(-1, 0, 731, 40);
@@ -281,13 +277,25 @@ public class ABCNNPane extends JPanel {
 		prepareB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				File file = new File("D:/kamatisan/training");
-				File file2 = new File("D:/kamatisan/testing");
 				
-				FixedDataLoader fdl = new FixedDataLoader(ABCNNPane.this, classifier, file, file2);
-								
-				Thread thread = new Thread(fdl);
-				thread.start();
+				if(Settings.dataSelection == Settings.USER_DEFINED_DATA) {
+					if( !trainDataTextField.getText().equals("") && !testDataTextField.getText().equals("") ) {
+						new Thread() {
+							public void run() {
+								bottomPane.setStatus(BottomPane.START_LOADING);
+								File file = new File(""+trainDataTextField.getText());
+								File file2 = new File(""+testDataTextField.getText());
+								FixedDataLoader fdl = new FixedDataLoader(bottomPane, classifier, file, file2);
+								fdl.load();
+							}
+						}.start();
+					}
+					else
+						JOptionPane.showMessageDialog(appFrame, "Oooops. Please select data locations.", "Warning", JOptionPane.WARNING_MESSAGE);
+				}
+				else {
+					
+				}
 				
 				//prepareTrainingData();
 				//classifier.loadImages();
@@ -305,7 +313,9 @@ public class ABCNNPane extends JPanel {
 			}
 		});
 		
-		final SettingDialog settingDialog = new SettingDialog(this);
+		//final SettingDialog settingDialog = new SettingDialog(this);
+		
+		settings = new Settings(this);
 		
 		JButton settingsButton = new JButton(new ImageIcon("src/images/setting.png"));
 		settingsButton.setToolTipText("Setting");
@@ -313,7 +323,7 @@ public class ABCNNPane extends JPanel {
 		settingsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				settingDialog.setVisible(true);
+				settings.setVisible(true);
 			}
 		});		
 		
@@ -349,25 +359,27 @@ public class ABCNNPane extends JPanel {
 			}
 		});
 		
-
 		JButton stopButton = new JButton(new ImageIcon("src/images/stop2.png"));
 		toolBar2.add(stopButton);
 		
 	}
 
-	private void updateRightPane(JPanel toRemove, JPanel toAdd) {
+	private void updateRightPane(JPanel toRemove, JPanel toAdd) 
+	{
 		tPane.remove(toRemove);
 		tPane.add(toAdd);
 		updateUI();
 	}
 	
-	private void selectDirectory() {
+	private void selectDirectory(JTextField textField) 
+	{
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) 
-			directoryField.setText(chooser.getSelectedFile()+"");
+			textField.setText(chooser.getSelectedFile()+"");
 	}
 	
-	private void saveWeights() {
+	private void saveWeights() 
+	{
 		if(!classifier.isNewTraining()) 
 			JOptionPane.showMessageDialog(appFrame, "No training has be done recently.", "Error", JOptionPane.WARNING_MESSAGE);
 		else {
@@ -432,7 +444,7 @@ public class ABCNNPane extends JPanel {
 	{
 		timeLabel.setText( elapsedTime + "" );
 		mseLabel.setText( MSE + "" );
-		setStatus(STAT3, Color.BLUE);
+		bottomPane.setStatus(BottomPane.END_TRAINING);
 	}
 
 	private void loadTrainedData() 
@@ -446,30 +458,23 @@ public class ABCNNPane extends JPanel {
 			if( weights == null )
 				return;
 			classifier.loadWeights(weights);
-			setStatus(STAT2, Color.BLUE);
 			JOptionPane.showMessageDialog(appFrame, "Loaded trained data.", "Message", JOptionPane.PLAIN_MESSAGE);
 		}
 	}
 	
-	public void setStatus(String status, Color color) 
-	{
-		statusLabel.setText(status);
-		statusLabel.setForeground(color);
-	}
 	
 	public String getFilePath() 
 	{
-		return directoryField.getText();
+		return randomTextField.getText();
 	}
 	
-	public LoadingPanel getLoadingPanel()
+	public BottomPane getBottomPane()
 	{
-		return loadingPanel;
+		return bottomPane;
 	}
-	
+
 	private void reset() 
 	{
-		setStatus(STAT1,new Color(153, 0, 0));
 		cycleBar.setValue(0);
 		runtimeBar.setValue(0);
 		timeLabel.setText("0");
@@ -483,5 +488,16 @@ public class ABCNNPane extends JPanel {
 			updateRightPane(batchPane, soloPane);
 		else 
 			updateRightPane(soloPane, batchPane);
+	}
+
+	public void applySettings(int dataSelection, int testBy) {
+		if(dataSelection == Settings.USER_DEFINED_DATA) {
+			randomPanel.setVisible(false);
+			userdefinedPanel.setVisible(true);
+		}
+		else {
+			userdefinedPanel.setVisible(false);
+			randomPanel.setVisible(true);
+		}
 	}
 }

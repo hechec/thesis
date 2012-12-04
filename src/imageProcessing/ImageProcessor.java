@@ -5,9 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import ui.LoadingPanel;
-import util.NetworkConfiguration;
-import dialogs.LoadingDialog;
+import ui.BottomPane;
+import static util.NNConstants.*;
 
 public class ImageProcessor 
 {
@@ -121,15 +120,15 @@ public class ImageProcessor
 		return bRemover.getSegmented();
 	}
 	
-	public double[][] createInputVectorArray(ArrayList<BufferedImage> input_data, LoadingPanel loadingPanel) {
+	public double[][] createInputVectorArray(ArrayList<BufferedImage> input_data, BottomPane bottomPane) {
 		int patternSize = input_data.size();
-		double[][] inputArray = new double[patternSize][NetworkConfiguration.NUMBER_OF_INPUT];
+		double[][] inputArray = new double[patternSize][NUMBER_OF_INPUT];
 		
 		for( int i = 0; i < patternSize; i++ )  {
 			BufferedImage extractedInput = process(input_data.get(i));
 			inputArray[i] = getFeatures(extractedInput);
 			//prog.setValue(patternSize+1+i);
-			loadingPanel.increment();
+			bottomPane.incrementBar();
 		}
 	
 		return inputArray;
@@ -137,7 +136,7 @@ public class ImageProcessor
 	
 	public double[][] createOutputVectorArray(ArrayList<Integer> output_data) {
 		int patternSize = output_data.size();
-		double[][] outputArray = new double[patternSize][NetworkConfiguration.NUMBER_OF_OUTPUT];
+		double[][] outputArray = new double[patternSize][NUMBER_OF_OUTPUT];
 		
 		// set the output node value of the expected class to 1
 		for( int i = 0; i < patternSize; i++ ) 
@@ -148,7 +147,7 @@ public class ImageProcessor
 	
 	
 	public double[] getFeatures(BufferedImage extractedInput) {
-		double[] features = new double[NetworkConfiguration.NUMBER_OF_INPUT];
+		double[] features = new double[NUMBER_OF_INPUT];
 		
 		features[0] = computeMeanRG(extractedInput);
 		features[1] = computeMeanRed(extractedInput);
@@ -158,7 +157,6 @@ public class ImageProcessor
 		
 		return features;
 	}
-	
 }
 
 

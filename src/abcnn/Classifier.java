@@ -1,22 +1,20 @@
 package abcnn;
 
-import java.awt.Color;
 import java.io.File;
-
 import javax.swing.JOptionPane;
-
 import dialogs.LoadingDialog;
 
-import ui.ABCNNPane;
+import ui.ABCNNTab;
 import ui.AppFrame;
+import ui.BottomPane;
 import util.DataLoader;
-import util.ImageLoader;
-import util.NetworkConfiguration;
+
+import static util.NNConstants.*;
 
 public class Classifier 
 {
 	private AppFrame appFrame;	
-	private ABCNNPane abcnnPane;
+	private ABCNNTab abcnnPane;
 	
 	private LoadingDialog dialog;
 	private DataLoader dataLoader;	
@@ -38,7 +36,7 @@ public class Classifier
 	private int[] test_expected;
 	
 	
-	public Classifier(AppFrame appFrame, ABCNNPane abcnnPane) 
+	public Classifier(AppFrame appFrame, ABCNNTab abcnnPane) 
 	{
 		this.appFrame = appFrame;
 		this.abcnnPane = abcnnPane;
@@ -60,8 +58,9 @@ public class Classifier
 	public void train(int runtime, int maxCycle, int populationSize)
 	{
 		if(isPrepared) {
+			abcnnPane.getBottomPane().setStatus(BottomPane.START_TRAINING);
 			abcnnPane.initComponents();
-			abc = new ABC( abcnnPane, this, runtime, maxCycle, populationSize, NetworkConfiguration.DIMENSIONS); 
+			abc = new ABC( abcnnPane, this, runtime, maxCycle, populationSize, DIMENSIONS); 
 			abc.setTrainingData(train_input, train_output);
 			abc.start();
 		}
@@ -157,7 +156,7 @@ public class Classifier
 
 	public void setPrepared(double[][] input_data, double[][] output_data) {
 		this.isPrepared = true;
-		abcnnPane.setStatus(ABCNNPane.STAT4, Color.BLUE);
+		//abcnnPane.setStatus(ABCNNPane.STAT4, Color.BLUE);
 	}
 
 	public double[][] getTestingInput() {

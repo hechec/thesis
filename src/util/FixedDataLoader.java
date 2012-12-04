@@ -8,13 +8,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
-import ui.ABCNNPane;
-import ui.LoadingPanel;
+import ui.ABCNNTab;
+import ui.AppFrame;
+import ui.BottomPane;
 
 import abcnn.Classifier;
 
-public class FixedDataLoader implements Runnable 
+public class FixedDataLoader
 {
 	private Classifier classifier;
 	
@@ -30,23 +32,22 @@ public class FixedDataLoader implements Runnable
 	private ArrayList<Integer> test_output_list = new ArrayList<Integer>();
 	
 	private ImageProcessor iProcessor;
-	private LoadingPanel loadingPanel;
+	private BottomPane bottomPane;
 	
 	private int count = 0;
 	private File trainFile, testFile;
 	
-	public FixedDataLoader(ABCNNPane abcnnPane, Classifier classifier, File trainFile, File testFile)
+	public FixedDataLoader(BottomPane bottomPane, Classifier classifier, File trainFile, File testFile)
 	{
 		this.classifier = classifier;
 		this.trainFile = trainFile;
 		this.testFile = testFile;
 		iProcessor = new ImageProcessor();
-		loadingPanel = abcnnPane.getLoadingPanel();
+		this.bottomPane = bottomPane;
 		
 		count += countFiles(trainFile);
 		count += countFiles(testFile);
-		loadingPanel.setMax(count*2);
-		
+		bottomPane.setProgressBarMax(count*2);
 	}
 	
 	private void loadAllImages(final File folder, ArrayList<BufferedImage> train_input_list, ArrayList<Integer> train_output_list) {
@@ -67,7 +68,7 @@ public class FixedDataLoader implements Runnable
 	        	
 	        	train_input_list.add(image);
 	        	train_output_list.add(classNumber);
-	        	loadingPanel.increment();
+	        	bottomPane.incrementBar();
 	        	//System.out.println( fileEntry.getParentFile().getName()+" :"+fileEntry.getAbsolutePath() );
 	        }
 	        	
@@ -85,10 +86,6 @@ public class FixedDataLoader implements Runnable
 		return ctr;
 	}
 	
-	private void end1()
-	{
-		classifier.setTrainData(train_input, train_output);
-	}
 	
 	private int[] convertOutputList(ArrayList<Integer> test_output_list) {
 		int size = test_output_list.size();
@@ -98,19 +95,21 @@ public class FixedDataLoader implements Runnable
 		return expectedOutput;
 	}
 
-	@Override
-	public void run() {
+	public void load() {
 		loadAllImages(trainFile, train_input_list, train_output_list);
 		loadAllImages(testFile, test_input_list, test_output_list);
 		
-		train_input = iProcessor.createInputVectorArray(train_input_list, loadingPanel);
+		train_input = iProcessor.createInputVectorArray(train_input_list, bottomPane);
     	train_output = iProcessor.createOutputVectorArray(train_output_list);
     	
-    	test_input = iProcessor.createInputVectorArray(test_input_list, loadingPanel);
+    	test_input = iProcessor.createInputVectorArray(test_input_list, bottomPane);
     	test_output = convertOutputList(test_output_list);
     	
     	classifier.setTrainData(train_input, train_output);
     	classifier.setTestData(test_input, test_output);
+    	
+    	bottomPane.setStatus(count+" "+BottomPane.END_LOADING);
+    	//JOptionPane.showMessageDialog(appFrame, count +" images.");
     	
 	}
 	

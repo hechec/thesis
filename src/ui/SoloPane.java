@@ -1,30 +1,16 @@
 package ui;
 
-import imageProcessing.ImageProcessor;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
+import java.io.*;
+import javax.imageio.*;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import imageProcessing.ImageProcessor;
 import abcnn.Classifier;
-import abcnn.MLPNetwork;
 
 public class SoloPane extends JPanel {
 	
@@ -36,13 +22,13 @@ public class SoloPane extends JPanel {
 	private String[] classes = {"Green","Breaker","Turning","Pink","Light Red","Red"};
 	private boolean hasInput = false;
 	
-	private ABCNNPane abcnnPane;
+	private ABCNNTab abcnnPane;
 	private Classifier classifier;
 	
 	private BufferedImage forTesting;
 	ImageProcessor iProcessor = ImageProcessor.getInstance();
 	
-	public SoloPane(final ABCNNPane abcnnPane, JFileChooser chooser, Classifier classifier) {
+	public SoloPane(final ABCNNTab abcnnPane, JFileChooser chooser, Classifier classifier) {
 		setBounds(0, 0, 290, 442);
 		setLayout(null);
 		

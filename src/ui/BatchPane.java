@@ -1,31 +1,14 @@
 package ui;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JTextField;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import javax.swing.*;
+import java.awt.event.*;
 import java.io.File;
-
-import javax.swing.JTextArea;
-import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
-import javax.swing.UIManager;
 
 import abcnn.Classifier;
 import abcnn.Result;
-
 import dialogs.LoadingDialog;
-
 import util.ImageLoader;
-
-import javax.swing.JLabel;
-import javax.swing.JComboBox;
-import javax.swing.SwingConstants;
 
 public class BatchPane extends JPanel {
 	
@@ -37,7 +20,7 @@ public class BatchPane extends JPanel {
 	private JLabel result1, result2;
 	
 	private AppFrame appFrame;
-	private ABCNNPane abcnnPane;
+	private ABCNNTab abcnnPane;
 	private Classifier classifier;
 	
 	private ImageLoader iLoader;
@@ -51,8 +34,8 @@ public class BatchPane extends JPanel {
 	 * @param chooser 
 	 * @param classifier 
 	 */
-	public BatchPane(ABCNNPane abcnnPane, JFileChooser chooser, Classifier classifier) {
-		setBounds(0, 0, 290, 442);
+	public BatchPane(ABCNNTab abcnnPane, JFileChooser chooser, Classifier classifier) {
+		setBounds(0, 0, 300, 442);
 		setLayout(null);
 		
 		JButton btnTest = new JButton("TEST");
@@ -61,11 +44,11 @@ public class BatchPane extends JPanel {
 				batchTest();
 			}
 		});
-		btnTest.setBounds(0, 110, 276, 44);
+		btnTest.setBounds(0, 110, 300, 44);
 		add(btnTest);
 		
 		textField = new JTextField();
-		textField.setBounds(87, 72, 189, 27);
+		textField.setBounds(87, 72, 213, 27);
 		add(textField);
 		textField.setColumns(10);
 		textField.setFocusable(false);
@@ -94,24 +77,24 @@ public class BatchPane extends JPanel {
 		textArea.setEnabled(false);
 		
 		JScrollPane scrollPane = new JScrollPane(textArea);
-		scrollPane.setBounds(0, 165, 276, 145);
+		scrollPane.setBounds(0, 165, 300, 167);
 		add(scrollPane);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "RESULTS", TitledBorder.CENTER, TitledBorder.TOP, null, null));
-		panel.setBounds(0, 321, 279, 110);
+		panel.setBounds(0, 343, 300, 99);
 		add(panel);
 		panel.setLayout(null);
 		
 		result1 = new JLabel("--");
 		result1.setHorizontalAlignment(SwingConstants.CENTER);
-		result1.setBounds(10, 31, 259, 25);
+		result1.setBounds(10, 31, 280, 25);
 		panel.add(result1);
 		
 		result2 = new JLabel("--");
 		result2.setHorizontalAlignment(SwingConstants.CENTER);
-		result2.setBounds(10, 55, 259, 33);
+		result2.setBounds(10, 55, 280, 33);
 		panel.add(result2);
 		
 		JLabel lblSelectTestingSet = new JLabel("Select Testing Set:");
@@ -120,7 +103,7 @@ public class BatchPane extends JPanel {
 		
 		String[] string = {"Default", "Browse"};
 		final JComboBox comboBox = new JComboBox(string);
-		comboBox.setBounds(123, 14, 153, 28);
+		comboBox.setBounds(123, 14, 177, 28);
 		add(comboBox);
 		
 		comboBox.addActionListener(new ActionListener() {

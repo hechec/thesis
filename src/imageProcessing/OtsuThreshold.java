@@ -72,10 +72,12 @@ public class OtsuThreshold extends RGBManipulator
 	            //if( i == 36 )
 	            //	System.out.println( wF+" "+mF +" "+varBetween);
 	        }
+	        thresh = threshold;
 	        return threshold;
 	 }
 	 
-	 public static int[] hist;
+	 public static int[] hist = null;
+	 public static int thresh = 0;
 	 
 	 public static int[] imageHistogram(BufferedImage grayImage) 
 	 {

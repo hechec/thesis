@@ -10,7 +10,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JProgressBar;
 
 import ui.AppFrame;
-import ui.ABCNNPane;
+import ui.ABCNNTab;
 
 public class LoadingDialog extends JDialog {
 

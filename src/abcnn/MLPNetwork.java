@@ -1,11 +1,8 @@
 package abcnn;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import util.NetworkConfiguration;
-
-import com.sun.corba.se.spi.orbutil.fsm.Input;
+import static util.NNConstants.*;
 
 public class MLPNetwork {
 	
@@ -13,9 +10,9 @@ public class MLPNetwork {
 	private MLPLayer outputLayer;
 	private MLPLayer inputLayer;
 	private int NUMBER_OF_LAYERS = 3;
-	private int[] NODES_PER_LAYER = { NetworkConfiguration.NUMBER_OF_INPUT, 
-								      NetworkConfiguration.NODES_PER_HIDDEN, 
-								      NetworkConfiguration.NUMBER_OF_OUTPUT};
+	private int[] NODES_PER_LAYER = { NUMBER_OF_INPUT, 
+								      NODES_PER_HIDDEN, 
+								      NUMBER_OF_OUTPUT};
 	
 	private double[][] input_data;// = { {0, 0}, {0, 1}, {1, 0}, {1, 1} }; 
 	private double[][] output_data;// = { {0}, {1}, {1}, {0} };

@@ -15,7 +15,7 @@ import org.omg.CORBA.INTERNAL;
 
 import com.sun.xml.internal.ws.Closeable;
 
-import ui.ABCNNPane;
+import ui.ABCNNTab;
 import ui.AppFrame;
 
 import java.awt.event.ActionListener;
@@ -25,7 +25,7 @@ public class SettingDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 
-	private ABCNNPane abcnnPane;
+	private ABCNNTab abcnnPane;
 	
 	private ButtonGroup group;
 	
@@ -36,7 +36,7 @@ public class SettingDialog extends JDialog {
 	 * Create the dialog.
 	 * @param abcnnPane 
 	 */
-	public SettingDialog(ABCNNPane abcnnPane) {
+	public SettingDialog(ABCNNTab abcnnPane) {
 		setTitle("Settings");
 		this.abcnnPane = abcnnPane;
 		

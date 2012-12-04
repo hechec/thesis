@@ -1,14 +1,10 @@
 package util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-
+import java.io.*;
 import javax.swing.JOptionPane;
 
 import ui.AppFrame;
+import static util.NNConstants.*;
 
 /**
  * class that loads trained data to be used for classification
@@ -21,7 +17,7 @@ public class NNWeightsLoader {
 
 	private AppFrame appFrame;	
 	
-	private double[] weights = new double[NetworkConfiguration.DIMENSIONS];
+	private double[] weights = new double[DIMENSIONS];
 	
 	public NNWeightsLoader(AppFrame appFrame) {
 		this.appFrame = appFrame;

@@ -13,7 +13,7 @@ import javax.swing.JTextArea;
 
 import abcnn.Classifier;
 
-import ui.ABCNNPane;
+import ui.ABCNNTab;
 import ui.AppFrame;
 import ui.BatchPane;
 
@@ -52,7 +52,7 @@ public class ImageLoader{
 		loadData();
 	}
 	
-	public ImageLoader(ABCNNPane abcnnPane, BatchPane batchPane, String path, LoadingDialog prog) {
+	public ImageLoader(ABCNNTab abcnnPane, BatchPane batchPane, String path, LoadingDialog prog) {
 		this.batchPane = batchPane;
 		this.prog = prog;
 		folder = new File(path);

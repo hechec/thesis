@@ -1,65 +1,38 @@
 package ui;
 
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.*;
+import java.awt.Dimension;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+
+import java.awt.image.BufferedImage;
+
 import imageProcessing.BilinearInterpolation;
 import imageProcessing.ImageProcessor;
+import imageProcessing.OtsuThreshold;
 
-import java.awt.Dimension;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.border.TitledBorder;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
-import javax.swing.SwingConstants;
-
-
-public class ExtractionPane extends JPanel {
-	
+public class BGRemoverTab extends JPanel 
+{
 	private JFileChooser fc;
 	
 	private JPanel processPanel;
 	private JPanel featuresPanel = null;
-	
 	private JLabel inputLabel;
 	private JLabel outputLabel;
-	
 	private JLabel meanRLabel, meanGLabel, meanRGLabel, meanHLabel, meanALabel;
+	private JCheckBox chckbxShowHistogram;
 	
 	private BufferedImage inputImage;
-	
 	private ImageProcessor iProcessor = ImageProcessor.getInstance();
 	
-	//private ImageHandler iHandler = new ImageHandler();
+	private HistogramDialog histogramDialog;
 	
-	public ExtractionPane(JTextArea dArea) {
+	public BGRemoverTab(AppFrame appFrame) {
 		this.setLayout(null);
 		this.setSize(740, 600);
-		/*
-		iPane = new ImagePane();
-		iPane.setBounds(0, 0, 730, 400);
-		//add(iPane);
-		
-		JPanel inputPanel = new JPanel();
-		inputPanel.setBounds(27, 94, 253, 197);
-		//iPane.add(inputPanel);
-		
-		fPane = new FeaturesPane();
-		fPane.setBounds(392, 380, 199, 330);
-		//add(fPane);
-		*/
 		
 		JPanel inputPane = new JPanel();
 		inputPane.setBorder(new TitledBorder(null, "Input", TitledBorder.CENTER, TitledBorder.TOP, null, null));
@@ -108,7 +81,7 @@ public class ExtractionPane extends JPanel {
 		processPanel = new JPanel();
 		
 		JScrollPane scrollPane = new JScrollPane(processPanel);
-		scrollPane.setBounds(45, 330, 639, 229);
+		scrollPane.setBounds(44, 317, 639, 229);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		add(scrollPane);
@@ -180,9 +153,16 @@ public class ExtractionPane extends JPanel {
 		meanALabel.setBounds(86, 115, 66, 30);
 		featuresPanel.add(meanALabel);
 		
+		chckbxShowHistogram = new JCheckBox(" Show Histogram");
+		chckbxShowHistogram.setBounds(39, 553, 163, 23);
+		add(chckbxShowHistogram);
+		
 		FileFilter filter = new FileNameExtensionFilter("JPEG file", "jpg", "jpeg", "png", "gif");
 		fc = new JFileChooser();
 		fc.setFileFilter(filter);
+		
+		histogramDialog = new HistogramDialog();
+		
 	}
 	
 	private void selectImage() {
@@ -206,17 +186,16 @@ public class ExtractionPane extends JPanel {
 	
 	BufferedImage processed;
 	private void process() {
-		processed = iProcessor.process(inputImage);
-		outputLabel.setIcon(new ImageIcon(processed));
-		extractFeatures(processed);
-		showProcess();
-		
-		/*try {
-		    File outputfile = new File("C:/Users/hechec/Desktop/saved.jpeg");
-		    ImageIO.write(processed, "jpeg", outputfile);
-		} catch (IOException e) {
-		}*/
-		
+		if(inputImage != null) {
+			processed = iProcessor.process(inputImage);
+			outputLabel.setIcon(new ImageIcon(processed));
+			showFeatures(processed);
+			showProcess();
+			
+			if( chckbxShowHistogram.isSelected() ) {
+				histogramDialog.create(OtsuThreshold.hist, OtsuThreshold.thresh);
+			}
+		}
 	}
 	
 	private void showProcess() {
@@ -233,7 +212,7 @@ public class ExtractionPane extends JPanel {
 	
 	}
 
-	private void extractFeatures(BufferedImage image) {
+	private void showFeatures(BufferedImage image) {
 		meanRLabel.setText(""+iProcessor.computeMeanRed(image));
 		meanGLabel.setText(""+iProcessor.computeMeanGreen(image));
 		meanRGLabel.setText(""+iProcessor.computeMeanRG(image));
@@ -242,6 +221,7 @@ public class ExtractionPane extends JPanel {
 	}
 
 	private void reset() {
+		inputImage = null;
 		processPanel.removeAll();
 		inputLabel.setIcon(null);
 		outputLabel.setIcon(null);

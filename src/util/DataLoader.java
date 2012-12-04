@@ -11,8 +11,7 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
-import ui.ABCNNPane;
-import ui.LoadingPanel;
+import ui.ABCNNTab;
 
 import abcnn.Classifier;
 import dialogs.LoadingDialog;
@@ -45,19 +44,17 @@ public class DataLoader {
 	private LoadingDialog prog;
 	private ImageProcessor iProcessor = ImageProcessor.getInstance();
 	
-	private LoadingPanel loadingPanel;
 	
 	private int counter = 0;
 	
 	public DataLoader(Classifier classifier, LoadingDialog prog) {
 		this.classifier = classifier;
 		this.prog = prog;
-		loadingPanel = LoadingPanel.getInstance();
 	}
 	
 	public void load(final File file) {
 		final int max = countFiles(file);
-		loadingPanel.setMax(max*2);
+		//loadingPanel.setMax(max*2);
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -66,10 +63,10 @@ public class DataLoader {
 				
 				loadAllImages(file);
 				
-				training_input = iProcessor.createInputVectorArray(training_input_list, loadingPanel);
+				//training_input = iProcessor.createInputVectorArray(training_input_list, loadingPanel);
 	        	training_output = iProcessor.createOutputVectorArray(training_output_list);
 	        	
-	        	testing_input = iProcessor.createInputVectorArray(testing_input_list, loadingPanel);
+	        	//testing_input = iProcessor.createInputVectorArray(testing_input_list, loadingPanel);
 	        	convertOutputList();
 	        	
 	        	classifier.setPrepared(training_input, training_output);
@@ -108,7 +105,7 @@ public class DataLoader {
 				input_list.add(image);
 				output_list.add( Integer.parseInt(folder.getName()) );
 				
-				loadingPanel.increment();
+				//loadingPanel.increment();
 				counter++;
 				prog.setValue(counter);
 			} catch (IOException e) {

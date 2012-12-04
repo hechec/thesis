@@ -1,22 +1,10 @@
 package abcnn;
 
-import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Random;
-
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
 
-import ui.AppFrame;
-import ui.ABCNNPane;
-import util.FileTypeFilter;
+import ui.ABCNNTab;
 
 public class ABC extends Thread {
 	
@@ -51,14 +39,14 @@ public class ABC extends Thread {
 	private MLPNetwork[] networks;
 	private Random rand = new Random();
 		
-	private ABCNNPane abcnnPane;
+	private ABCNNTab abcnnPane;
 	private double[][] input_data;
 	private double[][] output_data;
 	
 	private JFileChooser chooser;
 	private Classifier classifier;
 	
-	public ABC(ABCNNPane abcnnPane, Classifier classifier, int runtime, int maxCycle, int foodNumber, int dimension) {
+	public ABC(ABCNNTab abcnnPane, Classifier classifier, int runtime, int maxCycle, int foodNumber, int dimension) {
 		this.abcnnPane = abcnnPane;
 		this.classifier = classifier;
 		
@@ -181,7 +169,7 @@ public class ABC extends Thread {
 
 	private void sendOnlookerBees() {
 		//System.out.println("Onlooker Bees:");
-		int t = 0, i = 0;
+		/*int t = 0, i = 0;
 		double r;
 		while( t < foodNumber ) {
 			r = (   (double)Math.random()*32767 / ((double)(32767)+(double)(1)) );
@@ -194,16 +182,17 @@ public class ABC extends Thread {
 			i++;
 			if(i == foodNumber)
 	        	i = 0;
-		}
-		/*int onlookerSize;
+		}*/
+		int onlookerSize;
 		for( int i = 0; i < foodNumber; i++ ) {
 			onlookerSize = (int)(prob[i] * foodNumber);
+			
 			for( int j = 0; j < onlookerSize; j++ ) {
 				neighborhoodSearch(i);
 				evaluatePopulation();
 				greedySelection(i);
 			}
-		}	*/
+		}
 	}
 
 	private void sendScoutBees() {

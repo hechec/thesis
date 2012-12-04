@@ -1,7 +1,7 @@
 package util;
 
-public class NetworkConfiguration {
-
+public interface NNConstants 
+{
 	public static final int DIMENSIONS = 126;
 	
 	public static final int NUMBER_OF_INPUT = 5;

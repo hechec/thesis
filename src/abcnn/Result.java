@@ -1,8 +1,7 @@
 package abcnn;
 
-
-public class Result {
-	
+public class Result 
+{
 	private int[] expected;
 	private int[] actual;
 	
@@ -32,7 +31,8 @@ public class Result {
 		return actual[index];
 	}
 
-	public int getScore() {
+	public int getScore() 
+	{
 		int score = 0;
 		for( int i = 0; i < size(); i++ )
 			score += expected[i] == actual[i] ? 1 : 0;
