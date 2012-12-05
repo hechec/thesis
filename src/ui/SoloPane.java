@@ -29,17 +29,17 @@ public class SoloPane extends JPanel {
 	ImageProcessor iProcessor = ImageProcessor.getInstance();
 	
 	public SoloPane(final ABCNNTab abcnnPane, JFileChooser chooser, Classifier classifier) {
-		setBounds(0, 0, 290, 442);
+		setBounds(15, 0, 300, 442);
 		setLayout(null);
 		
 		JPanel resultsPane = new JPanel();
-		resultsPane.setBounds(0, 281, 278, 110);
+		resultsPane.setBounds(0, 310, 300, 110);
 		add(resultsPane);
 		resultsPane.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "RESULT", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		resultsPane.setLayout(null);
 		
 		JPanel inputPanel = new JPanel();
-		inputPanel.setBounds(0, 11, 280, 210);
+		inputPanel.setBounds(0, 39, 300, 210);
 		add(inputPanel);
 		inputPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "INPUT IMAGE", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		
@@ -47,11 +47,11 @@ public class SoloPane extends JPanel {
 		inputPanel.add(inputLabel);
 		
 		JButton btnBrowse = new JButton("CUSTOM");
-		btnBrowse.setBounds(0, 232, 89, 27);
+		btnBrowse.setBounds(0, 260, 89, 27);
 		add(btnBrowse);
 		
 		JButton classifyButton = new JButton("CLASSIFY");
-		classifyButton.setBounds(192, 232, 89, 27);
+		classifyButton.setBounds(211, 260, 89, 27);
 		add(classifyButton);
 		classifyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

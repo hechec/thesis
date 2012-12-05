@@ -55,12 +55,12 @@ public class Classifier
 		this.test_expected = test_output;
 	}
 	
-	public void train(int runtime, int maxCycle, int populationSize)
+	public void train(int runtime, int maxCycle, int employedBeeSize, int onlookerBeeSize)
 	{
 		if(isPrepared) {
 			abcnnPane.getBottomPane().setStatus(BottomPane.START_TRAINING);
 			abcnnPane.initComponents();
-			abc = new ABC( abcnnPane, this, runtime, maxCycle, populationSize, DIMENSIONS); 
+			abc = new ABC( abcnnPane, this, runtime, maxCycle, employedBeeSize, onlookerBeeSize, DIMENSIONS); 
 			abc.setTrainingData(train_input, train_output);
 			abc.start();
 		}

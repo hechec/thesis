@@ -61,6 +61,12 @@ public class BottomPane extends JPanel
 		this.updateUI();
 	}
 	
+	public void reset() {
+		lblStatus.setText("--");
+		progressBar.setValue(0);
+		this.updateUI();
+	}
+	
 	public void setStatus(String status)
 	{
 		lblStatus.setText(status);

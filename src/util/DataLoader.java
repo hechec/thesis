@@ -7,11 +7,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
 import ui.ABCNNTab;
+import ui.BottomPane;
 
 import abcnn.Classifier;
 import dialogs.LoadingDialog;
@@ -24,7 +26,7 @@ import dialogs.LoadingDialog;
 
 public class DataLoader {
 	
-	private double[][] training_input;
+	/*private double[][] training_input;
 	private double[][] training_output;
 
 	private double[][] testing_input;
@@ -35,6 +37,17 @@ public class DataLoader {
 	
 	private ArrayList<BufferedImage> testing_input_list = new ArrayList<BufferedImage>();
 	private ArrayList<Integer> testing_output_list = new ArrayList<Integer>();
+	*/
+	private double[][] train_input;
+	private double[][] train_output;
+	private double[][] test_input;
+	private int[] test_output;
+
+	private ArrayList<BufferedImage> train_input_list = new ArrayList<BufferedImage>();
+	private ArrayList<Integer> train_output_list = new ArrayList<Integer>();
+	
+	private ArrayList<BufferedImage> test_input_list = new ArrayList<BufferedImage>();
+	private ArrayList<Integer> test_output_list = new ArrayList<Integer>();
 	
 	private static final float TRAINING_PERCENTAGE = 0.7f;
 	
@@ -43,17 +56,28 @@ public class DataLoader {
 	private Classifier classifier;
 	private LoadingDialog prog;
 	private ImageProcessor iProcessor = ImageProcessor.getInstance();
-	
+	private BottomPane bottomPane;
+	private File file;
 	
 	private int counter = 0;
+	private int count = 0;
 	
 	public DataLoader(Classifier classifier, LoadingDialog prog) {
 		this.classifier = classifier;
 		this.prog = prog;
 	}
 	
+	public DataLoader(BottomPane bottomPane, Classifier classifier, File file) {
+		this.classifier = classifier;
+		this.bottomPane = bottomPane;
+		this.file = file;
+		
+		count = countFiles(file);
+		bottomPane.setProgressBarMax(count*2);
+	}
+
 	public void load(final File file) {
-		final int max = countFiles(file);
+		//final int max = countFiles(file);
 		//loadingPanel.setMax(max*2);
 		new Thread(new Runnable() {
 			@Override
@@ -63,16 +87,25 @@ public class DataLoader {
 				
 				loadAllImages(file);
 				
+				train_input = iProcessor.createInputVectorArray(train_input_list, bottomPane);
+		    	train_output = iProcessor.createOutputVectorArray(train_output_list);
+
+		    	test_input = iProcessor.createInputVectorArray(test_input_list, bottomPane);
+		    	test_output = convertOutputList(test_output_list);
+		    	
+		    	classifier.setTrainData(train_input, train_output);
+		    	classifier.setTestData(test_input, test_output);
 				//training_input = iProcessor.createInputVectorArray(training_input_list, loadingPanel);
-	        	training_output = iProcessor.createOutputVectorArray(training_output_list);
+	        	//training_output = iProcessor.createOutputVectorArray(training_output_list);
 	        	
 	        	//testing_input = iProcessor.createInputVectorArray(testing_input_list, loadingPanel);
-	        	convertOutputList();
+	        	//convertOutputList();
 	        	
-	        	classifier.setPrepared(training_input, training_output);
+	        	//classifier.setPrepared(training_input, training_output);
 	        	
-	        	prog.dispose();
-	        	JOptionPane.showMessageDialog(null,  max+" images has been loaded.");
+	        	//prog.dispose();
+		    	bottomPane.setStatus(count+" "+BottomPane.END_LOADING);
+	        	JOptionPane.showMessageDialog(null,  count+" images has been loaded.");
 	        	
 			}
 		}).start();
@@ -87,8 +120,8 @@ public class DataLoader {
 	        	int[] indices_training = randomizeIndices(total);
 	        	int[] indices_testing = getOtherIndices(indices_training, total);
 	        	
-	        	loadDataSet(fileEntry, indices_training, training_input_list, training_output_list);
-	        	loadDataSet(fileEntry, indices_testing, testing_input_list, testing_output_list);
+	        	loadDataSet(fileEntry, indices_training, train_input_list, train_output_list);
+	        	loadDataSet(fileEntry, indices_testing, test_input_list, test_output_list);
 	        }
 	}
 	
@@ -105,9 +138,10 @@ public class DataLoader {
 				input_list.add(image);
 				output_list.add( Integer.parseInt(folder.getName()) );
 				
+				bottomPane.incrementBar();
 				//loadingPanel.increment();
-				counter++;
-				prog.setValue(counter);
+				//counter++;
+				//prog.setValue(counter);
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (NumberFormatException e) {
@@ -116,11 +150,19 @@ public class DataLoader {
 		} 
 	}
 	
-	private void convertOutputList() {
-		int size = testing_output_list.size();
-		expectedOutput = new int[size];
+	private int[] convertOutputList(ArrayList<Integer> test_output_list) {
+		int size = test_output_list.size();
+		int[] expectedOutput = new int[size];
 		for( int i = 0; i < size; i++ )
-			expectedOutput[i] = testing_output_list.get(i)-1;
+			expectedOutput[i] = test_output_list.get(i)-1;
+		return expectedOutput;
+	}
+	
+	private void convertOutputList() {
+		//int size = testing_output_list.size();
+		//expectedOutput = new int[size];
+		//for( int i = 0; i < size; i++ )
+		//	expectedOutput[i] = testing_output_list.get(i)-1;
 	}
 
 	private int[] randomizeIndices(int total) {
@@ -166,19 +208,19 @@ public class DataLoader {
 	}
 	
 	public double[][] getTrainingInput() {
-		return training_input;
+		return null;//training_input;
 	}
 	
 	public double[][] getTrainingOutput() {
-		return training_output;
+		return null;//training_output;
 	}
 	
 	public double[][] getTestingInput() {
-		return testing_input;
+		return null;//testing_input;
 	}
 	
 	public int[] getTestingOutput() {
-		return expectedOutput;
+		return null;//expectedOutput;
 	}
 
 }

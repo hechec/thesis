@@ -35,7 +35,7 @@ public class BatchPane extends JPanel {
 	 * @param classifier 
 	 */
 	public BatchPane(ABCNNTab abcnnPane, JFileChooser chooser, Classifier classifier) {
-		setBounds(0, 0, 300, 442);
+		setBounds(15, 0, 300, 442);
 		setLayout(null);
 		
 		JButton btnTest = new JButton("TEST");

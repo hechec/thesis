@@ -10,10 +10,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
-import ui.ABCNNTab;
-import ui.AppFrame;
 import ui.BottomPane;
-
 import abcnn.Classifier;
 
 public class FixedDataLoader
@@ -50,7 +47,8 @@ public class FixedDataLoader
 		bottomPane.setProgressBarMax(count*2);
 	}
 	
-	private void loadAllImages(final File folder, ArrayList<BufferedImage> train_input_list, ArrayList<Integer> train_output_list) {
+	private void loadAllImages(final File folder, ArrayList<BufferedImage> train_input_list, ArrayList<Integer> train_output_list) 
+	{
 		for (final File fileEntry : folder.listFiles()) {
 	        if (fileEntry.isDirectory()) 
 	        	loadAllImages(fileEntry, train_input_list, train_output_list);
@@ -75,7 +73,8 @@ public class FixedDataLoader
 		}
 	}
 	
-	private int countFiles(File folder) {
+	private int countFiles(File folder) 
+	{
 		int ctr = 0;
 		for (final File fileEntry : folder.listFiles()) {
 	        if (fileEntry.isDirectory())  
@@ -109,7 +108,7 @@ public class FixedDataLoader
     	classifier.setTestData(test_input, test_output);
     	
     	bottomPane.setStatus(count+" "+BottomPane.END_LOADING);
-    	//JOptionPane.showMessageDialog(appFrame, count +" images.");
+    	JOptionPane.showMessageDialog(null, "Loaded "+count +" images.");
     	
 	}
 	

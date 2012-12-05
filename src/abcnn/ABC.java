@@ -8,14 +8,15 @@ import ui.ABCNNTab;
 
 public class ABC extends Thread {
 	
-	private int runtime 	 = 0,
-				maxCycle 	 = 0,
-				dimension 	 = 0,
-				foodNumber 	 = 0,
-				param2change = 0,
-				neighbour 	 = 0,
-				limit		 = 0,
-				bestIndex	 = 0;
+	private int runtime 	 	= 0,
+				maxCycle 	 	= 0,
+				dimension 		 = 0,
+				employedBeeSize = 0,
+				onlookerBeeSize = 0,
+				param2change 	= 0,
+				neighbour 	 	= 0,
+				limit			= 0,
+				bestIndex	 	= 0;
 	
 	private double GlobalMin 	= 0,
 			       lb 		 	= -1.0,
@@ -46,27 +47,28 @@ public class ABC extends Thread {
 	private JFileChooser chooser;
 	private Classifier classifier;
 	
-	public ABC(ABCNNTab abcnnPane, Classifier classifier, int runtime, int maxCycle, int foodNumber, int dimension) {
+	public ABC(ABCNNTab abcnnPane, Classifier classifier, int runtime, int maxCycle, int employedBeeSize, int onlookerBeeSize, int dimension) {
 		this.abcnnPane = abcnnPane;
 		this.classifier = classifier;
 		
 		this.runtime = runtime;
 		this.maxCycle = maxCycle;
 		this.dimension = dimension;
-		this.foodNumber = foodNumber;
+		this.employedBeeSize = employedBeeSize;
+		this.onlookerBeeSize = onlookerBeeSize;
 		
-		MSE = new double[foodNumber];
+		MSE = new double[employedBeeSize];
 		solution = new double[dimension];
 		GlobalParams = new double[dimension];
 		GlobalMins = new double[runtime];
-		fitness = new double[foodNumber];
-		prob = new double[foodNumber];
-		trial = new double[foodNumber];    
+		fitness = new double[employedBeeSize];
+		prob = new double[employedBeeSize];
+		trial = new double[employedBeeSize];    
 		
-		Foods = new double[foodNumber][dimension];
+		Foods = new double[employedBeeSize][dimension];
 		Params = new double[runtime][dimension];
 		
-		networks = new MLPNetwork[foodNumber];
+		networks = new MLPNetwork[employedBeeSize];
 		
 		limit = dimension;//foodNumber*dimension;
 	}
@@ -128,7 +130,7 @@ public class ABC extends Thread {
 	 *  initialize all food sources / networks
 	 */
 	private void initializePopulation() {
-		for( int i = 0; i < foodNumber; i++ )
+		for( int i = 0; i < employedBeeSize; i++ )
 			initializeEachFood(i);
 		GlobalMin = MSE[0];
 		for( int j = 0; j < dimension; j++ )
@@ -150,7 +152,7 @@ public class ABC extends Thread {
 	}
 
 	private void memorizeBestSource() {
-		for( int i = 0; i < foodNumber; i++ ) 
+		for( int i = 0; i < employedBeeSize; i++ ) 
 			if( MSE[i] < GlobalMin ) {
 				GlobalMin = MSE[i];
 				for( int j = 0;j < dimension; j++)
@@ -160,7 +162,7 @@ public class ABC extends Thread {
 	
 	private void sendEmployedBees() {
 		//System.out.println("Employed Bees:");
-		for( int i = 0; i < foodNumber; i++ ) {
+		for( int i = 0; i < employedBeeSize; i++ ) {
 			neighborhoodSearch(i);
 			evaluatePopulation();
 			greedySelection(i);
@@ -183,21 +185,25 @@ public class ABC extends Thread {
 			if(i == foodNumber)
 	        	i = 0;
 		}*/
-		int onlookerSize;
-		for( int i = 0; i < foodNumber; i++ ) {
-			onlookerSize = (int)(prob[i] * foodNumber);
-			
-			for( int j = 0; j < onlookerSize; j++ ) {
-				neighborhoodSearch(i);
-				evaluatePopulation();
-				greedySelection(i);
+		
+		for( int i = 0; i < employedBeeSize; i++ ) {
+			double r = (   (double)Math.random()*32767 / ((double)(32767)+(double)(1)) );
+			if( r < prob[i]  ) {
+				int maxOnlooker = (int)(prob[i] * onlookerBeeSize);
+				
+				for( int j = 0; j < maxOnlooker; j++ ) {
+					neighborhoodSearch(i);
+					evaluatePopulation();
+					greedySelection(i);
+				}
 			}
 		}
 	}
 
-	private void sendScoutBees() {
+	private void sendScoutBees() 
+	{
 		int maxtrialindex = 0;
-		for( int i=1; i < foodNumber; i++ ) {
+		for( int i=1; i < employedBeeSize; i++ ) {
 			if(trial[i] > trial[maxtrialindex])
 				maxtrialindex = i;
 		}
@@ -221,9 +227,9 @@ public class ABC extends Thread {
 		double r = ((double) Math.random()*32767 / ((double)(32767)+(double)(1)) );
         param2change = (int)(r * dimension);
         
-        neighbour = rand.nextInt(foodNumber);
+        neighbour = rand.nextInt(employedBeeSize);
         while( neighbour == foodIndex ) 
-        	neighbour = rand.nextInt(foodNumber);
+        	neighbour = rand.nextInt(employedBeeSize);
         
         for( int j = 0; j < dimension; j++ )
         	solution[j] = Foods[foodIndex][j];
@@ -266,12 +272,12 @@ public class ABC extends Thread {
 
 	private void calculateProbabilities() {
 		 double maxfit = fitness[0];
-		    for( int i = 1; i < foodNumber; i++ ) {
+		    for( int i = 1; i < employedBeeSize; i++ ) {
 		    	if(fitness[i] > maxfit)
 		    		maxfit = fitness[i];
 		    }
 
-		    for(int i = 0; i < foodNumber; i++ )
+		    for(int i = 0; i < employedBeeSize; i++ )
 		    	prob[i] = (0.9*(fitness[i]/maxfit))+0.1;
 		
 	}
@@ -294,7 +300,7 @@ public class ABC extends Thread {
 		int maxCycle = 1000;
 		int dimension = 126;
 		int foodNumber = 1;
-		ABC abc = new ABC(null, null, runtime, maxCycle, foodNumber, dimension);
+		ABC abc = new ABC(null, null, runtime, maxCycle, foodNumber, 10, dimension);
 		abc.run();
 		
 		//double[] input = {0, 1};

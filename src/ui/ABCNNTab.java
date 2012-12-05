@@ -15,6 +15,7 @@ import javax.swing.filechooser.FileFilter;
 import dialogs.SettingDialog;
 import abcnn.Classifier;
 import ui.dialogs.Settings;
+import util.DataLoader;
 import util.FileTypeFilter;
 import util.FixedDataLoader;
 import util.NNWeightsLoader;
@@ -29,13 +30,12 @@ public class ABCNNTab extends JPanel
 	private JButton loadB, prepareB, trainB, resetB;
 	private JPanel userdefinedPanel, randomPanel, tPane, leftPane;
 	
-	private JSpinner employedSpinner, cycleSpinner, runtimeSpinner;
+	private JSpinner employedSpinner, onlookerSpinner, cycleSpinner, runtimeSpinner;
 	
 	private JProgressBar cycleBar;
 	private JProgressBar runtimeBar;
 	private JTextField randomTextField;
 	
-	//private String[] testingTypes = {"Batch", "One by One"};
 	private double[] weights = new double[DIMENSIONS];
 	private NNWeightsLoader fileLoader;
 	
@@ -162,9 +162,9 @@ public class ABCNNTab extends JPanel
 		paramPanel.setBorder(new TitledBorder(null, "ABC Parameters", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		paramPanel.setLayout(null);
 		
-		JLabel lblEmployedBees = new JLabel("Population Size:");
+		JLabel lblEmployedBees = new JLabel("Employed Bees:");
 		lblEmployedBees.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblEmployedBees.setBounds(11, 30, 111, 20);
+		lblEmployedBees.setBounds(0, 30, 111, 20);
 		paramPanel.add(lblEmployedBees);
 		
 		JLabel lblMacCycle = new JLabel("cycle:");
@@ -178,28 +178,38 @@ public class ABCNNTab extends JPanel
 		paramPanel.add(lblRuntime);
 		
 		employedSpinner = new JSpinner();
-		employedSpinner.setModel(new SpinnerNumberModel(new Integer(10), null, null, new Integer(1)));
-		employedSpinner.setBounds(132, 28, 50, 24);
+		employedSpinner.setModel(new SpinnerNumberModel(new Integer(10), 1, null, new Integer(1)));
+		employedSpinner.setBounds(121, 30, 50, 24);
 		paramPanel.add(employedSpinner);
+
+		JLabel lblOnlookerBees = new JLabel("Onlooker Bees:");
+		lblOnlookerBees.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblOnlookerBees.setBounds(0, 78, 111, 20);
+		paramPanel.add(lblOnlookerBees);
 		
-		JLabel lblMacCycle_1 = new JLabel("Mac Cycle:");
+		onlookerSpinner = new JSpinner();
+		onlookerSpinner.setModel(new SpinnerNumberModel(new Integer(10), 1, null, new Integer(1)));
+		onlookerSpinner.setBounds(121, 78, 50, 24);
+		paramPanel.add(onlookerSpinner);
+		
+		JLabel lblMacCycle_1 = new JLabel("Max Cycle:");
 		lblMacCycle_1.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblMacCycle_1.setBounds(21, 76, 101, 20);
+		lblMacCycle_1.setBounds(155, 30, 101, 20);
 		paramPanel.add(lblMacCycle_1);
 		
 		JLabel lblRuntime_1 = new JLabel("Runtime:");
 		lblRuntime_1.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblRuntime_1.setBounds(169, 28, 88, 24);
+		lblRuntime_1.setBounds(168, 74, 88, 24);
 		paramPanel.add(lblRuntime_1);
 		
 		cycleSpinner = new JSpinner();
-		cycleSpinner.setModel(new SpinnerNumberModel(new Integer(500), null, null, new Integer(1)));
-		cycleSpinner.setBounds(132, 74, 50, 24);
+		cycleSpinner.setModel(new SpinnerNumberModel(new Integer(500), 1, null, new Integer(1)));
+		cycleSpinner.setBounds(266, 28, 50, 24);
 		paramPanel.add(cycleSpinner);
 		
 		runtimeSpinner = new JSpinner();
-		runtimeSpinner.setModel(new SpinnerNumberModel(new Integer(1), null, null, new Integer(1)));
-		runtimeSpinner.setBounds(267, 28, 50, 24);
+		runtimeSpinner.setModel(new SpinnerNumberModel(new Integer(1), 1, null, new Integer(1)));
+		runtimeSpinner.setBounds(266, 74, 50, 24);
 		paramPanel.add(runtimeSpinner);
 		
 		cycleBar = new JProgressBar();
@@ -244,8 +254,10 @@ public class ABCNNTab extends JPanel
 		tPane.setLayout(null);
 		batchPane = new BatchPane(this, chooser, classifier);
 		tPane.add(batchPane);
+		batchPane.setVisible(false);
 		
 		soloPane = new SoloPane(this, chooser, classifier);
+		tPane.add(soloPane);
 	}
 
 	/**
@@ -277,6 +289,7 @@ public class ABCNNTab extends JPanel
 		prepareB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				bottomPane.reset();
 				
 				if(Settings.dataSelection == Settings.USER_DEFINED_DATA) {
 					if( !trainDataTextField.getText().equals("") && !testDataTextField.getText().equals("") ) {
@@ -294,11 +307,11 @@ public class ABCNNTab extends JPanel
 						JOptionPane.showMessageDialog(appFrame, "Oooops. Please select data locations.", "Warning", JOptionPane.WARNING_MESSAGE);
 				}
 				else {
-					
+					bottomPane.setStatus(BottomPane.START_LOADING);
+					File file = new File(""+randomTextField.getText());
+					DataLoader dataLoader = new DataLoader(bottomPane, classifier, file);
+					dataLoader.load(file);
 				}
-				
-				//prepareTrainingData();
-				//classifier.loadImages();
 			}
 		});
 		
@@ -355,7 +368,8 @@ public class ABCNNTab extends JPanel
 		trainB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				classifier.train((int)runtimeSpinner.getValue(), (int)cycleSpinner.getValue(), (int)employedSpinner.getValue());
+				classifier.train( (int)runtimeSpinner.getValue(), (int)cycleSpinner.getValue(), 
+								  (int)employedSpinner.getValue(), (int)onlookerSpinner.getValue());
 			}
 		});
 		
@@ -499,5 +513,14 @@ public class ABCNNTab extends JPanel
 			userdefinedPanel.setVisible(false);
 			randomPanel.setVisible(true);
 		}
+		if(testBy == Settings.BATCH_TEST) {
+			soloPane.setVisible(false);
+			batchPane.setVisible(true);
+		}
+		else {
+			batchPane.setVisible(false);
+			soloPane.setVisible(true);
+		}
+		
 	}
 }

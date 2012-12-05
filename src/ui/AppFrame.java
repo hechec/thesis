@@ -50,7 +50,9 @@ public class AppFrame extends JFrame
 		resizerTab = new ResizerTab(this);
 		
 		tabbedPane = new ClosableTabbedPane(this);
-		tabbedPane.addTabb("ABC+NN", abcnnTab);
+		tabbedPane.setFocusable(false);
+		tabbedPane.addTabb("Toto-Bee Main", abcnnTab);
+		
 		//tabbedPane.addTabb("Extraction", extractionTab);
 		
 		tabs.add(abcnnTab);
