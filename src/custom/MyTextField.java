@@ -25,7 +25,7 @@ public class MyTextField extends JTextField{
 	        Graphics2D g2 = (Graphics2D)g.create();
 	        //g2.setBackground(Color.LIGHT_GRAY);
 	        g2.setColor(Color.GRAY);
-	        g2.setFont(new Font("Calibri", Font.ITALIC, 14));
+	        g2.setFont(new Font("Tahoma", Font.ITALIC, 13));
 	        g2.drawString(placeHolder, 5, 18); //figure out x, y from font's FontMetrics and size of component.
 	        g2.dispose();
 	    }

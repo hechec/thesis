@@ -1,19 +1,19 @@
-package imageProcessing;
+package image_processing;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import ui.BottomPane;
-import static util.NNConstants.*;
+import abcnn.NNConstants;
 
-public class ImageProcessor 
+import ui.BottomPane;
+
+public class ImageProcessor implements NNConstants
 {
 	
 	private static ImageProcessor instance = null;
 	private BackgroundRemover bRemover = null;
-	private FeatureExtractor fExtractor = null;
 	
 	public static final int WIDTH = 200;
 	public static final int HEIGHT = 200;
@@ -23,7 +23,6 @@ public class ImageProcessor
 	public ImageProcessor() 
 	{
 		bRemover = BackgroundRemover.getInstance();
-		fExtractor = FeatureExtractor.getInstance();
 	}
 	
 	public static ImageProcessor getInstance() 
@@ -65,33 +64,6 @@ public class ImageProcessor
 		return cropped;
 	}
 	
-	/*******************************************/
-	/*	    getters to FeatureExtractor        */ 
-	/*******************************************/
-	public double computeMeanRed(BufferedImage image) 
-	{
-		return fExtractor.computeMeanRed(image);
-	}
-	
-	public double computeMeanGreen(BufferedImage image) 
-	{
-		return fExtractor.computeMeanGreen(image);
-	}
-	
-	public double computeMeanRG(BufferedImage image) 
-	{
-		return fExtractor.computeMeanRG(image);
-	}
-	
-	public double computeMeanA(BufferedImage image) 
-	{
-		return fExtractor.computeMeanA(image);
-	}
-	
-	public double computeMeanHue(BufferedImage image) 
-	{
-		return fExtractor.computeMeanHue(image);
-	}
 	
 	/*******************************************/
 	/*		getters to BackgroundRemover       */ 
@@ -120,6 +92,12 @@ public class ImageProcessor
 		return bRemover.getSegmented();
 	}
 	
+	/**
+	 * creates a vector of features for each image 
+	 * @param input_data
+	 * @param bottomPane
+	 * @return
+	 */
 	public double[][] createInputVectorArray(ArrayList<BufferedImage> input_data, BottomPane bottomPane) {
 		int patternSize = input_data.size();
 		double[][] inputArray = new double[patternSize][NUMBER_OF_INPUT];
@@ -134,7 +112,12 @@ public class ImageProcessor
 		return inputArray;
 	}
 	
-	public double[][] createOutputVectorArray(ArrayList<Integer> output_data) {
+	/**
+	 * creates a vector and sets the corresponding class index to 1, other to 0  
+	 * @param output_data
+	 * @return 
+	 */
+	public double[][] createOutputVector(ArrayList<Integer> output_data) {
 		int patternSize = output_data.size();
 		double[][] outputArray = new double[patternSize][NUMBER_OF_OUTPUT];
 		
@@ -145,15 +128,19 @@ public class ImageProcessor
 		return outputArray;
 	}
 	
-	
-	public double[] getFeatures(BufferedImage extractedInput) {
+	/**
+	 * extracts color features of an image 
+	 * @param processedImage
+	 * @return feature vector
+	 */
+	public double[] getFeatures(BufferedImage processedImage) {
 		double[] features = new double[NUMBER_OF_INPUT];
 		
-		features[0] = computeMeanRG(extractedInput);
-		features[1] = computeMeanRed(extractedInput);
-		features[2] = computeMeanHue(extractedInput);
-		features[3] = computeMeanGreen(extractedInput);
-		features[4] = computeMeanA(extractedInput);		
+		features[0] = FeatureExtractor.computeMeanRG(processedImage);
+		features[1] = FeatureExtractor.computeMeanRed(processedImage);
+		features[2] = FeatureExtractor.computeMeanHue(processedImage);
+		features[3] = FeatureExtractor.computeMeanGreen(processedImage);
+		features[4] = FeatureExtractor.computeMeanA(processedImage);		
 		
 		return features;
 	}

@@ -1,4 +1,4 @@
-package util;
+package abcnn;
 
 public interface NNConstants 
 {

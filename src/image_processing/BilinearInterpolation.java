@@ -1,10 +1,10 @@
-package imageProcessing;
+package image_processing;
 
 import java.awt.FlowLayout;
 import java.awt.image.BufferedImage;
-import java.io.File;
-
 import javax.swing.*;
+
+import static image_processing.ImageUtility.*;
 
 public class BilinearInterpolation {
 	
@@ -12,7 +12,7 @@ public class BilinearInterpolation {
 	{
 		BufferedImage resized = null;
 		
-		int[] pixels = toArray(image);
+		int[] pixels = to1DArray(image);
 		//int[] newPixels = resizeNearestNeighbor(pixels, image.getWidth(), image.getHeight(), w, h);
 		int[] newPixels = resizeBilinear(pixels, image.getWidth(), image.getHeight(), w, h);
 		
@@ -84,66 +84,22 @@ public class BilinearInterpolation {
 	    }                
 	    return temp ;
 	}
-	
-	public static int[] toArray(BufferedImage image)
-	{
-		int[] pixels = new int[image.getWidth()*image.getHeight()];
-		int ctr = 0;
-		for( int i = 0; i < image.getHeight(); i++  )
-			for( int j = 0; j < image.getWidth(); j++ ){
-				//System.out.println( i+" "+j );
-				pixels[ctr++] = image.getRGB(j, i);
-			}
-		return pixels;
-	}
-	
-	public static BufferedImage toImage(int[] pixels, int w, int h)
-	{
-		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-		
-		for( int ctr = 0, j = 0, i = 0 ; ctr < pixels.length;j++, ctr++ ) {
-			if( ctr > 0 && (ctr) % w == 0 ) { // w or h ?
- 				j = 0;
-				i++;
-			}		
-			//System.out.println(ctr+" "+i+" "+j);
-			image.setRGB(j, i, pixels[ctr]);
-		}
-			
-		
-		return image;
-	}
-	
-	public static void main(String[] args) {
+		public static void main(String[] args) {
 		BufferedImage image = null;
-		File file = new File("C:/Users/hechec/Desktop/saved.jpeg");
-		/*try {
-			image  = ImageIO.read(file);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
-		
-		image = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB);
-		
+		image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+	
 		for( int y = 0; y < image.getHeight(); y++ )
 			for( int x = 0; x < image.getWidth(); x++ ){
 				int rgb = (100+x+y)<<16|(100+x+y)<<8|(100+x+y);
 				image.setRGB(x, y, rgb);	
 			}
-				
+		
+		int[] pixels = to1DArray(image);
+		
+		int[] newPixels = resizeBilinear(pixels, image.getWidth(), image.getHeight(), 50, 50);
 		
 		
-		//System.out.println( image.getWidth() +" "+image.getHeight() );
-		
-		int[] pixels = toArray(image);
-		
-		int[] newPixels = resizeBilinear(pixels, image.getWidth(), image.getHeight(), 2, 2);
-		
-		//System.out.println( newPixels.length );
-		
-		//System.out.println( newPixels[39999] );
-		
-		BufferedImage resized = toImage(newPixels, 2, 2);
+		BufferedImage resized = toImage(newPixels, 50, 50);
 		
 		JFrame frame = new JFrame();
 		frame.getContentPane().setLayout(new FlowLayout());

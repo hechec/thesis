@@ -8,11 +8,14 @@ import java.awt.Dimension;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
+import ui.dialogs.Histogram;
+
 import java.awt.image.BufferedImage;
 
-import imageProcessing.BilinearInterpolation;
-import imageProcessing.ImageProcessor;
-import imageProcessing.OtsuThreshold;
+import image_processing.BilinearInterpolation;
+import image_processing.FeatureExtractor;
+import image_processing.ImageProcessor;
+import image_processing.OtsuThreshold;
 
 public class BGRemoverTab extends JPanel 
 {
@@ -28,7 +31,7 @@ public class BGRemoverTab extends JPanel
 	private BufferedImage inputImage;
 	private ImageProcessor iProcessor = ImageProcessor.getInstance();
 	
-	private HistogramDialog histogramDialog;
+	private Histogram histogramDialog;
 	
 	public BGRemoverTab(AppFrame appFrame) {
 		this.setLayout(null);
@@ -161,7 +164,7 @@ public class BGRemoverTab extends JPanel
 		fc = new JFileChooser();
 		fc.setFileFilter(filter);
 		
-		histogramDialog = new HistogramDialog();
+		histogramDialog = new Histogram();
 		
 	}
 	
@@ -213,11 +216,11 @@ public class BGRemoverTab extends JPanel
 	}
 
 	private void showFeatures(BufferedImage image) {
-		meanRLabel.setText(""+iProcessor.computeMeanRed(image));
-		meanGLabel.setText(""+iProcessor.computeMeanGreen(image));
-		meanRGLabel.setText(""+iProcessor.computeMeanRG(image));
-		meanHLabel.setText(""+iProcessor.computeMeanHue(image));
-		meanALabel.setText(""+iProcessor.computeMeanA(image));
+		meanRLabel.setText(""+FeatureExtractor.computeMeanRed(image));
+		meanGLabel.setText(""+FeatureExtractor.computeMeanGreen(image));
+		meanRGLabel.setText(""+FeatureExtractor.computeMeanRG(image));
+		meanHLabel.setText(""+FeatureExtractor.computeMeanHue(image));
+		meanALabel.setText(""+FeatureExtractor.computeMeanA(image));
 	}
 
 	private void reset() {

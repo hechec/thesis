@@ -20,7 +20,7 @@ import util.FileTypeFilter;
 import util.FixedDataLoader;
 import util.NNWeightsLoader;
 
-import static util.NNConstants.*;
+import static abcnn.NNConstants.*;
 
 public class ABCNNTab extends JPanel 
 {
@@ -272,7 +272,7 @@ public class ABCNNTab extends JPanel
 		add(toolBar);
 		//toolBar.putClientProperty("textureType", new Integer(TextureUtils.WINDOW_TEXTURE_TYPE));
 		
-		loadB = new JButton(new ImageIcon("src/images/f.png"));
+		loadB = new JButton("Load", new ImageIcon("src/images/f.png"));
 		loadB.setToolTipText("Load data");
 		toolBar.add(loadB);
 		loadB.addActionListener(new ActionListener() {
@@ -283,7 +283,7 @@ public class ABCNNTab extends JPanel
 		});
 		
 
-		prepareB = new JButton(new ImageIcon("src/images/prepare.png"));
+		prepareB = new JButton("Prepare", new ImageIcon("src/images/prepare.png"));
 		prepareB.setToolTipText("Prepare");
 		toolBar.add(prepareB);
 		prepareB.addActionListener(new ActionListener() {
@@ -316,7 +316,7 @@ public class ABCNNTab extends JPanel
 		});
 		
 		
-		JButton saveButton = new JButton(new ImageIcon("src/images/save.png"));
+		JButton saveButton = new JButton("Save", new ImageIcon("src/images/save.png"));
 		saveButton.setToolTipText("Save");
 		toolBar.add(saveButton);
 		saveButton.addActionListener(new ActionListener() {
@@ -330,7 +330,7 @@ public class ABCNNTab extends JPanel
 		
 		settings = new Settings(this);
 		
-		JButton settingsButton = new JButton(new ImageIcon("src/images/setting.png"));
+		JButton settingsButton = new JButton("Settings", new ImageIcon("src/images/setting.png"));
 		settingsButton.setToolTipText("Setting");
 		toolBar.add(settingsButton);
 		settingsButton.addActionListener(new ActionListener() {

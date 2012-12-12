@@ -143,7 +143,7 @@ public class ABC extends Thread {
 			r = ( (double)Math.random()*32767 / ((double)32767+(double)(1)) );
 			Foods[index][j] = r * ( ub - lb ) + lb;
 			solution[j] = Foods[index][j];
-			//System.out.println( j+" :"+ Foods[index][j]);
+			System.out.println( r+" :"+ Foods[index][j]);
 		}
 		networks[index] = new MLPNetwork(solution, input_data, output_data);
 		MSE[index] = calculateObjectiveFunction(networks[index]);
@@ -296,9 +296,9 @@ public class ABC extends Thread {
 	}
 	
 	public static void main(String[] args){
-		int runtime = 30;
-		int maxCycle = 1000;
-		int dimension = 126;
+		int runtime = 1;
+		int maxCycle = 1;
+		int dimension = 10;
 		int foodNumber = 1;
 		ABC abc = new ABC(null, null, runtime, maxCycle, foodNumber, 10, dimension);
 		abc.run();

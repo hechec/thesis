@@ -9,7 +9,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import imageProcessing.ImageProcessor;
+import image_processing.ImageProcessor;
 import abcnn.Classifier;
 
 public class SoloPane extends JPanel {

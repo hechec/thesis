@@ -1,6 +1,6 @@
 package util;
 
-import imageProcessing.ImageProcessor;
+import image_processing.ImageProcessor;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -69,7 +69,7 @@ public class ImageLoader{
 				loadAllImages(folder);
 				
 				//input_data = iProcessor.createInputVectorArray(inputList, prog);
-				output_data = iProcessor.createOutputVectorArray(outputList);
+				output_data = iProcessor.createOutputVector(outputList);
 				prog.dispose();
 				
 				if(loadType == TRAINING)

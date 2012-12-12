@@ -2,7 +2,7 @@ package abcnn;
 
 import java.util.ArrayList;
 
-import static util.NNConstants.*;
+import static abcnn.NNConstants.*;
 
 public class MLPNetwork {
 	

@@ -1,4 +1,4 @@
-package ui;
+package ui.dialogs;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -7,7 +7,7 @@ import java.awt.Graphics2D;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-public class HistogramDialog extends JDialog {
+public class Histogram extends JDialog {
 
 	private final int originX = 50;
 	private final int originY = 300;
@@ -16,7 +16,7 @@ public class HistogramDialog extends JDialog {
 	
 	private JPanel contentPane;
 	
-	public HistogramDialog()
+	public Histogram()
 	{
 		contentPane = new JPanel();
 		setContentPane(contentPane);

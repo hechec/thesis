@@ -1,6 +1,6 @@
 package util;
 
-import imageProcessing.ImageProcessor;
+import image_processing.ImageProcessor;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -88,7 +88,7 @@ public class DataLoader {
 				loadAllImages(file);
 				
 				train_input = iProcessor.createInputVectorArray(train_input_list, bottomPane);
-		    	train_output = iProcessor.createOutputVectorArray(train_output_list);
+		    	train_output = iProcessor.createOutputVector(train_output_list);
 
 		    	test_input = iProcessor.createInputVectorArray(test_input_list, bottomPane);
 		    	test_output = convertOutputList(test_output_list);

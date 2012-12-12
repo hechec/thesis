@@ -4,7 +4,7 @@ import java.io.*;
 import javax.swing.JOptionPane;
 
 import ui.AppFrame;
-import static util.NNConstants.*;
+import static abcnn.NNConstants.*;
 
 /**
  * class that loads trained data to be used for classification

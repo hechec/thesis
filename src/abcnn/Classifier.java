@@ -9,7 +9,7 @@ import ui.AppFrame;
 import ui.BottomPane;
 import util.DataLoader;
 
-import static util.NNConstants.*;
+import static abcnn.NNConstants.*;
 
 public class Classifier 
 {

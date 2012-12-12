@@ -1,4 +1,4 @@
-package imageProcessing;
+package image_processing;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -13,39 +13,24 @@ import colorspace.RGBChannel;
 public class FeatureExtractor 
 {
 	
-	private static FeatureExtractor instance = null;
-	
-	public FeatureExtractor()
-	{
-	}
-	
-	public static FeatureExtractor getInstance()
-	{
-		if( instance == null )
-			instance = new FeatureExtractor();
-		return instance;
-	}
-	
-	public double computeMeanRed(BufferedImage image) 
+	public static double computeMeanRed(BufferedImage image) 
 	{
 		BufferedImage redImage = RGBChannel.toRGBChannel(image, RGBChannel.RED);
 		return getAverage(redImage, RGBChannel.RED);
 	}
 
-	public double computeMeanGreen(BufferedImage image) 
+	public static double computeMeanGreen(BufferedImage image) 
 	{
 		BufferedImage greenImage = RGBChannel.toRGBChannel(image, RGBChannel.GREEN);		
 		return getAverage(greenImage, RGBChannel.GREEN);
 	}
 	
-	public double getAverage(BufferedImage grayImage, int color) 
+	public static double getAverage(BufferedImage grayImage, int color) 
 	{
 		//BufferedImage grayImage = GrayScale.toGray(image);
 		double sum = 0, ctr = 0;
 		int width = grayImage.getWidth(),
 			height = grayImage.getHeight();
-		
-		//Raster r = grayImage.getData();
 		
 		int value = 0;
 		
@@ -66,7 +51,7 @@ public class FeatureExtractor
 		return ctr != 0 ? sum/ctr : 0;
 	}
 
-	public double computeMeanRG(BufferedImage image) 
+	public static double computeMeanRG(BufferedImage image) 
 	{
 		//BufferedImage redGray =  GrayScale.toGray(RGBChannel.toRGBChannel(image, RGBChannel.RED));
 		//BufferedImage greenGray = GrayScale.toGray(RGBChannel.toRGBChannel(image, RGBChannel.GREEN));
@@ -77,8 +62,6 @@ public class FeatureExtractor
 		int width = image.getWidth(),
 			height = image.getHeight();
 		
-		
-		
 		for( int i = 0; i < height; i++ ) 
 			for( int j = 0; j < width; j++ ) {
 				Color color = new Color(image.getRGB(j, i));
@@ -86,15 +69,12 @@ public class FeatureExtractor
 					sum += ( color.getRed() - color.getGreen() );
 					ctr++;
 				}
-				//if( ((image.getRGB(j, i)) & 0xff) != 0 ) {
-				//	sum += ( (redGray.getRGB(j, i) & 0xff) - (greenGray.getRGB(j, i) & 0xff) );
-				//	ctr++;
-				//}
 			}
+
 		return ctr != 0 ? sum/ctr : 0;
 	}
 
-	public double computeMeanA(BufferedImage image) 
+	public static double computeMeanA(BufferedImage image) 
 	{
 		double sum = 0;
 		int ctr = 0, rgb, red, green, blue;
@@ -118,7 +98,7 @@ public class FeatureExtractor
 		return ctr != 0 ? sum/ctr : 0;
 	}
 
-	public double computeMeanHue(BufferedImage image) 
+	public static double computeMeanHue(BufferedImage image) 
 	{
 		double sum = 0;
 		int rgb, red, green, blue, ctr = 0;
@@ -137,27 +117,6 @@ public class FeatureExtractor
 				}
 			}
 		return ctr != 0 ? sum/ctr : 0;
-	}
-	
-	public static void main(String[] args)
-	{
-		BufferedImage image = null;
-		File file = new File("C:/Users/hechec/Desktop/saved.jpeg");
-		try {
-			image  = ImageIO.read(file);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		FeatureExtractor fe = new FeatureExtractor();
-		double red = fe.computeMeanRed(image);
-		double green = fe.computeMeanGreen(image);
-		double redgreen = fe.computeMeanRG(image);
-		
-		System.out.println( "red: "+red );
-		System.out.println( "green: "+green );
-		System.out.println( "redgreen: "+redgreen );
-		
 	}
 	
 }
