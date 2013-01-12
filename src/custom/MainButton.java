@@ -22,9 +22,9 @@ public class MainButton extends JButton
 	private Image hover = null;
 	private boolean mouseEntered = false;
 	
-	public MainButton(String source, String source2) {
-		setBorderPainted(false);
-		
+	public MainButton(String source, String source2) 
+	{
+		setBorderPainted(false);		
 		try {                
 			normal = ImageIO.read(new File(""+source));
 			hover = ImageIO.read(new File(""+source2));
@@ -35,6 +35,8 @@ public class MainButton extends JButton
 		addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				mouseEntered = false;
+				repaint();
 			}
 		});
 		
@@ -64,6 +66,16 @@ public class MainButton extends JButton
 		}
 		else 
 			g2.drawImage(normal, 0, 0, null); 
+	}
+
+	public void updateIcons(String source, String source2) {
+		try {                
+			normal = ImageIO.read(new File(""+source));
+			hover = ImageIO.read(new File(""+source2));
+        } catch (IOException ex) {
+        	System.out.println("Check main button image source.");
+        }		
+		repaint();
 	}
 
 }

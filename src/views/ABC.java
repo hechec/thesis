@@ -1,8 +1,10 @@
-package abcnn;
+package views;
 
 import java.util.Random;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+
+import abcnn.MLPNetwork;
 
 import ui.ABCNNTab;
 
@@ -41,16 +43,16 @@ public class ABC extends Thread {
 	private MLPNetwork[] networks;
 	private Random rand;
 		
-	private ABCNNTab abcnnPane;
+	private TrainPane trainPane;
 	private double[][] input_data;
 	private double[][] output_data;
 
 	private Classifier classifier;
 	
-	public ABC(ABCNNTab abcnnPane, Classifier classifier, int runtime, int maxCycle, int employedBeeSize, 
+	public ABC(TrainPane trainPane, Classifier classifier, Data trainingData, int runtime, int maxCycle, int employedBeeSize, 
 			int onlookerBeeSize, int dimension) 
 	{
-		this.abcnnPane = abcnnPane;
+		this.trainPane = trainPane;
 		this.classifier = classifier;
 		
 		this.runtime = runtime;
@@ -75,17 +77,9 @@ public class ABC extends Thread {
 		
 		rand = new Random();
 		limit = dimension;//foodNumber*dimension;
-	}
 	
-	/**
-	 * sets the training data
-	 * @param training_input
-	 * @param training_output
-	 */
-	public void setTrainingData(double[][] input_data, double[][] output_data) 
-	{
-		this.input_data = input_data;
-		this.output_data = output_data;
+		input_data = trainingData.getInput();
+		output_data = trainingData.getOutput();
 	}
 	
 	/**
@@ -105,9 +99,9 @@ public class ABC extends Thread {
 				sendOnlookerBees();
 				memorizeBestSource();
 				sendScoutBees();
-				abcnnPane.incrementCycle(cycle+1);
+				trainPane.incrementCycle(cycle+1);
 			}
-			abcnnPane.incrementRuntime(run+1);
+			trainPane.incrementRuntime(run+1);
 			//for( int i = 0; i < GlobalParams.length; i++ )
 				//System.out.println( GlobalParams[i] );
 			
@@ -122,9 +116,9 @@ public class ABC extends Thread {
 			//abcnnPane.print("run "+(run+1)+": "+GlobalMin+"\n");
 		}
 		double elapsedTime = (System.currentTimeMillis() - start) / 1000;
-		classifier.finishTraining(bestMin, Params[bestIndex], elapsedTime);
 		
-		JOptionPane.showMessageDialog(abcnnPane, "Finished training the network.");
+		JOptionPane.showMessageDialog(trainPane, "Finished training the network.");
+		classifier.finishTraining(bestMin, Params[bestIndex], elapsedTime);
 	}
 	
 	/**
