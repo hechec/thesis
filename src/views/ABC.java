@@ -8,7 +8,7 @@ import abcnn.MLPNetwork;
 
 import ui.ABCNNTab;
 
-public class ABC extends Thread {
+public class ABC{
 	
 	private int runtime 	 	= 0,
 				maxCycle 	 	= 0,
@@ -47,13 +47,10 @@ public class ABC extends Thread {
 	private double[][] input_data;
 	private double[][] output_data;
 
-	private Classifier classifier;
-	
-	public ABC(TrainPane trainPane, Classifier classifier, Data trainingData, int runtime, int maxCycle, int employedBeeSize, 
+	public ABC(TrainPane trainPane, Data trainingData, int runtime, int maxCycle, int employedBeeSize, 
 			int onlookerBeeSize, int dimension) 
 	{
 		this.trainPane = trainPane;
-		this.classifier = classifier;
 		
 		this.runtime = runtime;
 		this.maxCycle = maxCycle;
@@ -85,8 +82,7 @@ public class ABC extends Thread {
 	/**
 	 * start ABC
 	 */
-	@Override
-    public void run() 
+    public void start() 
 	{		
 		double start = System.currentTimeMillis();
 		for( int run = 0; run < runtime; run++ ) {
@@ -117,8 +113,9 @@ public class ABC extends Thread {
 		}
 		double elapsedTime = (System.currentTimeMillis() - start) / 1000;
 		
+		trainPane.displayResult(bestMin, Params[bestIndex], elapsedTime);
 		JOptionPane.showMessageDialog(trainPane, "Finished training the network.");
-		classifier.finishTraining(bestMin, Params[bestIndex], elapsedTime);
+		
 	}
 	
 	/**
@@ -306,6 +303,11 @@ public class ABC extends Thread {
 			result=1+Math.abs(fun);
 		return result;
 	}
+	
+	public double[] getSolution()
+	{
+		return Params[bestIndex];
+	}
 
 	public double[] test(double[] input) 
 	{
@@ -318,18 +320,4 @@ public class ABC extends Thread {
 		return new MLPNetwork( Params[bestIndex] );
 	}
 	
-	public static void main(String[] args){
-		/*int runtime = 1;
-		int maxCycle = 1;
-		int dimension = 10;
-		int foodNumber = 1;
-		ABC abc = new ABC(null, null, runtime, maxCycle, foodNumber, 10, dimension);
-		abc.run();
-		*/
-		//double[] input = {0, 1};
-		//double[] result = abc.test(input);
-		
-		//System.out.println("result: "+result[0] +" rounded: "+Math.round(result[0]));
-	}
-
 }

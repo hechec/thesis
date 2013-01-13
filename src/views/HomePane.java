@@ -61,6 +61,13 @@ public class HomePane extends JPanel
 		JButton resizeButton = new MainButton("src/images/resizeButton.png", "src/images/resizeHover.png");
 		resizeButton.setBounds(505, 225, 140, 140);
 		this.add(resizeButton, 0);
+		resizeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frame.setView(frame.getNextView(3));
+			}
+		});
+		
 		
 		JPanel title = new JPanel() {
 			@Override

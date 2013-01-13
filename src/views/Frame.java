@@ -15,6 +15,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import custom.MainButton;
@@ -26,7 +28,7 @@ public class Frame extends JFrame
 	private JPanel contentPane;
 	private JPanel thePanel;
 	
-	private JPanel[] panels = new JPanel[3];
+	private JPanel[] panels = new JPanel[6];
 	
 	/**
 	 * Launch the application.
@@ -35,6 +37,7 @@ public class Frame extends JFrame
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 					Frame frame = new Frame();
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -106,9 +109,13 @@ public class Frame extends JFrame
 		panels[1].setBounds(0, 0, 700, 475);
 		panels[1].setOpaque(false);
 		
-		panels[2] = ClassificationPane.getInstance();
+		panels[2] = BatchPane.getInstance();
 		panels[2].setBounds(0, 0, 700, 475);
 		panels[2].setOpaque(false);
+		
+		panels[3] = SoloPane.getInstance();
+		panels[3].setBounds(0, 0, 700, 475);
+		panels[3].setOpaque(false);
 		
 		contentPane.addMouseMotionListener(new MouseMotionListener() {
 			boolean startDrag = false;

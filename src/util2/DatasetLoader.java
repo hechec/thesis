@@ -1,4 +1,4 @@
-package views;
+package util2;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -8,7 +8,11 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
-public class ImageLoader 
+import views.Data;
+import views.ImageProcessor;
+import views.ProgressPane;
+
+public class DatasetLoader 
 {
 	private double[][] input;
 	private double[][] output;
@@ -18,26 +22,26 @@ public class ImageLoader
 	
 	private ImageProcessor iProcessor;
 	private int count = 0;
-	private File trainFile;
+	private File file;
 	private ProgressPane progressPane;
 
-	public ImageLoader(ProgressPane progressPane, File trainFile) 
+	public DatasetLoader(ProgressPane progressPane, File file) 
 	{
-		this.trainFile = trainFile;
+		this.file = file;
 		this.progressPane = progressPane;
 		iProcessor = new ImageProcessor();
-		count += countFiles(trainFile);
+		count += countFiles(file);
 		progressPane.reset(count*2);
 	}
 	
 	/**
-	 * Loads training images and extracts features of each image
+	 * Loads images and extracts features of each image
 	 * 
-	 * @return Data - training data
+	 * @return Data 
 	 */
 	public Data load() 
 	{
-		loadAllImages(trainFile, input_list, output_list);
+		loadAllImages(file, input_list, output_list);
 		
 		input = iProcessor.createInputVectorArray(input_list, progressPane);
     	output = iProcessor.createOutputVector(output_list);
@@ -47,11 +51,11 @@ public class ImageLoader
     	return new Data(input, output);
 	}
 	
-	private void loadAllImages(final File folder, ArrayList<BufferedImage> train_input_list, ArrayList<Integer> train_output_list) 
+	private void loadAllImages(final File folder, ArrayList<BufferedImage> input_list, ArrayList<Integer> output_list) 
 	{
 		for (final File fileEntry : folder.listFiles()) {
 	        if (fileEntry.isDirectory()) 
-	        	loadAllImages(fileEntry, train_input_list, train_output_list);
+	        	loadAllImages(fileEntry, input_list, output_list);
 	        else {
 	        	File file = null;
 	        	BufferedImage image = null;
@@ -64,8 +68,8 @@ public class ImageLoader
 				} catch (IOException e) {
 				} catch (NumberFormatException e) {}
 	        	
-	        	train_input_list.add(image);
-	        	train_output_list.add(classNumber);
+	        	input_list.add(image);
+	        	output_list.add(classNumber);
 	        	progressPane.incrementBar();
 	        }
 	        	

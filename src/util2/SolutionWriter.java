@@ -1,4 +1,4 @@
-package views;
+package util2;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,10 +11,10 @@ import javax.swing.filechooser.FileFilter;
 
 import util.FileTypeFilter;
 
-public class FileSaver 
+public class SolutionWriter 
 {
 	
-	public FileSaver()
+	public SolutionWriter()
 	{
 	}
 	

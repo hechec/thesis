@@ -1,33 +1,17 @@
 package views;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.SystemColor;
-import java.awt.TextField;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
+
+import javax.swing.*;
+
 import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
-import javax.swing.text.Caret;
+import static abcnn.NNConstants.DIMENSIONS;
 
-import sun.security.jca.GetInstance.Instance;
+import util2.FileChooser;
+import util2.SolutionWriter;
+import util2.DatasetLoader;
 
 import custom.MainButton;
 import custom.MyTextField;
@@ -37,10 +21,8 @@ public class TrainPane extends JPanel
 {
 	private static TrainPane instance = null;
 	
-	private JFileChooser chooser;
-
-	private Classifier classifier;
-	private Data trainingData;
+	private FileChooser chooser = FileChooser.getInstance();
+	private Data trainData;
 	
 	private JSpinner runtimeSpinner, cycleSpinner, 
 					 employedSpinner, onlookerSpinner;
@@ -48,6 +30,8 @@ public class TrainPane extends JPanel
 	private JLabel mseLabel, timeLabel;	
 	
 	private Frame frame;
+	
+	private ABC abc;
 	
 	public static TrainPane getInstance() 
 	{
@@ -83,9 +67,11 @@ public class TrainPane extends JPanel
 		panel1.add(label1);
 		
 		final JTextField textField1 = new MyTextField("click to selected directory");
-		textField1.setBounds(330, 38, 291, 30);
+		textField1.setBounds(330, 38, 261, 30);
 		textField1.setBorder(null);
 		textField1.setFont(new Font("Century Gothic", Font.PLAIN, 16));
+		textField1.setBorder(BorderFactory.createCompoundBorder( textField1.getBorder(),
+				BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 		add(textField1);
 		textField1.addMouseListener(new MouseAdapter() {
 			@Override
@@ -93,6 +79,17 @@ public class TrainPane extends JPanel
 				selectDirectory(textField1);
 			}
 		});		
+		
+		JButton cButton = new MainButton("src/images/pencil.png", "src/images/pencil.png");
+		cButton.setBorderPainted(false);
+		cButton.setBounds(598, 38, 35, 33);
+		add(cButton);
+		cButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				selectDirectory(textField1);
+			}
+		});
 		
 		JPanel line1 = new JPanel();
 		line1.setBackground(new Color(255, 204, 51));
@@ -210,30 +207,30 @@ public class TrainPane extends JPanel
 		JLabel label9 = new JLabel("Mean Square Error:");
 		label9.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		label9.setForeground(Color.WHITE);
-		label9.setBounds(202, 370, 151, 23);
+		label9.setBounds(202, 365, 151, 23);
 		label9.setHorizontalAlignment(SwingConstants.RIGHT);
 		add(label9);
 		
 		JLabel label10 = new JLabel("Training Time (sec):");
 		label10.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		label10.setForeground(Color.WHITE);
-		label10.setBounds(204, 398, 149, 23);
+		label10.setBounds(204, 393, 149, 23);
 		label10.setHorizontalAlignment(SwingConstants.RIGHT);
 		add(label10);
 		
 		mseLabel = new JLabel("0.0");
 		mseLabel.setFont(new Font("Century Gothic", Font.BOLD, 16));
 		mseLabel.setForeground(new Color(255, 204, 51));
-		mseLabel.setBounds(361, 370, 257, 23);
+		mseLabel.setBounds(361, 365, 257, 23);
 		add(mseLabel);
 		
 		timeLabel = new JLabel("0.0");
 		timeLabel.setFont(new Font("Century Gothic", Font.BOLD, 16));
 		timeLabel.setForeground(new Color(255, 204, 51));
-		timeLabel.setBounds(361, 398, 257, 23);
+		timeLabel.setBounds(361, 393, 257, 23);
 		add(timeLabel);
 		
-		final ProgressPane progressPane = new ProgressPane(this); 
+		final ProgressPane progressPane = new ProgressPane(); 
 		progressPane.setLocation(0, 425);
 		this.add(progressPane);
 		
@@ -244,13 +241,15 @@ public class TrainPane extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if( !textField1.getText().equals("") ) {
-					new Thread() {
+					new Thread( new Runnable() {
+						@Override
 						public void run() {
 							File file = new File(""+textField1.getText());
-							ImageLoader dl = new ImageLoader(progressPane, file);
-							trainingData = dl.load();
+							DatasetLoader dl = new DatasetLoader(progressPane, file);
+							trainData = dl.load();
 						}
-					}.start();
+						
+					}).start();
 				}
 			}
 		});
@@ -261,8 +260,7 @@ public class TrainPane extends JPanel
 		playButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				classifier = new Classifier();
-				classifier.trainNetwork( trainingData, (int)runtimeSpinner.getValue(), (int)cycleSpinner.getValue(), 
+				trainNetwork( trainData, (int)runtimeSpinner.getValue(), (int)cycleSpinner.getValue(), 
 						  (int)employedSpinner.getValue(), (int)onlookerSpinner.getValue());
 			}
 		});
@@ -275,12 +273,10 @@ public class TrainPane extends JPanel
 		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				FileSaver fileSaver = new FileSaver();
-				fileSaver.saveFile(classifier.getSolution());
+				SolutionWriter fileSaver = new SolutionWriter();
+				fileSaver.saveFile(abc.getSolution());
 			}
 		});
-		
-		chooser = new JFileChooser();
 		
 	}
 	
@@ -289,6 +285,36 @@ public class TrainPane extends JPanel
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) 
 			textField.setText(chooser.getSelectedFile()+"");
+	}
+	
+	/**
+	 * train neural network classifier
+	 * 
+	 * @param trainingData
+	 * @param runtime
+	 * @param maxCycle
+	 * @param employedBeeSize
+	 * @param onlookerBeeSize
+	 */
+	public void trainNetwork(final Data trainingData, final int runtime, final int maxCycle,
+			final int employedBeeSize, final int onlookerBeeSize) 
+	{
+		initComponents();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				abc = new ABC(TrainPane.getInstance(), trainingData, runtime, maxCycle, employedBeeSize, onlookerBeeSize, DIMENSIONS); 
+				abc.start();
+			}
+		}).start();
+	
+	}
+	
+	public void displayResult(double MSE, double[] solution, double elapsedTime) 
+	{
+		System.out.println("DISPLAY!");
+		mseLabel.setText(""+MSE);
+		timeLabel.setText(""+elapsedTime);
 	}
 	
 	public void initComponents() 
@@ -311,10 +337,4 @@ public class TrainPane extends JPanel
 		runtimeBar.setValue(percent);
 	}
 
-	public void displayResult(double MSE, double elapsedTime) 
-	{
-		mseLabel.setText(""+MSE);
-		timeLabel.setText(""+elapsedTime);
-	}
-		
 }

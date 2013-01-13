@@ -1,55 +1,41 @@
 package views;
 
-import static abcnn.NNConstants.DIMENSIONS;
+import abcnn.MLPNetwork;
+import abcnn.Result;
 
 public class Classifier 
-{
-	private TrainPane trainPane;
-	
+{	
 	private double[] solution;
 	
-	public Classifier() 
+	public Classifier(double[] solution) 
 	{
-		trainPane = TrainPane.getInstance();
+		this.solution = solution;	
 	}
 	
-	/**
-	 * train neural network classifier
-	 * 
-	 * @param trainingData
-	 * @param runtime
-	 * @param maxCycle
-	 * @param employedBeeSize
-	 * @param onlookerBeeSize
-	 */
-	public void trainNetwork(Data trainingData, int runtime, int maxCycle,
-			int employedBeeSize, int onlookerBeeSize) 
+	public Result test_batch(double[][] test_input, int[] test_expected)
 	{
-		trainPane.initComponents();
-		ABC abc = new ABC(trainPane, this, trainingData, runtime, maxCycle, employedBeeSize, onlookerBeeSize, DIMENSIONS); 
-		abc.start();
-	}
-	
-	/**
-	 * signals end of training process
-	 * displays results
-	 * 
-	 * @param MSE
-	 * @param solution
-	 * @param elapsedTime
-	 */
-	public void finishTraining(double MSE, double[] solution, double elapsedTime) 
-	{
-		this.solution = solution;
-		trainPane.displayResult(MSE, elapsedTime);
-	}
-	
-	/**
-	 * @return optimal weights
-	 */
-	public double[] getSolution() 
-	{
-		return solution;
-	}
+		int[] actual = new int[test_expected.length];
 
+		for( int i = 0; i < test_input.length; i++ ) 
+			actual[i] = classify( test_input[i] );
+		
+		return new Result(test_expected, actual);
+	}
+	
+	public int classify(double[] input) 
+	{
+		MLPNetwork classifier = new MLPNetwork(solution);
+		double[] output = classifier.test(input);
+		
+		return normalizeOutput(output);
+	}
+	
+	private int normalizeOutput(double[] output) 
+	{
+		int maxIndex = 0;	
+		for( int i = 1; i < output.length; i++ )
+			if( output[i] > output[maxIndex] )
+				maxIndex = i;
+		return maxIndex;
+	}
 }
