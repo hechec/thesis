@@ -8,15 +8,18 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
+
 import views.Data;
 import views.ImageProcessor;
 import views.ProgressPane;
 
 public class DatasetLoader 
 {
-	private double[][] input;
-	private double[][] output;
-
+	private double[][] inputVector;
+	private double[][] outputVector;
+	private ArrayList<String> filename = new ArrayList<String>();
+	
 	private ArrayList<BufferedImage> input_list = new ArrayList<BufferedImage>();
 	private ArrayList<Integer> output_list = new ArrayList<Integer>();
 	
@@ -43,12 +46,12 @@ public class DatasetLoader
 	{
 		loadAllImages(file, input_list, output_list);
 		
-		input = iProcessor.createInputVectorArray(input_list, progressPane);
-    	output = iProcessor.createOutputVector(output_list);
+		inputVector = iProcessor.createInputVectorArray(input_list, progressPane);
+    	outputVector = iProcessor.createOutputVector(output_list);
     	
     	JOptionPane.showMessageDialog(null, "Loaded "+count +" images.");
     	
-    	return new Data(input, output);
+    	return new Data(filename, inputVector, outputVector);
 	}
 	
 	private void loadAllImages(final File folder, ArrayList<BufferedImage> input_list, ArrayList<Integer> output_list) 
@@ -64,13 +67,14 @@ public class DatasetLoader
 	        		file = new File(fileEntry.getAbsolutePath());
 	        		image = ImageIO.read(file);
 	        		image = iProcessor.resizeImage(image, ImageProcessor.WIDTH, ImageProcessor.HEIGHT);
-					classNumber =  Integer.parseInt(fileEntry.getParentFile().getName());
-				} catch (IOException e) {
-				} catch (NumberFormatException e) {}
-	        	
-	        	input_list.add(image);
-	        	output_list.add(classNumber);
-	        	progressPane.incrementBar();
+	        		classNumber =  Integer.parseInt(fileEntry.getParentFile().getName());
+	        		
+	        		filename.add(fileEntry.getName());
+	        		input_list.add(image);
+		        	output_list.add(classNumber);
+		        	progressPane.incrementBar();
+	        	} catch (IOException e) {
+	        	} catch (NumberFormatException e) {}
 	        }
 	        	
 		}

@@ -99,7 +99,7 @@ public class SoloPane extends JPanel
 		add(fPanel);
 		
 		fileLabel = new JLabel("-no classifier selected-");
-		fileLabel.setFont(new Font("Century Gothic", Font.PLAIN, 16));
+		fileLabel.setFont(new Font("Century Gothic", Font.PLAIN, 14));
 		fileLabel.setForeground(Color.BLACK);
 		fileLabel.setBounds(4, 0, 260, 30);
 		fPanel.add(fileLabel);
@@ -241,13 +241,19 @@ public class SoloPane extends JPanel
 	}
 	
 	private void test() {
-		classifier = new Classifier(solution);
-		input = iProcessor.process(input);
-		double[] features = iProcessor.getFeatures(input);
-		int classIndex = classifier.classify(features);
-		
-		classLabel.setForeground(classColors[classIndex]);
-		classLabel.setText(classifications[classIndex]+"");
+		classLabel.setText("...");
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				classifier = new Classifier(solution);
+				BufferedImage temp = input;
+				temp = iProcessor.process(input);
+				double[] features = iProcessor.getFeatures(temp);
+				int classIndex = classifier.classify(features);
+				classLabel.setForeground(classColors[classIndex]);
+				classLabel.setText(classifications[classIndex]+"");
+			}
+		}).start();
 	}
 	
 }

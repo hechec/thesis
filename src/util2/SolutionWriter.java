@@ -15,8 +15,7 @@ public class SolutionWriter
 {
 	
 	public SolutionWriter()
-	{
-	}
+	{}
 	
 	public void saveFile(double[] solution)
 	{

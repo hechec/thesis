@@ -75,8 +75,8 @@ public class ABC{
 		rand = new Random();
 		limit = dimension;//foodNumber*dimension;
 	
-		input_data = trainingData.getInput();
-		output_data = trainingData.getOutput();
+		input_data = trainingData.getInputVector();
+		output_data = trainingData.getOutputVector();
 	}
 	
 	/**

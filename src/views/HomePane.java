@@ -57,6 +57,12 @@ public class HomePane extends JPanel
 		JButton removeButton = new MainButton("src/images/removeBGButton.png", "src/images/removeBGHover.png");
 		removeButton.setBounds(355, 225, 140, 140);
 		this.add(removeButton, 0);
+		removeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frame.setView(frame.getNextView(4));
+			}
+		});
 		
 		JButton resizeButton = new MainButton("src/images/resizeButton.png", "src/images/resizeHover.png");
 		resizeButton.setBounds(505, 225, 140, 140);

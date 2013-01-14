@@ -6,11 +6,14 @@ import java.awt.event.*;
 import java.io.File;
 import java.text.DecimalFormat;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 
 import abcnn.Result;
 
+import util.FileTypeFilter;
 import util2.FileChooser;
 import util2.DatasetLoader;
+import util2.ResultWriter;
 import util2.SolutionReader;
 
 import custom.MainButton;
@@ -21,8 +24,9 @@ public class BatchPane extends JPanel
 	private static BatchPane instance = null;
 	private Frame frame;
 	
-	private Classifier classifier;
 	private Data testData = null;
+	private Result result;
+	
 	private double[] solution = null;
 	
 	private FileChooser chooser = FileChooser.getInstance();
@@ -85,7 +89,7 @@ public class BatchPane extends JPanel
 		add(fPanel);
 		
 		fileLabel = new JLabel("-no classifier selected-");
-		fileLabel.setFont(new Font("Century Gothic", Font.PLAIN, 16));
+		fileLabel.setFont(new Font("Century Gothic", Font.PLAIN, 14));
 		fileLabel.setForeground(Color.BLACK);
 		fileLabel.setBounds(4, 0, 260, 30);
 		fPanel.add(fileLabel);
@@ -182,6 +186,24 @@ public class BatchPane extends JPanel
 		viewButton.setBounds(208, 370, 124, 30);
 		add(viewButton);
 		
+		JButton saveButton = new JButton("Save Results");
+		saveButton.setBounds(350, 370, 124, 30);
+		add(saveButton);
+		saveButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				FileFilter filter = new FileTypeFilter(".ttb", "Text files");
+				JFileChooser chooser = new JFileChooser("D:/");
+				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				chooser.setFileFilter(filter);
+				if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) { 
+					ResultWriter resultWriter = new ResultWriter();
+					resultWriter.writeResult(chooser.getSelectedFile(), testData, result);
+				}
+				
+			}
+		});
+		
 		final ProgressPane progressPane = new ProgressPane(); 
 		progressPane.setLocation(0, 425);
 		this.add(progressPane);
@@ -192,10 +214,12 @@ public class BatchPane extends JPanel
 		loadButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
+				final File file = new File(""+textField1.getText());
+				
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						File file = new File(""+textField1.getText());
 						DatasetLoader dl = new DatasetLoader(progressPane, file);
 						testData = dl.load();
 					}
@@ -226,8 +250,8 @@ public class BatchPane extends JPanel
 	 */
 	private void test() 
 	{
-		classifier = new Classifier(solution);
-		Result result = classifier.test_batch(testData.getInput(), normalize(testData.getOutput()));
+		Classifier classifier = new Classifier(solution);
+		result = classifier.test_batch(testData.getInputVector(), normalize(testData.getOutputVector()));
 		
 		float acc = result.getAccuracy(); 
 		if(acc > 90 )
@@ -242,6 +266,7 @@ public class BatchPane extends JPanel
 		incorrectLabel.setText( result.size() - result.getScore()+"" );
 		percentLabel.setVisible(true);
 	}
+	
 	
 	/**
 	 * normalize expected output array

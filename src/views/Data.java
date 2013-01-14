@@ -1,23 +1,27 @@
 package views;
 
+import java.util.ArrayList;
+
 public class Data 
 {
-	private double[][] input;
-	private double[][] output;
+	private double[][] inputVector;
+	private double[][] outputVector;
+	private ArrayList<String> filename;
 	
-	public Data(double[][] input, double[][] output)
+	public Data(ArrayList<String> filename, double[][] inputVector, double[][] outputVector)
 	{
-		this.input = input;
-		this.output = output;
+		this.filename = filename;
+		this.inputVector = inputVector;
+		this.outputVector = outputVector;
 	}
 	
 	/**
 	 * 
 	 * @return M x N array representing M samples and N features for each sample.
 	 */
-	public double[][] getInput()
+	public double[][] getInputVector()
 	{
-		return input;
+		return inputVector;
 	}
 	
 	/**
@@ -25,9 +29,19 @@ public class Data
 	 * 
 	 * @return M x N array representing M samples and N output vector 
 	 */
-	public double[][] getOutput()
+	public double[][] getOutputVector()
 	{
-		return output;
+		return outputVector;
+	}
+
+	public String getFilename(int index) 
+	{
+		return filename.get(index);
+	}
+	
+	public int size() 
+	{
+		return filename.size();
 	}
 	
 }

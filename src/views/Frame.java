@@ -117,6 +117,10 @@ public class Frame extends JFrame
 		panels[3].setBounds(0, 0, 700, 475);
 		panels[3].setOpaque(false);
 		
+		panels[4] = BRemoverPane.getInstance(); 
+		panels[4].setBounds(0, 0, 700, 475);
+		panels[4].setOpaque(false);		
+		
 		contentPane.addMouseMotionListener(new MouseMotionListener() {
 			boolean startDrag = false;
 			Point original = null;
@@ -138,7 +142,8 @@ public class Frame extends JFrame
 		});		
 	}
 	
-	private void dragFrame(Point original, Point newPoint) {
+	private void dragFrame(Point original, Point newPoint) 
+	{
 		Point p = new Point(newPoint.x - original.x, newPoint.y - original.y);
 		this.setLocation(this.getX()+p.x , this.getY() + p.y);
 	}
