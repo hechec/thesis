@@ -11,10 +11,13 @@ import javax.swing.filechooser.FileFilter;
 import abcnn.Result;
 
 import util.FileTypeFilter;
+import util2.Debugger;
 import util2.FileChooser;
 import util2.DatasetLoader;
+import util2.OutputLayerHelper;
 import util2.ResultWriter;
 import util2.SolutionReader;
+import views.dialog.ResultViewerDialog;
 
 import custom.MainButton;
 import custom.MyTextField;
@@ -25,7 +28,7 @@ public class BatchPane extends JPanel
 	private Frame frame;
 	
 	private Data testData = null;
-	private Result result;
+	private Result result = null;
 	
 	private double[] solution = null;
 	
@@ -185,6 +188,18 @@ public class BatchPane extends JPanel
 		JButton viewButton = new JButton("View Results");
 		viewButton.setBounds(208, 370, 124, 30);
 		add(viewButton);
+		viewButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(testData != null && result != null) {
+					ResultViewerDialog rvDialog = new ResultViewerDialog(testData, result);
+					rvDialog.setVisible(true);
+				}
+				else {
+					Debugger.printError("Cannot show results.");
+				}
+			}
+		});
 		
 		JButton saveButton = new JButton("Save Results");
 		saveButton.setBounds(350, 370, 124, 30);
@@ -251,7 +266,7 @@ public class BatchPane extends JPanel
 	private void test() 
 	{
 		Classifier classifier = new Classifier(solution);
-		result = classifier.test_batch(testData.getInputVector(), normalize(testData.getOutputVector()));
+		result = classifier.test_batch(testData.getInputVector(), OutputLayerHelper.normalize(testData.getOutputVector()));
 		
 		float acc = result.getAccuracy(); 
 		if(acc > 90 )
@@ -265,35 +280,6 @@ public class BatchPane extends JPanel
 		correctLabel.setText( result.getScore() +"" );
 		incorrectLabel.setText( result.size() - result.getScore()+"" );
 		percentLabel.setVisible(true);
-	}
-	
-	
-	/**
-	 * normalize expected output array
-	 * 
-	 * ex
-	 * input =  {{1, 0, 0, 0, 0, 0},
-	 * 			 {0, 1, 0, 0, 0, 0},
-	 * 		     {0, 0, 0, 1, 0, 0},
-	 * 			}
-	 * output = {0, 1, 3}
-	 * 
-	 * @param output
-	 * @return
-	 */
-	private int[] normalize(double[][] output) 
-	{
-		int[] expected_output = new int[output.length];
-		
-		for( int i = 0; i < output.length; i++ ) {
-			for( int j = 0; j < output[i].length; j++ ) {
-				if( output[i][j] == 1.0 ) {
-					expected_output[i] = j;
-					break;
-				}
-			}
-		}
-		return expected_output;
 	}
 	
 	/**

@@ -17,11 +17,11 @@ public class Entry extends JPanel
 	
 	private Color normalColor, hoverColor;
 	
-	private JLabel[] components = new JLabel[3];
+	private JLabel[] components = new JLabel[4];
 	
-	public Entry(String absolutePath, String filename, String expected, String actual)
+	public Entry(int number, String absolutePath, String filename, String expected, String actual)
 	{
-		setPreferredSize(new Dimension(400, 30));
+		setPreferredSize(new Dimension(500, 30));
 		setOpaque(false);
 		setLayout(null);
 		
@@ -32,10 +32,19 @@ public class Entry extends JPanel
 			normalColor = new Color(255, 51, 51);
 		}
 		
+		JLabel label0 = new JLabel(""+number);
+		label0.setFont(new Font("Century Gothic", Font.PLAIN, 14));
+		label0.setForeground(Color.WHITE);
+		label0.setBounds(0, 0, 80, 30);
+		label0.setBackground(normalColor);
+		label0.setHorizontalAlignment(SwingConstants.CENTER);
+		label0.setOpaque(true);
+		add(label0);
+		
 		label1 = new JLabel(filename);
 		label1.setFont(new Font("Century Gothic", Font.PLAIN, 14));
 		label1.setForeground(Color.WHITE);
-		label1.setBounds(0, 0, 186, 30);
+		label1.setBounds(81, 0, 186, 30);
 		label1.setBackground(normalColor);
 		label1.setHorizontalAlignment(SwingConstants.CENTER);
 		label1.setOpaque(true);
@@ -44,7 +53,7 @@ public class Entry extends JPanel
 		label2 = new JLabel(expected);
 		label2.setFont(new Font("Century Gothic", Font.PLAIN, 14));
 		label2.setForeground(Color.WHITE);
-		label2.setBounds(187, 0, 95, 30);
+		label2.setBounds(268, 0, 95, 30);
 		label2.setBackground(normalColor);
 		label2.setOpaque(true);
 		label2.setHorizontalAlignment(SwingConstants.CENTER);
@@ -53,7 +62,7 @@ public class Entry extends JPanel
 		label3 = new JLabel(actual);
 		label3.setFont(new Font("Century Gothic", Font.PLAIN, 14));
 		label3.setForeground(Color.WHITE);
-		label3.setBounds(283, 0, 95, 30);
+		label3.setBounds(364, 0, 95, 30);
 		label3.setBackground(normalColor);
 		label3.setOpaque(true);
 		label3.setHorizontalAlignment(SwingConstants.CENTER);
@@ -62,6 +71,7 @@ public class Entry extends JPanel
 		components[0] = label1;
 		components[1] = label2;
 		components[2] = label3;
+		components[3] = label0;
 		
 		addMouseListener(new MouseListener() {
 			@Override
@@ -96,7 +106,7 @@ public class Entry extends JPanel
 
 	private void updateColor(Color color) 
 	{
-		for( int i = 0; i < 3; i++ ) 
+		for( int i = 0; i < components.length; i++ ) 
 			components[i].setBackground(color);
 		updateUI();
 	}

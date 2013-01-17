@@ -1,5 +1,7 @@
 package views;
 
+import image_processing.OtsuThreshold;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -9,25 +11,41 @@ import java.awt.Image;
 import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import custom.MainButton;
 
+import util.FileTypeFilter;
+import util2.Debugger;
 import util2.FileChooser;
 import abcnn.Result;
 
 public class BRemoverPane extends JPanel
 {
 	private static BRemoverPane instance = null;
+	
 	private Frame frame;
+	private ImageProcessor iProcessor = new ImageProcessor();
+	
+	private JFileChooser chooser = new JFileChooser("D:/");
+	private FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("", "jpg", "jpeg");
+	
+	private JLabel filenameLabel, inputLabel;
+	private JPanel processPanel;
+	private BufferedImage input, temp, processed;
 	
 	public static BRemoverPane getInstance() 
 	{
@@ -62,13 +80,13 @@ public class BRemoverPane extends JPanel
 		label1.setBounds(218, 41, 194, 26);
 		add(label1);
 		
-		JLabel inputLabel = new JLabel();
-		inputLabel.setBounds(482, 28, 180, 180);
+		inputLabel = new JLabel();
+		inputLabel.setBounds(492, 28, 170, 170);
 		inputLabel.setBackground(Color.GRAY);
 		inputLabel.setOpaque(true);
 		add(inputLabel);
 		
-		JLabel filenameLabel = new JLabel("tomato.jpg");
+		filenameLabel = new JLabel("tomato.jpg");
 		filenameLabel.setBounds(480, 213, 150, 30);
 		filenameLabel.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		filenameLabel.setForeground(Color.WHITE);
@@ -82,6 +100,13 @@ public class BRemoverPane extends JPanel
 		tButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				File inputFile = selectInput();
+				if(inputFile != null) {
+					showInput(inputFile);
+				}
+				else {
+					System.out.println("wew");
+				}
 			}
 		});
 		
@@ -150,19 +175,76 @@ public class BRemoverPane extends JPanel
 		aLabel.setBounds(330, 193, 60, 22);
 		add(aLabel);
 		
-		JPanel processPanel = new JPanel();
+		processPanel = new JPanel();
 		processPanel.setBackground(Color.GRAY);
 		
 		JScrollPane scrollPane = new JScrollPane(processPanel, 
 					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scrollPane.setBounds(15, 265, 670, 190);	
+		scrollPane.setBounds(15, 255, 670, 200);	
 		add(scrollPane);
 		
 		JButton removeButton = new JButton("REMOVE");
 		removeButton.setBounds(20, 200, 80, 40);
 		add(removeButton);
+		removeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				process();
+			}
+		});
 		
-		
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		chooser.setFileFilter(fileFilter);
 	}
 	
+	private File selectInput() 
+	{
+		File file = null;
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)  
+			file = chooser.getSelectedFile();
+		return file;
+	}	
+	
+	private void showInput(File inputFile) 
+	{
+		filenameLabel.setText(inputFile.getName());
+		try {
+			input = ImageIO.read(inputFile);
+		} catch (IOException e1) {
+			Debugger.printError("IO error in "+this.getClass().getName());
+		}
+		temp = iProcessor.resizeImage(input, 170, 170);
+		inputLabel.setIcon(new ImageIcon(temp));
+		updateUI();
+	}
+	
+	private void process() 
+	{
+		if(temp != null) {
+			processed = iProcessor.process(temp, 170, 170);
+			//outputLabel.setIcon(new ImageIcon(processed));
+			//showFeatures(processed);
+			showProcess();
+			
+			//if( chckbxShowHistogram.isSelected() ) {
+			//	histogramDialog.create(OtsuThreshold.hist, OtsuThreshold.thresh);
+			//}
+		}
+	}
+	
+	private void showProcess() 
+	{
+		processPanel.removeAll();
+		processPanel.add(new JLabel(new ImageIcon(temp)));
+		processPanel.add(new JLabel(new ImageIcon(iProcessor.getBlueChannel())));
+		processPanel.add(new JLabel(new ImageIcon(iProcessor.getFilteredBlue())));
+		processPanel.add(new JLabel(new ImageIcon(iProcessor.getGrayscale())));
+		processPanel.add(new JLabel(new ImageIcon(iProcessor.getBinaryMask())));
+		processPanel.add(new JLabel(new ImageIcon(iProcessor.getSegmented())));
+		processPanel.add(new JLabel(new ImageIcon(iProcessor.getCropped())));
+		processPanel.add(new JLabel(new ImageIcon(processed)));
+		updateUI();
+	}
+		
 }

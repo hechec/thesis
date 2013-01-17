@@ -35,7 +35,7 @@ public class HomePane extends JPanel
 		setLayout(null);
 		
 		JButton trainButton = new MainButton("src/images/trainButton.png", "src/images/trainHover.png");
-		trainButton.setBounds(55, 225, 140, 140);
+		trainButton.setBounds(130, 117, 140, 140);
 		this.add(trainButton, 0);
 		trainButton.addActionListener(new ActionListener() {
 			@Override
@@ -44,10 +44,20 @@ public class HomePane extends JPanel
 			}
 		});
 		
-		JButton classifyButton = new MainButton("src/images/classifyButton.png", "src/images/classifyHover.png");
-		classifyButton.setBounds(205, 225, 140, 140);
-		this.add(classifyButton, 0);
-		classifyButton.addActionListener(new ActionListener() {
+		JButton soloButton = new MainButton("src/images/classifyButton.png", "src/images/classifyHover.png");
+		soloButton.setBounds(285, 117, 140, 140);
+		this.add(soloButton, 0);
+		soloButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frame.setView(frame.getNextView(3));
+			}
+		});
+		
+		JButton batchButton = new MainButton("src/images/batchButton.png", "src/images/batchHover.png");
+		batchButton.setBounds(440, 117, 140, 140);
+		this.add(batchButton, 0);
+		batchButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				frame.setView(frame.getNextView(2));
@@ -55,7 +65,7 @@ public class HomePane extends JPanel
 		});
 		
 		JButton removeButton = new MainButton("src/images/removeBGButton.png", "src/images/removeBGHover.png");
-		removeButton.setBounds(355, 225, 140, 140);
+		removeButton.setBounds(285, 272, 140, 140);
 		this.add(removeButton, 0);
 		removeButton.addActionListener(new ActionListener() {
 			@Override
@@ -65,12 +75,21 @@ public class HomePane extends JPanel
 		});
 		
 		JButton resizeButton = new MainButton("src/images/resizeButton.png", "src/images/resizeHover.png");
-		resizeButton.setBounds(505, 225, 140, 140);
+		resizeButton.setBounds(130, 272, 140, 140);
 		this.add(resizeButton, 0);
 		resizeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				frame.setView(frame.getNextView(3));
+			}
+		});
+		
+		JButton randomizeButton = new MainButton("src/images/randomizeButton.png", "src/images/randomizeHover.png");
+		randomizeButton.setBounds(440, 272, 140, 140);
+		this.add(randomizeButton, 0);
+		randomizeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//frame.setView(frame.getNextView(3));
 			}
 		});
 		
@@ -88,7 +107,7 @@ public class HomePane extends JPanel
 		        g2.drawImage(image, 0, 0, null);          
 		    }
 		};
-		title.setBounds(51, 34, 568, 128);
+		title.setBounds(61, 7, 488, 90);
 		this.add(title, 0);
 		
 		JPanel footerPane = new JPanel() {

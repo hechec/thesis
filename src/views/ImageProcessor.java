@@ -39,9 +39,9 @@ public class ImageProcessor implements NNConstants
 		return instance;
 	}
 	
-	public BufferedImage process(BufferedImage image)
+	public BufferedImage process(BufferedImage image, int width, int height)
 	{
-		return BilinearInterpolation.resize(cropImage(removeBackground( BilinearInterpolation.resize(image, WIDTH, HEIGHT))), 64, 64);
+		return BilinearInterpolation.resize(cropImage(removeBackground( BilinearInterpolation.resize(image, width, height))), 64, 64);
 		//return resizeImage(cropImage(removeBackground(resizeImage(image, WIDTH, HEIGHT))), 64, 64);
 	}
 	
@@ -110,7 +110,7 @@ public class ImageProcessor implements NNConstants
 		double[][] inputArray = new double[patternSize][NUMBER_OF_INPUT];
 		
 		for( int i = 0; i < patternSize; i++ )  {
-			BufferedImage extractedInput = process(input_data.get(i));
+			BufferedImage extractedInput = process(input_data.get(i), 200, 200);
 			inputArray[i] = getFeatures(extractedInput);
 			//prog.setValue(patternSize+1+i);
 			progressPane.incrementBar();

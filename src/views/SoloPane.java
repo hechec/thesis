@@ -247,7 +247,7 @@ public class SoloPane extends JPanel
 			public void run() {
 				classifier = new Classifier(solution);
 				BufferedImage temp = input;
-				temp = iProcessor.process(input);
+				temp = iProcessor.process(input, 200, 200);
 				double[] features = iProcessor.getFeatures(temp);
 				int classIndex = classifier.classify(features);
 				classLabel.setForeground(classColors[classIndex]);

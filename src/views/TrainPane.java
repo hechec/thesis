@@ -148,7 +148,7 @@ public class TrainPane extends JPanel
 		panel4.add(label5);
 
 		onlookerSpinner = new JSpinner();
-		onlookerSpinner.setModel(new SpinnerNumberModel(new Integer(10), 1, null, new Integer(5)));
+		onlookerSpinner.setModel(new SpinnerNumberModel(new Integer(20), 1, null, new Integer(5)));
 		onlookerSpinner.setBounds(332, 219, 67, 30);
 		onlookerSpinner.setBorder(null);
 		onlookerSpinner.setFont(new Font("Century Gothic", Font.PLAIN, 15));

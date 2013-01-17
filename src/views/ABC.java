@@ -18,7 +18,6 @@ public class ABC{
 				scoutBeeSize	= 0,
 				param2change 	= 0,
 				neighbour 	 	= 0,
-				limit			= 0,
 				bestIndex	 	= 0;
 	
 	private double GlobalMin 	= 0,
@@ -73,7 +72,6 @@ public class ABC{
 		networks = new MLPNetwork[employedBeeSize];
 		
 		rand = new Random();
-		limit = dimension;//foodNumber*dimension;
 	
 		input_data = trainingData.getInputVector();
 		output_data = trainingData.getOutputVector();
@@ -199,7 +197,6 @@ public class ABC{
 
 	private void sendScoutBees() 
 	{
-		int[] worstIndices = getWorstSolutions();
 		for( int i = 0; i < scoutBeeSize; i++ ) {
 			
 		}
@@ -222,11 +219,6 @@ public class ABC{
 			//System.out.println( trial[i] );
 		}
 		System.out.println("SCOUT: "+ctr);*/
-	}
-	
-	private int[] getWorstSolutions()
-	{
-		return new int[10];
 	}
 
 	private void neighborhoodSearch(int foodIndex) 

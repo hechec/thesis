@@ -1,40 +1,43 @@
 package views.dialog;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
-import java.util.Random;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
 
-import views.BatchPane;
-import views.SoloPane;
+import abcnn.Result;
+import views.Data;
 
 public class MainPage extends JPanel
 {
 	private static MainPage instance = null;
+	private Result result;
+	private Data testData;
 	
-	private ResultViewerDialog parent;
+	private JPanel resultPanel;
 	
 	public static MainPage getInstance() 
 	{
-		if(instance == null)
-			instance = new MainPage();
 		return instance;
 	}
 	
 	public MainPage()
 	{
-		parent = ResultViewerDialog.getInstance();
+		instance = this;
 		setLayout(null);	
 		
+		JPanel panel0 = new JPanel();
+		panel0.setBounds(46, 22, 80, 30);
+		panel0.setBackground(Color.BLACK);
+		add(panel0);
+		
+		JLabel numberLabel = new JLabel("Test");
+		numberLabel.setFont(new Font("Century Gothic", Font.PLAIN, 16));
+		numberLabel.setForeground(Color.WHITE);
+		panel0.add(numberLabel);
+		
 		JPanel panel1 = new JPanel();
-		panel1.setBounds(46, 22, 186, 30);
+		panel1.setBounds(127, 22, 186, 30);
 		panel1.setBackground(Color.BLACK);
 		add(panel1);
 		
@@ -44,7 +47,7 @@ public class MainPage extends JPanel
 		panel1.add(label1);
 		
 		JPanel panel2 = new JPanel();
-		panel2.setBounds(233, 22, 95, 30);
+		panel2.setBounds(314, 22, 95, 30);
 		panel2.setBackground(Color.BLACK);
 		add(panel2);
 		
@@ -54,7 +57,7 @@ public class MainPage extends JPanel
 		panel2.add(label2);
 		
 		JPanel panel3 = new JPanel();
-		panel3.setBounds(329, 22, 95, 30);
+		panel3.setBounds(410, 22, 95, 30);
 		panel3.setBackground(Color.BLACK);
 		add(panel3);
 		
@@ -67,31 +70,42 @@ public class MainPage extends JPanel
 		linePanel.setBounds(46, 52, 400, 2);
 		add(linePanel);
 		
+		resultPanel = new JPanel();
+		//resultPanel.setOpaque(false);
+		resultPanel.setLayout(null);
+		resultPanel.setBounds(46, 55, 500, 310);
+		add(resultPanel);
+
 	}
 	
-	public void showTable() 
+	public void showTable(Data testData, Result result) 
 	{
+		this.result = result;
+		this.testData = testData;
 		
-		JPanel panel = new JPanel();
-		panel.setOpaque(false);
-		panel.setLayout(null);
-		panel.setBounds(46, 55, 400, 310);
-		add(panel);
+		PagerPanel pagerPanel = new PagerPanel();
+		pagerPanel.setBounds(46, 370, 460, 30);
+		add(pagerPanel);
 		
-		Random random = new Random();
-		for( int i = 0, y = 0; i < 10; i++, y += 31 ) {
-			boolean b = random.nextBoolean();
-			Entry e1 = new Entry("", "tomato1.jpg", "TURNING", b?"TURNING":"BREAKER");
-			e1.setBounds(0, y, 400, 30);
-			//e1.setLocation(0, y);
-			
-			//JLabel e1 = new JLabel("Harvey Jake Opena");
-			//e1.setSize(400, 30);
-			panel.add(e1);
-		}
-		
-		
-		
+		int numberOfPages = (int)(result.size()/10)+1;
+		if(result.size()%10 == 0)
+			numberOfPages--;
+		pagerPanel.setPager(numberOfPages);
+		setPage(1);
 	}
-	
+
+	public void setPage(int currentPage) 
+	{
+		resultPanel.removeAll();
+		
+		int firstIndex = (currentPage-1)*10;
+		
+		for( int i = firstIndex, y = 0; i < firstIndex + 10 && i < result.size(); i++, y += 31 ) {
+			Entry e = new Entry(i+1, testData.getFilename(i), testData.getFilename(i), result.getExpected(i)+"", result.getActual(i)+"");
+			e.setBounds(0, y, 500, 30);
+			resultPanel.add(e);
+		}
+		updateUI();
+	}
+
 }

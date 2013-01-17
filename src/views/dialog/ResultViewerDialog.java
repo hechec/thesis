@@ -9,6 +9,12 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import com.sun.xml.internal.ws.Closeable;
+
+import abcnn.Result;
+
+import views.Data;
+
 import custom.MainButton;
 
 public class ResultViewerDialog extends JDialog 
@@ -21,7 +27,7 @@ public class ResultViewerDialog extends JDialog
 	
 	public static void main(String[] args) {
 		try {
-			ResultViewerDialog dialog = new ResultViewerDialog();
+			ResultViewerDialog dialog = new ResultViewerDialog(null, null);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -29,12 +35,12 @@ public class ResultViewerDialog extends JDialog
 		}
 	}
 
-	public ResultViewerDialog() 
+	public ResultViewerDialog(Data testData, Result result) 
 	{
 		instance = this;
-		setSize(550, 450);
+		setSize(550, 500);
 		setUndecorated(true);
-		setLocationRelativeTo(null);
+		setLocation(0, 0);
 		contentPane = new JPanel() {
 			@Override
 		    public void paintComponent(Graphics g) {
@@ -45,7 +51,7 @@ public class ResultViewerDialog extends JDialog
 		        } catch (IOException ex) {
 		        	System.out.println("Check background image.");
 		        }
-		        g.drawImage(image, 0, 0, null);          
+		        //g.drawImage(image, 0, 0, null);          
 		    }
 		};
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -72,8 +78,9 @@ public class ResultViewerDialog extends JDialog
 		exitButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.exit(1);
+				close();
 			}
+
 		});
 		
 		contentPane.addMouseMotionListener(new MouseMotionListener() {
@@ -106,17 +113,22 @@ public class ResultViewerDialog extends JDialog
 		thePanel.setLayout(null);
 		contentPane.add(thePanel);
 	
-		mainPage = MainPage.getInstance();
+		mainPage = new MainPage();
 		mainPage.setBounds(0, 0, 550, 400);
 		mainPage.setOpaque(false);
 		thePanel.add(mainPage);
-		mainPage.showTable();
+		mainPage.showTable(testData, result);
 	}
 	
 	private void dragFrame(Point original, Point newPoint) 
 	{
 		Point p = new Point(newPoint.x - original.x, newPoint.y - original.y);
 		this.setLocation(this.getX()+p.x , this.getY() + p.y);
+	}
+	
+	private void close() 
+	{
+		this.dispose();
 	}
 
 	public static ResultViewerDialog getInstance() 
