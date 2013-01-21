@@ -1,4 +1,4 @@
-package util2;
+package dataset;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -10,11 +10,11 @@ import javax.swing.JOptionPane;
 
 import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
-import views.Data;
+import util2.FileHelper;
 import views.ImageProcessor;
 import views.ProgressPane;
 
-public class DatasetLoader 
+public class DataLoader extends FileHelper
 {
 	private double[][] inputVector;
 	private double[][] outputVector;
@@ -28,12 +28,12 @@ public class DatasetLoader
 	private File file;
 	private ProgressPane progressPane;
 
-	public DatasetLoader(ProgressPane progressPane, File file) 
+	public DataLoader(ProgressPane progressPane, File file) 
 	{
 		this.file = file;
 		this.progressPane = progressPane;
 		iProcessor = new ImageProcessor();
-		count += countFiles(file);
+		count += FileHelper.countFiles(file);
 		progressPane.reset(count*2);
 	}
 	
@@ -78,18 +78,6 @@ public class DatasetLoader
 	        }
 	        	
 		}
-	}
-	
-	private int countFiles(File folder) 
-	{
-		int ctr = 0;
-		for (final File fileEntry : folder.listFiles()) {
-	        if (fileEntry.isDirectory())  
-	        	ctr += countFiles(fileEntry);
-	        else 
-	        	ctr++;
-		}
-		return ctr;
 	}
 	
 }

@@ -13,9 +13,9 @@ import com.sun.xml.internal.ws.Closeable;
 
 import abcnn.Result;
 
-import views.Data;
 
 import custom.MainButton;
+import dataset.Data;
 
 public class ResultViewerDialog extends JDialog 
 {

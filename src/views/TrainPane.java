@@ -5,17 +5,19 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+
 import java.io.File;
 
 import static abcnn.NNConstants.DIMENSIONS;
 
 import util2.FileChooser;
 import util2.SolutionWriter;
-import util2.DatasetLoader;
 
 import custom.MainButton;
 import custom.MyTextField;
 import custom.StopPlayButton;
+import dataset.Data;
+import dataset.DataLoader;
 
 public class TrainPane extends JPanel 
 {
@@ -245,7 +247,7 @@ public class TrainPane extends JPanel
 						@Override
 						public void run() {
 							File file = new File(""+textField1.getText());
-							DatasetLoader dl = new DatasetLoader(progressPane, file);
+							DataLoader dl = new DataLoader(progressPane, file);
 							trainData = dl.load();
 						}
 						
@@ -303,8 +305,8 @@ public class TrainPane extends JPanel
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				abc = new ABC(TrainPane.getInstance(), trainingData, runtime, maxCycle, employedBeeSize, onlookerBeeSize, DIMENSIONS); 
-				abc.start();
+				abc = new ABC(runtime, maxCycle, employedBeeSize, onlookerBeeSize, DIMENSIONS); 
+				abc.train(trainingData);
 			}
 		}).start();
 	
@@ -330,6 +332,8 @@ public class TrainPane extends JPanel
 	public void incrementCycle(int percent) 
 	{
 		cycleBar.setValue(percent);
+		updateUI();
+		System.out.println( cycleBar.getValue() + "/" + cycleBar.getMaximum() );
 	}
 	
 	public void incrementRuntime(int percent) 

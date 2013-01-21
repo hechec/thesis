@@ -1,8 +1,11 @@
 package views;
 
+import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+
+import dataset.Data;
 
 import abcnn.MLPNetwork;
 
@@ -46,10 +49,10 @@ public class ABC{
 	private double[][] input_data;
 	private double[][] output_data;
 
-	public ABC(TrainPane trainPane, Data trainingData, int runtime, int maxCycle, int employedBeeSize, 
+	public ABC(int runtime, int maxCycle, int employedBeeSize, 
 			int onlookerBeeSize, int dimension) 
 	{
-		this.trainPane = trainPane;
+		this.trainPane = TrainPane.getInstance();
 		
 		this.runtime = runtime;
 		this.maxCycle = maxCycle;
@@ -72,17 +75,17 @@ public class ABC{
 		networks = new MLPNetwork[employedBeeSize];
 		
 		rand = new Random();
-	
-		input_data = trainingData.getInputVector();
-		output_data = trainingData.getOutputVector();
 	}
 	
 	/**
-	 * start ABC
+	 * start training
 	 */
-    public void start() 
-	{		
+    public void train(Data trainingData) 
+	{
+    	input_data = trainingData.getInputVector();
+		output_data = trainingData.getOutputVector();
 		double start = System.currentTimeMillis();
+		
 		for( int run = 0; run < runtime; run++ ) {
 			initializePopulation();
 			memorizeBestSource();
@@ -94,6 +97,7 @@ public class ABC{
 				memorizeBestSource();
 				sendScoutBees();
 				trainPane.incrementCycle(cycle+1);
+				//System.out.println("cycle: "+(cycle+1));
 			}
 			trainPane.incrementRuntime(run+1);
 			//for( int i = 0; i < GlobalParams.length; i++ )
@@ -197,6 +201,10 @@ public class ABC{
 
 	private void sendScoutBees() 
 	{
+		//sortByFitness();
+		//for( int i = 0; i < employedBeeSize; i++ )
+		//	System.out.println( fitness[i] +" "+scouts[i]);
+		
 		for( int i = 0; i < scoutBeeSize; i++ ) {
 			
 		}
@@ -296,6 +304,36 @@ public class ABC{
 		return result;
 	}
 	
+	int[] scouts;
+	
+	private void sortByFitness() 
+	{
+		scouts = new int[employedBeeSize];
+		for( int i = 0; i < employedBeeSize; i++ ) 
+			scouts[i] = i;
+		
+		int temp;
+		double[] tempFitness = fitness.clone();
+		double temp2;
+		
+		for( int i = 0; i < employedBeeSize - 1; i++ ) {
+			for( int j = 0; j < employedBeeSize - 1; j++ ) {
+				if( tempFitness[j] > tempFitness[j+1] ) {
+					temp2 = tempFitness[j];
+					temp = scouts[j];
+					tempFitness[j] = tempFitness[j+1];
+					scouts[j] = scouts[j+1];
+					tempFitness[j+1] = temp2;
+					scouts[j+1] = temp;
+				}
+			}
+		}
+	}
+	
+	/***********************************/
+	/*                                 */
+	/***********************************/
+	
 	public double[] getSolution()
 	{
 		return Params[bestIndex];
@@ -310,6 +348,33 @@ public class ABC{
 	public MLPNetwork getBestBee() 
 	{
 		return new MLPNetwork( Params[bestIndex] );
+	}
+	
+	public static void main(String[] args) {
+		ABC abc = new ABC(1, 10, 11, 0, 126);
+		
+		ArrayList<String> filename = new ArrayList<String>();
+		filename.add("f1");
+		filename.add("f2");
+		filename.add("f3");
+		double[][] inputVector = { {0, 1, 2, 3, 4, 5}, 
+								   {6, 7, 8, 9, 10, 11}, 
+								   {12, 13, 14, 15, 16, 17},
+								   {18, 19, 20, 21, 22, 23}, 
+								   {24, 25, 26, 27, 28, 29}, 
+								   {30, 31, 32, 33, 34, 35}
+								  };
+		double[][] outputVector = { {1, 0, 0, 0, 0, 0}, 
+									{0, 1, 0, 0, 0, 0}, 
+									{0, 0, 1, 0, 0, 0},
+									{0, 0, 0, 1, 0, 0},
+									{0, 0, 0, 0, 1, 0},
+									{0, 0, 0, 0, 0, 1}};
+	
+		
+		Data data = new Data(filename, inputVector, outputVector);
+		abc.train(data);
+		
 	}
 	
 }

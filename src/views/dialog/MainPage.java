@@ -5,8 +5,9 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import dataset.Data;
+
 import abcnn.Result;
-import views.Data;
 
 public class MainPage extends JPanel
 {

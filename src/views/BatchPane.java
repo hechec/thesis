@@ -13,7 +13,6 @@ import abcnn.Result;
 import util.FileTypeFilter;
 import util2.Debugger;
 import util2.FileChooser;
-import util2.DatasetLoader;
 import util2.OutputLayerHelper;
 import util2.ResultWriter;
 import util2.SolutionReader;
@@ -21,6 +20,8 @@ import views.dialog.ResultViewerDialog;
 
 import custom.MainButton;
 import custom.MyTextField;
+import dataset.Data;
+import dataset.DataLoader;
 
 public class BatchPane extends JPanel
 {
@@ -235,7 +236,7 @@ public class BatchPane extends JPanel
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						DatasetLoader dl = new DatasetLoader(progressPane, file);
+						DataLoader dl = new DataLoader(progressPane, file);
 						testData = dl.load();
 					}
 				}).start();

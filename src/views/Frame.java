@@ -121,6 +121,10 @@ public class Frame extends JFrame
 		panels[4].setBounds(0, 0, 700, 475);
 		panels[4].setOpaque(false);		
 		
+		panels[5] = RandomizerPane.getInstance(); 
+		panels[5].setBounds(0, 0, 700, 475);
+		panels[5].setOpaque(false);	
+		
 		contentPane.addMouseMotionListener(new MouseMotionListener() {
 			boolean startDrag = false;
 			Point original = null;

@@ -7,7 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import views.Data;
+import dataset.Data;
+
 import abcnn.Result;
 
 public class ResultWriter 

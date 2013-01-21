@@ -89,7 +89,7 @@ public class HomePane extends JPanel
 		randomizeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//frame.setView(frame.getNextView(3));
+				frame.setView(frame.getNextView(5));
 			}
 		});
 		
