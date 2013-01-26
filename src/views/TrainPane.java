@@ -4,12 +4,15 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.plaf.basic.BasicProgressBarUI;
 
 
 import java.io.File;
 
 import static abcnn.NNConstants.DIMENSIONS;
 
+import util.FileTypeFilter;
 import util2.FileChooser;
 import util2.SolutionWriter;
 
@@ -17,7 +20,7 @@ import custom.MainButton;
 import custom.MyTextField;
 import custom.StopPlayButton;
 import dataset.Data;
-import dataset.DataLoader;
+import dataset.DataReader;
 
 public class TrainPane extends JPanel 
 {
@@ -31,8 +34,9 @@ public class TrainPane extends JPanel
 	private JProgressBar cycleBar, runtimeBar;
 	private JLabel mseLabel, timeLabel;	
 	
-	private Frame frame;
+	private boolean hasData = false;
 	
+	private Frame frame;
 	private ABC abc;
 	
 	public static TrainPane getInstance() 
@@ -68,7 +72,7 @@ public class TrainPane extends JPanel
 		label1.setBounds(0, 0, 107, 23);
 		panel1.add(label1);
 		
-		final JTextField textField1 = new MyTextField("click to selected directory");
+		final JTextField textField1 = new MyTextField("click to select test data");
 		textField1.setBounds(330, 38, 261, 30);
 		textField1.setBorder(null);
 		textField1.setFont(new Font("Century Gothic", Font.PLAIN, 16));
@@ -115,11 +119,12 @@ public class TrainPane extends JPanel
 		panel2.add(label3);
 		
 		employedSpinner = new JSpinner();
-		employedSpinner.setModel(new SpinnerNumberModel(new Integer(10), 1, null, new Integer(5)));
+		employedSpinner.setModel(new SpinnerNumberModel(new Integer(20), 1, null, new Integer(5)));
 		employedSpinner.setBounds(332, 163, 67, 30);
 		employedSpinner.setBorder(null);
 		employedSpinner.setFont(new Font("Century Gothic", Font.PLAIN, 15));
 		add(employedSpinner);
+		
 		
 		JPanel panel3 = new JPanel();
 		panel3.setBackground(new Color(255, 204, 51));
@@ -150,7 +155,7 @@ public class TrainPane extends JPanel
 		panel4.add(label5);
 
 		onlookerSpinner = new JSpinner();
-		onlookerSpinner.setModel(new SpinnerNumberModel(new Integer(20), 1, null, new Integer(5)));
+		onlookerSpinner.setModel(new SpinnerNumberModel(new Integer(30), 1, null, new Integer(5)));
 		onlookerSpinner.setBounds(332, 219, 67, 30);
 		onlookerSpinner.setBorder(null);
 		onlookerSpinner.setFont(new Font("Century Gothic", Font.PLAIN, 15));
@@ -187,12 +192,21 @@ public class TrainPane extends JPanel
 		label8.setHorizontalAlignment(SwingConstants.RIGHT);
 		add(label8);
 		
+		JPanel cPanel = new JPanel();
+		cPanel.setBounds(332, 275, 288, 26);
+		cPanel.setBackground(Color.WHITE);
+		cPanel.setLayout(null);
+		add(cPanel);
+		
 		cycleBar = new JProgressBar();
-		cycleBar.setBounds(332, 275, 288, 26);
-		cycleBar.setForeground(Color.LIGHT_GRAY);
+		cycleBar.setUI(new BasicProgressBarUI());
+		cycleBar.setOpaque(false);
 		cycleBar.setBorderPainted(false);
+		cycleBar.setBounds(0, 0, 288, 26);
+		cycleBar.setStringPainted(true);
+		cycleBar.setForeground(Color.GRAY);
 		cycleBar.setBackground(Color.WHITE);
-		add(cycleBar);
+		cPanel.add(cycleBar);
 		
 		runtimeBar = new JProgressBar();
 		runtimeBar.setBounds(332, 313, 288, 26);
@@ -247,8 +261,9 @@ public class TrainPane extends JPanel
 						@Override
 						public void run() {
 							File file = new File(""+textField1.getText());
-							DataLoader dl = new DataLoader(progressPane, file);
-							trainData = dl.load();
+							DataReader dl = new DataReader(progressPane, file);
+							trainData = dl.read();
+							hasData = true;
 						}
 						
 					}).start();
@@ -262,8 +277,12 @@ public class TrainPane extends JPanel
 		playButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				trainNetwork( trainData, (int)runtimeSpinner.getValue(), (int)cycleSpinner.getValue(), 
-						  (int)employedSpinner.getValue(), (int)onlookerSpinner.getValue());
+				if(hasData) {
+					trainNetwork( trainData, (int)runtimeSpinner.getValue(), (int)cycleSpinner.getValue(), 
+						(int)employedSpinner.getValue(), (int)onlookerSpinner.getValue());
+				}
+				else
+					JOptionPane.showMessageDialog(null, "No Data.");	
 			}
 		});
 		//playButton.setEnabled(false);
@@ -284,9 +303,13 @@ public class TrainPane extends JPanel
 	
 	private void selectDirectory(JTextField textField) 
 	{
-		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) 
-			textField.setText(chooser.getSelectedFile()+"");
+		FileFilter filter = new FileTypeFilter(".data", "Text files");
+		JFileChooser chooser = new JFileChooser("D:/kamatisan");
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		chooser.setFileFilter(filter);
+		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+			textField.setText(chooser.getSelectedFile().getAbsolutePath());
+		}
 	}
 	
 	/**
@@ -333,7 +356,7 @@ public class TrainPane extends JPanel
 	{
 		cycleBar.setValue(percent);
 		updateUI();
-		System.out.println( cycleBar.getValue() + "/" + cycleBar.getMaximum() );
+		//System.out.println( cycleBar.getValue() + "/" + cycleBar.getMaximum() );
 	}
 	
 	public void incrementRuntime(int percent) 

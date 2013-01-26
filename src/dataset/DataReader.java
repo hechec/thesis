@@ -1,7 +1,10 @@
 package dataset;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -14,7 +17,7 @@ import util2.FileHelper;
 import views.ImageProcessor;
 import views.ProgressPane;
 
-public class DataLoader extends FileHelper
+public class DataReader extends FileHelper
 {
 	private double[][] inputVector;
 	private double[][] outputVector;
@@ -25,16 +28,58 @@ public class DataLoader extends FileHelper
 	
 	private ImageProcessor iProcessor;
 	private int count = 0;
-	private File file;
+	private File dataFile;
 	private ProgressPane progressPane;
-
-	public DataLoader(ProgressPane progressPane, File file) 
+	private BufferedReader bufferedReader;
+	
+	public DataReader(ProgressPane progressPane, File dataFile) 
 	{
-		this.file = file;
+		this.dataFile = dataFile;
 		this.progressPane = progressPane;
 		iProcessor = new ImageProcessor();
-		count += FileHelper.countFiles(file);
+	}
+	
+
+	/**
+	 * reads .data file containing absolute paths of images and extracts features from each image
+	 * 
+	 * @return Data 
+	 */
+	public Data read() 
+	{
+		int count = FileHelper.countFiles(dataFile);
 		progressPane.reset(count*2);
+		try {
+			bufferedReader = new BufferedReader(new FileReader(dataFile));
+			String fname = "";
+			int classNumber;
+			File file = null;
+        	BufferedImage image = null;
+			while( (fname = bufferedReader.readLine()) != null ) 
+			{
+				file = new File(fname);
+        		image = ImageIO.read(file);
+        		image = iProcessor.resizeImage(image, ImageProcessor.WIDTH, ImageProcessor.HEIGHT);
+        		classNumber =  Integer.parseInt(file.getParentFile().getName());
+        		
+        		input_list.add(image);
+	        	output_list.add(classNumber);
+	        	progressPane.incrementBar();
+        		filename.add(fname);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NumberFormatException e) {}
+	
+		inputVector = iProcessor.createInputVectorArray(input_list, progressPane);
+    	outputVector = iProcessor.createOutputVector(output_list);
+    	
+    	JOptionPane.showMessageDialog(null, "Loaded "+count +" images.");
+
+		
+		return new Data(filename, inputVector, outputVector);
 	}
 	
 	/**
@@ -44,7 +89,7 @@ public class DataLoader extends FileHelper
 	 */
 	public Data load() 
 	{
-		loadAllImages(file, input_list, output_list);
+		loadAllImages(dataFile, input_list, output_list);
 		
 		inputVector = iProcessor.createInputVectorArray(input_list, progressPane);
     	outputVector = iProcessor.createOutputVector(output_list);

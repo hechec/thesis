@@ -12,20 +12,31 @@ public class DataRandomizer
 	private File dataFile;
 	private float percentage = 0.7f;
 	
-	ArrayList<String> train_paths = new ArrayList<String>();
-	ArrayList<String> test_paths = new ArrayList<String>();
+	ArrayList<String> train_set = new ArrayList<String>();
+	ArrayList<String> test_set = new ArrayList<String>();
 	
 	public DataRandomizer(File dataFile)
 	{
 		this.dataFile = dataFile;
 	}
 	
-	public void randomize()
+	public ArrayList<String> getTrainSet()
 	{
-		getAbsolutePaths(dataFile);
+		return train_set;
+	}
+	
+	public ArrayList<String> getTestSet()
+	{
+		return test_set;
+	}
+	
+	public boolean randomize()
+	{
+		boolean success = getAbsolutePaths(dataFile);
+		return success;
 	}
 
-	private void getAbsolutePaths(File dataFile) 
+	private boolean getAbsolutePaths(File dataFile) 
 	{
 		for (File classFile: dataFile.listFiles()) {
 	        if (classFile.isDirectory()) { 
@@ -34,17 +45,16 @@ public class DataRandomizer
 	        	
 	        	for( int i = 0; i < data.length; i++ ) {
 	        		if(arrayContains(trainIndices, i)) 
-	        			train_paths.add(data[i].getAbsolutePath()); // add file to train data
+	        			train_set.add(data[i].getAbsolutePath()); // add file to train data
 	        		else 
-	        			test_paths.add(data[i].getAbsolutePath()); // add file to test data
+	        			test_set.add(data[i].getAbsolutePath()); // add file to test data
 	        	}
 	        	
 	        }
-	        else {
-				// error
-			}
+	        else 
+				return false;
 		}
-		
+		return true;
 	}
 	
 	private boolean arrayContains(int[] array, int number)
@@ -86,7 +96,7 @@ public class DataRandomizer
 		File file = new File("D:/kamatisan/testing_60");
 		
 		DataRandomizer randomizer = new DataRandomizer(file);
-		randomizer.randomize();
+		System.out.println(randomizer.randomize());
 	}
 	
 }

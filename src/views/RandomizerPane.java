@@ -4,20 +4,32 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.plaf.metal.MetalIconFactory.FileIcon16;
+
+import util.FileTypeFilter;
+import util2.ResultWriter;
 
 import custom.MainButton;
 import custom.MyTextField;
+import dataset.DataRandomizer;
+import dataset.DataWriter;
 
 public class RandomizerPane extends JPanel 
 {
 	private static RandomizerPane instance = null;
 	private Frame frame;
+	
+	private JTextField directoryField;
 	
 	public static RandomizerPane  getInstance() 
 	{
@@ -63,13 +75,13 @@ public class RandomizerPane extends JPanel
 		cLabel.setBounds(0, 0, 75, 30);
 		cpanel.add(cLabel);
 		
-		final JTextField textField1 = new MyTextField("click to selected directory");
-		textField1.setBounds(330, 117, 260, 30);
-		textField1.setBorder(null);
-		textField1.setFont(new Font("Century Gothic", Font.PLAIN, 16));
-		textField1.setBorder(BorderFactory.createCompoundBorder( textField1.getBorder(),
+		directoryField = new MyTextField("click to selected directory");
+		directoryField.setBounds(330, 117, 260, 30);
+		directoryField.setBorder(null);
+		directoryField.setFont(new Font("Century Gothic", Font.PLAIN, 16));
+		directoryField.setBorder(BorderFactory.createCompoundBorder( directoryField.getBorder(),
 					BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-		add(textField1);
+		add(directoryField);
 		
 		JButton tButton = new MainButton("src/images/pencil.png", "src/images/pencil.png");
 		tButton.setBounds(595, 117, 35, 33);
@@ -77,7 +89,8 @@ public class RandomizerPane extends JPanel
 		tButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-			}
+				selectDirectory();
+			}	
 		});
 		
 		JPanel panel = new JPanel();
@@ -91,7 +104,7 @@ public class RandomizerPane extends JPanel
 		label1.setBounds(0, 0, 75, 30);
 		panel.add(label1);
 		
-		JTextField trainingField = new MyTextField("click to selected directory");
+		final JTextField trainingField = new MyTextField("click to selected directory");
 		trainingField.setBounds(330, 226, 240, 30);
 		trainingField.setBorder(null);
 		trainingField.setFont(new Font("Century Gothic", Font.PLAIN, 16));
@@ -116,7 +129,7 @@ public class RandomizerPane extends JPanel
 		label3.setBounds(0, 0, 75, 30);
 		panel2.add(label3);
 		
-		JTextField testingField = new MyTextField("click to selected directory");
+		final JTextField testingField = new MyTextField("click to selected directory");
 		testingField.setBounds(330, 274, 240, 30);
 		testingField.setBorder(null);
 		testingField.setFont(new Font("Century Gothic", Font.PLAIN, 16));
@@ -136,11 +149,36 @@ public class RandomizerPane extends JPanel
 		randomize.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!textField1.getText().isEmpty()) {
-					System.out.println("randomize");
+				if(!directoryField.getText().isEmpty() && !trainingField.getText().isEmpty() && !testingField.getText().isEmpty()) {
+					File dataFile = new File(directoryField.getText());
+					DataRandomizer dataRandomizer = new DataRandomizer(dataFile);
+					boolean success = dataRandomizer.randomize();
+					if(success) {
+						DataWriter dataWriter = new DataWriter(trainingField.getText());
+						boolean b1 = dataWriter.write(dataRandomizer.getTrainSet());
+						DataWriter dataWriter2 = new DataWriter(testingField.getText());
+						boolean b2 = dataWriter2.write(dataRandomizer.getTestSet());
+						if(b1 & b2) {
+							JOptionPane.showMessageDialog(null, "Success :)");
+						}
+						else
+							JOptionPane.showMessageDialog(null, "Fail :(");
+					}
 				}
+				else
+					JOptionPane.showMessageDialog(null, "Oopppps! :p");
 			}
 		});
 		
 	}	
+	
+	private void selectDirectory()
+	{
+		JFileChooser chooser = new JFileChooser("D:/");
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) { 
+			directoryField.setText(chooser.getSelectedFile().getAbsolutePath());
+		}
+	}
+	
 }

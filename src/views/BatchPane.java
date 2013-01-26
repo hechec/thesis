@@ -21,7 +21,7 @@ import views.dialog.ResultViewerDialog;
 import custom.MainButton;
 import custom.MyTextField;
 import dataset.Data;
-import dataset.DataLoader;
+import dataset.DataReader;
 
 public class BatchPane extends JPanel
 {
@@ -120,7 +120,7 @@ public class BatchPane extends JPanel
 		label2.setBounds(0, 0, 107, 23);
 		panel.add(label2);
 		
-		final JTextField textField1 = new MyTextField("click to selected directory");
+		final JTextField textField1 = new MyTextField("click to select test data");
 		textField1.setBounds(330, 195, 260, 30);
 		textField1.setBorder(null);
 		textField1.setFont(new Font("Century Gothic", Font.PLAIN, 16));
@@ -140,7 +140,14 @@ public class BatchPane extends JPanel
 		tButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				selectDirectory(textField1);
+				FileFilter filter = new FileTypeFilter(".data", "Text files");
+				JFileChooser chooser = new JFileChooser("D:/");
+				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				chooser.setFileFilter(filter);
+				if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+					textField1.setText(chooser.getSelectedFile().getAbsolutePath());
+				}
+				//selectDirectory(textField1);
 			}
 		});
 		
@@ -208,8 +215,8 @@ public class BatchPane extends JPanel
 		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				FileFilter filter = new FileTypeFilter(".ttb", "Text files");
-				JFileChooser chooser = new JFileChooser("D:/");
+				FileFilter filter = new FileTypeFilter(".txt", "Text files");
+				JFileChooser chooser = new JFileChooser("D:/kamatisan/");
 				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				chooser.setFileFilter(filter);
 				if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) { 
@@ -236,8 +243,8 @@ public class BatchPane extends JPanel
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						DataLoader dl = new DataLoader(progressPane, file);
-						testData = dl.load();
+						DataReader dl = new DataReader(progressPane, file);
+						testData = dl.read();
 					}
 				}).start();
 			}
@@ -289,7 +296,10 @@ public class BatchPane extends JPanel
 	 */
 	private void selectClassifier()
 	{
+		FileFilter filter = new FileTypeFilter(".ttb", "Text files");
+		JFileChooser chooser = new JFileChooser("D:/kamatisan");
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		chooser.setFileFilter(filter);
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
 			fileLabel.setText(chooser.getSelectedFile()+"");
 			solution = SolutionReader.read(chooser.getSelectedFile());

@@ -21,8 +21,8 @@ public class SolutionWriter
 	{
 		JFileChooser chooser;
 		
-		FileFilter filter = new FileTypeFilter(".txt", "Text files");
-		chooser = new JFileChooser();
+		FileFilter filter = new FileTypeFilter(".ttb", "Text files");
+		chooser = new JFileChooser("D:/kamatisan/");
 		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		chooser.setFileFilter(filter);
 		chooser.setAcceptAllFileFilterUsed(false);
