@@ -7,6 +7,12 @@ import java.util.Random;
 
 import util2.FileHelper;
 
+/** 
+ * Randomizes the  dataset; 70% for training and 30% for testing
+ * @author hechec
+ *
+ */
+
 public class DataRandomizer
 {
 	private File dataFile;

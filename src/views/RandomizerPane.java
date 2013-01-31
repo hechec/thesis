@@ -2,10 +2,15 @@ package views;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -169,6 +174,24 @@ public class RandomizerPane extends JPanel
 					JOptionPane.showMessageDialog(null, "Oopppps! :p");
 			}
 		});
+		
+		JPanel footerPane = new JPanel() {
+			@Override
+		    public void paintComponent(Graphics g) {
+				 Graphics2D g2 = (Graphics2D) g;
+				Image image = null;
+				try {                
+					image = ImageIO.read(new File("src/images/footer.png"));
+		        } catch (IOException ex) {
+		        	System.out.println("Check footer image.");
+		        }
+		        g2.drawImage(image, 0, 0, null);          
+		    }
+		};
+		footerPane.setBackground(Color.DARK_GRAY);
+		footerPane.setBounds(0, 425, 700, 50);
+		this.add(footerPane);
+		footerPane.setLayout(null);
 		
 	}	
 	

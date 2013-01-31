@@ -80,6 +80,7 @@ public class HomePane extends JPanel
 		resizeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				frame.setView(frame.getNextView(6));
 			}
 		});
 		

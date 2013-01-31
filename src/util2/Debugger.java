@@ -7,7 +7,7 @@ public class Debugger {
 	public static void printError(String errorMessage)
 	{
 		if(debug)
-			System.out.println( errorMessage );
+			System.err.println( errorMessage );
 	}
 	
 }

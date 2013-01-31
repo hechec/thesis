@@ -28,7 +28,7 @@ public class Frame extends JFrame
 	private JPanel contentPane;
 	private JPanel thePanel;
 	
-	private JPanel[] panels = new JPanel[6];
+	private JPanel[] panels = new JPanel[7];
 	
 	/**
 	 * Launch the application.
@@ -123,7 +123,11 @@ public class Frame extends JFrame
 		
 		panels[5] = RandomizerPane.getInstance(); 
 		panels[5].setBounds(0, 0, 700, 475);
-		panels[5].setOpaque(false);	
+		panels[5].setOpaque(false);
+		
+		panels[6] = ResizerPane.getInstance();
+		panels[6].setBounds(0, 0, 700, 475);
+		panels[6].setOpaque(false);
 		
 		contentPane.addMouseMotionListener(new MouseMotionListener() {
 			boolean startDrag = false;
