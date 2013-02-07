@@ -21,8 +21,8 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.plaf.metal.MetalIconFactory.FileIcon16;
 
-import util.FileTypeFilter;
-import util2.ResultWriter;
+import utilities.FileTypeFilter;
+import utilities.ResultWriter;
 
 import custom.MainButton;
 import custom.MyTextField;
@@ -35,6 +35,7 @@ public class RandomizerPane extends JPanel
 	private Frame frame;
 	
 	private JTextField directoryField;
+	private JFileChooser chooser;
 	
 	public static RandomizerPane  getInstance() 
 	{
@@ -80,7 +81,7 @@ public class RandomizerPane extends JPanel
 		cLabel.setBounds(0, 0, 75, 30);
 		cpanel.add(cLabel);
 		
-		directoryField = new MyTextField("click to selected directory");
+		directoryField = new MyTextField("click to select directory");
 		directoryField.setBounds(330, 117, 260, 30);
 		directoryField.setBorder(null);
 		directoryField.setFont(new Font("Century Gothic", Font.PLAIN, 16));
@@ -109,7 +110,7 @@ public class RandomizerPane extends JPanel
 		label1.setBounds(0, 0, 75, 30);
 		panel.add(label1);
 		
-		final JTextField trainingField = new MyTextField("click to selected directory");
+		final JTextField trainingField = new MyTextField("Enter train data filename");
 		trainingField.setBounds(330, 226, 240, 30);
 		trainingField.setBorder(null);
 		trainingField.setFont(new Font("Century Gothic", Font.PLAIN, 16));
@@ -134,7 +135,7 @@ public class RandomizerPane extends JPanel
 		label3.setBounds(0, 0, 75, 30);
 		panel2.add(label3);
 		
-		final JTextField testingField = new MyTextField("click to selected directory");
+		final JTextField testingField = new MyTextField("Enter test data filename");
 		testingField.setBounds(330, 274, 240, 30);
 		testingField.setBorder(null);
 		testingField.setFont(new Font("Century Gothic", Font.PLAIN, 16));
@@ -193,12 +194,13 @@ public class RandomizerPane extends JPanel
 		this.add(footerPane);
 		footerPane.setLayout(null);
 		
+		chooser = new JFileChooser("D:/kamatisan");
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 	}	
 	
 	private void selectDirectory()
 	{
-		JFileChooser chooser = new JFileChooser("D:/");
-		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		
 		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) { 
 			directoryField.setText(chooser.getSelectedFile().getAbsolutePath());
 		}

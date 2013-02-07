@@ -1,5 +1,6 @@
 package views;
 
+import image_processing.FeatureExtractor;
 import image_processing.OtsuThreshold;
 
 import java.awt.Color;
@@ -28,9 +29,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import custom.MainButton;
 
-import util.FileTypeFilter;
-import util2.Debugger;
-import util2.FileChooser;
+import utilities.Debugger;
+import utilities.FileTypeFilter;
 import abcnn.Result;
 
 public class BRemoverPane extends JPanel
@@ -44,6 +44,7 @@ public class BRemoverPane extends JPanel
 	private FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("", "jpg", "jpeg");
 	
 	private JLabel filenameLabel, inputLabel;
+	private JLabel redLabel, greenLabel, redgreenLabel, hueLabel, aLabel;
 	private JPanel processPanel;
 	private BufferedImage input, temp, processed;
 	
@@ -81,13 +82,13 @@ public class BRemoverPane extends JPanel
 		add(label1);
 		
 		inputLabel = new JLabel();
-		inputLabel.setBounds(492, 28, 170, 170);
+		inputLabel.setBounds(482, 28, 190, 190);
 		inputLabel.setBackground(Color.GRAY);
 		inputLabel.setOpaque(true);
 		add(inputLabel);
 		
 		filenameLabel = new JLabel("tomato.jpg");
-		filenameLabel.setBounds(480, 213, 150, 30);
+		filenameLabel.setBounds(480, 230, 150, 30);
 		filenameLabel.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		filenameLabel.setForeground(Color.WHITE);
 		//filenameLabel.setBackground(Color.BLACK);
@@ -95,18 +96,14 @@ public class BRemoverPane extends JPanel
 		add(filenameLabel);
 		
 		JButton tButton = new MainButton("src/images/pencil.png", "src/images/pencil.png");
-		tButton.setBounds(640, 215, 35, 33);
+		tButton.setBounds(640, 230, 35, 33);
 		add(tButton);
 		tButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				File inputFile = selectInput();
-				if(inputFile != null) {
+				if(inputFile != null) 
 					showInput(inputFile);
-				}
-				else {
-					System.out.println("wew");
-				}
 			}
 		});
 		
@@ -145,31 +142,31 @@ public class BRemoverPane extends JPanel
 		label6.setHorizontalAlignment(SwingConstants.RIGHT);
 		add(label6);
 		
-		JLabel redLabel = new JLabel("--");
+		redLabel = new JLabel("--");
 		redLabel.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		redLabel.setForeground(Color.WHITE);
 		redLabel.setBounds(330, 78, 60, 22);
 		add(redLabel);
 		
-		JLabel greenLabel = new JLabel("--");
+		greenLabel = new JLabel("--");
 		greenLabel.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		greenLabel.setForeground(Color.WHITE);
 		greenLabel.setBounds(330, 109, 60, 22);
 		add(greenLabel);
 		
-		JLabel redgreenLabel = new JLabel("--");
+		redgreenLabel = new JLabel("--");
 		redgreenLabel.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		redgreenLabel.setForeground(Color.WHITE);
 		redgreenLabel.setBounds(330, 136, 60, 22);
 		add(redgreenLabel);
 		
-		JLabel hueLabel = new JLabel("--");
+		hueLabel = new JLabel("--");
 		hueLabel.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		hueLabel.setForeground(Color.WHITE);
 		hueLabel.setBounds(330, 163, 60, 22);
 		add(hueLabel);
 		
-		JLabel aLabel = new JLabel("--");
+		aLabel = new JLabel("--");
 		aLabel.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		aLabel.setForeground(Color.WHITE);
 		aLabel.setBounds(330, 193, 60, 22);
@@ -180,7 +177,7 @@ public class BRemoverPane extends JPanel
 		
 		JScrollPane scrollPane = new JScrollPane(processPanel, 
 					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scrollPane.setBounds(15, 255, 670, 200);	
+		scrollPane.setBounds(15, 285, 670, 220);	
 		add(scrollPane);
 		
 		JButton removeButton = new JButton("REMOVE");
@@ -214,7 +211,7 @@ public class BRemoverPane extends JPanel
 		} catch (IOException e1) {
 			Debugger.printError("IO error in "+this.getClass().getName());
 		}
-		temp = iProcessor.resizeImage(input, 170, 170);
+		temp = iProcessor.resizeImage(input, 190, 190);
 		inputLabel.setIcon(new ImageIcon(temp));
 		updateUI();
 	}
@@ -222,11 +219,11 @@ public class BRemoverPane extends JPanel
 	private void process() 
 	{
 		if(temp != null) {
-			processed = iProcessor.process(temp, 170, 170);
+			processed = iProcessor.process(temp, 190, 190);
 			//outputLabel.setIcon(new ImageIcon(processed));
 			//showFeatures(processed);
 			showProcess();
-			
+			showFeatures();
 			//if( chckbxShowHistogram.isSelected() ) {
 			//	histogramDialog.create(OtsuThreshold.hist, OtsuThreshold.thresh);
 			//}
@@ -238,13 +235,23 @@ public class BRemoverPane extends JPanel
 		processPanel.removeAll();
 		processPanel.add(new JLabel(new ImageIcon(temp)));
 		processPanel.add(new JLabel(new ImageIcon(iProcessor.getBlueChannel())));
-		processPanel.add(new JLabel(new ImageIcon(iProcessor.getFilteredBlue())));
+		//processPanel.add(new JLabel(new ImageIcon(iProcessor.getFilteredBlue())));
 		processPanel.add(new JLabel(new ImageIcon(iProcessor.getGrayscale())));
 		processPanel.add(new JLabel(new ImageIcon(iProcessor.getBinaryMask())));
 		processPanel.add(new JLabel(new ImageIcon(iProcessor.getSegmented())));
 		processPanel.add(new JLabel(new ImageIcon(iProcessor.getCropped())));
 		processPanel.add(new JLabel(new ImageIcon(processed)));
 		updateUI();
+	}
+	
+	private void showFeatures()
+	{
+		redLabel.setText(FeatureExtractor.computeMeanRed(processed)+"");
+		greenLabel.setText(FeatureExtractor.computeMeanGreen(processed)+"");
+		redgreenLabel.setText(FeatureExtractor.computeMeanRG(processed)+"");
+		hueLabel.setText(FeatureExtractor.computeMeanHue(processed)+"");
+		aLabel.setText(FeatureExtractor.computeMeanA(processed)+"");
+		
 	}
 		
 }

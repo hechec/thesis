@@ -1,4 +1,4 @@
-package util2;
+package utilities;
 
 public class OutputLayerHelper 
 {

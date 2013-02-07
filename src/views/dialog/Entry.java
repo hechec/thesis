@@ -24,6 +24,7 @@ public class Entry extends JPanel
 		setPreferredSize(new Dimension(500, 30));
 		setOpaque(false);
 		setLayout(null);
+		setToolTipText(absolutePath);
 		
 		if(expected.equals(actual)) {
 			normalColor = new Color(85, 176, 106);

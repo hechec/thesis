@@ -2,12 +2,13 @@ package dataset;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import util2.Debugger;
-import util2.FileHelper;
+import utilities.Debugger;
+import utilities.FileHelper;
 import views.ImageProcessor;
 import views.ProgressPane;
 import views.ResizerPane;
@@ -29,7 +30,7 @@ public class DataResizer
 		progressPane.reset(count);
 	}
 	
-	public void resize()
+	public boolean resize()
 	{		
 		for (File classFile: sourceFile.listFiles()) {
 	        if (classFile.isDirectory()) { 	        	
@@ -43,22 +44,19 @@ public class DataResizer
 						BufferedImage image = iProcessor.resizeImage(ImageIO.read(data[i]), 200, 200);
 						ImageIO.write(image, "JPG", new File(newFile.getAbsoluteFile() + "/"+data[i].getName()));
 						progressPane.incrementBar();
+					} catch (FileNotFoundException e) {
+						return false;
+					} catch (NullPointerException e) {
+						return false;
 					} catch (IOException e) {
-						Debugger.printError("Cannot read image: \""+data[i].getAbsolutePath()+"\"");
-					}
+						//Debugger.printError("Cannot read image: \""+data[i].getAbsolutePath()+"\"");
+						return false;
+					} 
 	        	}
 	        	
 	        }
 		}
-	}
-	
-	public static void main(String[] args)
-	{
-		File destFile = new File("C:/Users/hechec/Desktop/Jake");
-		File sourceFile = new File("D:/kamatisan/KAMATISAN");
-		DataResizer dataResizer = new DataResizer(sourceFile, destFile);
-		dataResizer.resize();
-		
+		return true;
 	}
 
 }

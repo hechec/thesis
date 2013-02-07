@@ -1,4 +1,4 @@
-package util2;
+package utilities;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,7 +31,7 @@ public class FileHelper
 	}
 	
 	/**
-	 * couns the number of files (images) inside a directory
+	 * counts the number of files (images) inside a directory
 	 * Given the dir struct
 	 * 		Main_Dir
 	 * 			1

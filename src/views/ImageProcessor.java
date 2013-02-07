@@ -14,8 +14,6 @@ import javax.swing.JPanel;
 
 import abcnn.NNConstants;
 
-import ui.BottomPane;
-
 public class ImageProcessor implements NNConstants
 {
 	
@@ -147,7 +145,7 @@ public class ImageProcessor implements NNConstants
 		features[1] = FeatureExtractor.computeMeanRed(processedImage);
 		features[2] = FeatureExtractor.computeMeanHue(processedImage);
 		features[3] = FeatureExtractor.computeMeanGreen(processedImage);
-		features[4] = FeatureExtractor.computeMeanA(processedImage);		
+		features[4] = FeatureExtractor.computeMeanA(processedImage);	
 		
 		return features;
 	}

@@ -10,12 +10,11 @@ import javax.swing.filechooser.FileFilter;
 
 import abcnn.Result;
 
-import util.FileTypeFilter;
-import util2.Debugger;
-import util2.FileChooser;
-import util2.OutputLayerHelper;
-import util2.ResultWriter;
-import util2.SolutionReader;
+import utilities.Debugger;
+import utilities.FileTypeFilter;
+import utilities.OutputLayerHelper;
+import utilities.ResultWriter;
+import utilities.SolutionReader;
 import views.dialog.ResultViewerDialog;
 
 import custom.MainButton;
@@ -33,7 +32,7 @@ public class BatchPane extends JPanel
 	
 	private double[] solution = null;
 	
-	private FileChooser chooser = FileChooser.getInstance();
+	private JFileChooser dataChooser, ttbChooser;
 	private JLabel fileLabel, percentLabel, correctLabel, incorrectLabel;
 	
 	public static BatchPane getInstance() 
@@ -47,6 +46,16 @@ public class BatchPane extends JPanel
 	{
 		frame = Frame.getInstance();
 		setLayout(null);		
+		
+		FileFilter filter = new FileTypeFilter(".data", "Text files");
+		dataChooser = new JFileChooser("D:/kamatisan");
+		dataChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		dataChooser.setFileFilter(filter);
+		
+		FileFilter filter2 = new FileTypeFilter(".ttb", "Text files");
+		ttbChooser = new JFileChooser("D:/kamatisan/");
+		ttbChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		ttbChooser.setFileFilter(filter2);
 		
 		JButton backButton = new MainButton("src/images/back.png", "src/images/backHover.png");
 		backButton.setBounds(10, 0, 71, 51);
@@ -140,12 +149,8 @@ public class BatchPane extends JPanel
 		tButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				FileFilter filter = new FileTypeFilter(".data", "Text files");
-				JFileChooser chooser = new JFileChooser("D:/");
-				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				chooser.setFileFilter(filter);
-				if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-					textField1.setText(chooser.getSelectedFile().getAbsolutePath());
+				if (dataChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+					textField1.setText(dataChooser.getSelectedFile().getAbsolutePath());
 				}
 				//selectDirectory(textField1);
 			}
@@ -162,39 +167,39 @@ public class BatchPane extends JPanel
 		label3.setBounds(364, 268, 107, 29);
 		add(label3);
 		
-		JLabel label4 = new JLabel("no. of CORRECT classification:");
+		JLabel label4 = new JLabel("No. of CORRECT classification:");
 		label4.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		label4.setForeground(Color.WHITE);
-		label4.setBounds(208, 300, 230, 24);
+		label4.setBounds(208, 310, 235, 24);
 		add(label4);
 		
-		JLabel label5 = new JLabel("no. of INCORRECT classification:");
+		JLabel label5 = new JLabel("No. of INCORRECT classification:");
 		label5.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		label5.setForeground(Color.WHITE);
-		label5.setBounds(208, 329, 250, 24);
+		label5.setBounds(208, 349, 250, 24);
 		add(label5);
 		
 		correctLabel = new JLabel("--");
-		correctLabel.setFont(new Font("Century Gothic", Font.PLAIN, 20));
+		correctLabel.setFont(new Font("Century Gothic", Font.BOLD, 20));
 		correctLabel.setForeground(new Color(102, 255, 0));
-		correctLabel.setBounds(445, 298, 40, 29);
+		correctLabel.setBounds(450, 308, 40, 29);
 		add(correctLabel);
 		
 		incorrectLabel = new JLabel("--");
-		incorrectLabel.setFont(new Font("Century Gothic", Font.PLAIN, 20));
+		incorrectLabel.setFont(new Font("Century Gothic", Font.BOLD, 20));
 		incorrectLabel.setForeground(new Color(255, 51, 51));
-		incorrectLabel.setBounds(460, 326, 40, 29);
+		incorrectLabel.setBounds(465, 346, 40, 29);
 		add(incorrectLabel);
 		
 		percentLabel = new JLabel("0 %");
-		percentLabel.setFont(new Font("Century Gothic", Font.BOLD, 30));
+		percentLabel.setFont(new Font("Century Gothic", Font.BOLD, 40));
 		percentLabel.setForeground(new Color(102, 255, 0));
-		percentLabel.setBounds(515, 305, 110, 40);
+		percentLabel.setBounds(505, 320, 150, 40);
 		add(percentLabel);
 		percentLabel.setVisible(false);
 		
 		JButton viewButton = new JButton("View Results");
-		viewButton.setBounds(208, 370, 124, 30);
+		viewButton.setBounds(208, 410, 124, 30);
 		add(viewButton);
 		viewButton.addActionListener(new ActionListener() {
 			@Override
@@ -210,7 +215,7 @@ public class BatchPane extends JPanel
 		});
 		
 		JButton saveButton = new JButton("Save Results");
-		saveButton.setBounds(350, 370, 124, 30);
+		saveButton.setBounds(350, 410, 124, 30);
 		add(saveButton);
 		saveButton.addActionListener(new ActionListener() {
 			@Override
@@ -228,7 +233,7 @@ public class BatchPane extends JPanel
 		});
 		
 		final ProgressPane progressPane = new ProgressPane(); 
-		progressPane.setLocation(0, 425);
+		progressPane.setLocation(0, 475);
 		this.add(progressPane);
 		
 		JButton loadButton = new JButton("LOAD");
@@ -265,7 +270,7 @@ public class BatchPane extends JPanel
 			}
 		});
 		
-		chooser.setIsFiltered(false);
+		//chooser.setIsFiltered(false);
 	}
 	
 	/**
@@ -296,18 +301,15 @@ public class BatchPane extends JPanel
 	 */
 	private void selectClassifier()
 	{
-		FileFilter filter = new FileTypeFilter(".ttb", "Text files");
-		JFileChooser chooser = new JFileChooser("D:/kamatisan");
-		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		chooser.setFileFilter(filter);
-		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
-			fileLabel.setText(chooser.getSelectedFile()+"");
-			solution = SolutionReader.read(chooser.getSelectedFile());
+		if (ttbChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
+			fileLabel.setText(ttbChooser.getSelectedFile()+"");
+			solution = SolutionReader.read(ttbChooser.getSelectedFile());
 		}
 	}
 	
 	private void selectDirectory(JTextField textField) 
 	{
+		JFileChooser chooser = new JFileChooser("D:/");	
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) 
 			textField.setText(chooser.getSelectedFile()+"");

@@ -29,32 +29,12 @@ public class Frame extends JFrame
 	private JPanel thePanel;
 	
 	private JPanel[] panels = new JPanel[7];
-	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-					Frame frame = new Frame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
-	/**
-	 * Create the frame.
-	 */
 	public Frame() 
 	{
 		instance = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(700, 500);
+		setSize(700, 550);
 		setUndecorated(true);
 		setLocationRelativeTo(null);
 		contentPane = new JPanel() {
@@ -76,7 +56,7 @@ public class Frame extends JFrame
 		
 		thePanel = new JPanel();
 		thePanel.setOpaque(false);
-		thePanel.setBounds(0, 26, 700, 475);
+		thePanel.setBounds(0, 26, 700, 525);
 		thePanel.setLayout(null);
 		contentPane.add(thePanel);
 		
@@ -101,32 +81,32 @@ public class Frame extends JFrame
 		});
 		
 		panels[0] = HomePane.getInstance();
-		panels[0].setBounds(0, 0, 700, 475);
+		panels[0].setBounds(0, 0, 700, 525);
 		panels[0].setOpaque(false);
 		thePanel.add(panels[0]);	
 		
 		panels[1] = TrainPane.getInstance();
-		panels[1].setBounds(0, 0, 700, 475);
+		panels[1].setBounds(0, 0, 700, 525);
 		panels[1].setOpaque(false);
 		
 		panels[2] = BatchPane.getInstance();
-		panels[2].setBounds(0, 0, 700, 475);
+		panels[2].setBounds(0, 0, 700, 525);
 		panels[2].setOpaque(false);
 		
 		panels[3] = SoloPane.getInstance();
-		panels[3].setBounds(0, 0, 700, 475);
+		panels[3].setBounds(0, 0, 700, 525);
 		panels[3].setOpaque(false);
 		
 		panels[4] = BRemoverPane.getInstance(); 
-		panels[4].setBounds(0, 0, 700, 475);
+		panels[4].setBounds(0, 0, 700, 525);
 		panels[4].setOpaque(false);		
 		
 		panels[5] = RandomizerPane.getInstance(); 
-		panels[5].setBounds(0, 0, 700, 475);
+		panels[5].setBounds(0, 0, 700, 525);
 		panels[5].setOpaque(false);
 		
 		panels[6] = ResizerPane.getInstance();
-		panels[6].setBounds(0, 0, 700, 475);
+		panels[6].setBounds(0, 0, 700, 525);
 		panels[6].setOpaque(false);
 		
 		contentPane.addMouseMotionListener(new MouseMotionListener() {

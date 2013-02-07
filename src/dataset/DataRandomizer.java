@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import util2.FileHelper;
+import utilities.FileHelper;
 
 /** 
  * Randomizes the  dataset; 70% for training and 30% for testing

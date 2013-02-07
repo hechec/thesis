@@ -14,9 +14,12 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
-import util2.FileChooser;
-import util2.SolutionReader;
+import utilities.FileChooser;
+import utilities.FileTypeFilter;
+import utilities.SolutionReader;
 
 import custom.MainButton;
 
@@ -31,7 +34,7 @@ public class SoloPane extends JPanel
 	private double[] solution = null;
 	private BufferedImage input = null;
 
-	private FileChooser chooser = FileChooser.getInstance();
+	private JFileChooser ttbChooser, jpegChooser;
 	private JLabel mLabel, fileLabel, inputLabel, classLabel;
 	
 	private String[] classifications = { "GREEN", "BREAKER", "TURNING", "PINK", "LIGHT RED", "RED" };
@@ -53,6 +56,16 @@ public class SoloPane extends JPanel
 	{
 		frame = Frame.getInstance();
 		setLayout(null);		
+		
+		FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("", "jpg", "jpeg");
+		jpegChooser = new JFileChooser("D:/kamatisan/");
+		jpegChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		jpegChooser.setFileFilter(fileFilter);
+		
+		FileFilter filter2 = new FileTypeFilter(".ttb", "Text files");
+		ttbChooser = new JFileChooser("D:/kamatisan/");
+		ttbChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		ttbChooser.setFileFilter(filter2);
 		
 		JButton backButton = new MainButton("src/images/back.png", "src/images/backHover.png");
 		backButton.setBounds(10, 0, 71, 51);
@@ -127,14 +140,14 @@ public class SoloPane extends JPanel
 		ipanel.add(iLabel);
 		
 		inputLabel = new JLabel();
-		inputLabel.setBounds(330, 181, 150, 150);
+		inputLabel.setBounds(330, 181, 200, 200);
 		inputLabel.setMinimumSize(new Dimension(150, 150));
 		inputLabel.setBackground(Color.WHITE);
 		inputLabel.setOpaque(true);
 		add(inputLabel);
 		
 		JButton tButton = new MainButton("src/images/pencil.png", "src/images/pencil.png");
-		tButton.setBounds(485, 298, 35, 33);
+		tButton.setBounds(535, 350, 35, 33);
 		add(tButton);
 		tButton.addActionListener(new ActionListener() {
 			@Override
@@ -147,7 +160,7 @@ public class SoloPane extends JPanel
 		
 		mLabel = new JLabel();
 		mLabel.setFont(new Font("Century Gothic", Font.PLAIN, 16));
-		mLabel.setBounds(205, 338, 412, 21);
+		mLabel.setBounds(205, 388, 412, 21);
 		mLabel.setForeground(Color.WHITE);
 		mLabel.setHorizontalAlignment(JLabel.CENTER);
 		add(mLabel);
@@ -156,19 +169,19 @@ public class SoloPane extends JPanel
 		
 		JPanel line2 = new JPanel();
 		line2.setBackground(new Color(255, 204, 51));
-		line2.setBounds(145, 371, 475, 1);
+		line2.setBounds(145, 421, 475, 1);
 		add(line2);
 		
 		JLabel rLabel = new JLabel("Classification:");
 		rLabel.setFont(new Font("Century Gothic", Font.PLAIN, 16));
-		rLabel.setBounds(280, 388, 118, 21);
+		rLabel.setBounds(280, 438, 118, 21);
 		rLabel.setForeground(Color.WHITE);
 		rLabel.setHorizontalAlignment(JLabel.CENTER);
 		add(rLabel);
 		
 		classLabel = new JLabel("--");
 		classLabel.setFont(new Font("Century Gothic", Font.BOLD, 20));
-		classLabel.setBounds(405, 386, 118, 21);
+		classLabel.setBounds(405, 436, 118, 21);
 		classLabel.setForeground(Color.WHITE);
 		add(classLabel);
 		
@@ -186,7 +199,7 @@ public class SoloPane extends JPanel
 		    }
 		};
 		footerPane.setBackground(Color.DARK_GRAY);
-		footerPane.setBounds(0, 425, 700, 50);
+		footerPane.setBounds(0, 475, 700, 50);
 		this.add(footerPane);
 		footerPane.setLayout(null);
 		
@@ -209,21 +222,18 @@ public class SoloPane extends JPanel
 	
 	private void selectClassifier()
 	{
-		chooser.setIsFiltered(false);
-		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
-			fileLabel.setText(chooser.getSelectedFile()+"");
-			solution = SolutionReader.read(chooser.getSelectedFile());
+		
+		if (ttbChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
+			fileLabel.setText(ttbChooser.getSelectedFile()+"");
+			solution = SolutionReader.read(ttbChooser.getSelectedFile());
 		}
 	}
 
 	private String selectInput() 
 	{
-		chooser.setIsFiltered(true);
 		String path = "--";
-		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)  
-			path = chooser.getSelectedFile()+"";
+		if (jpegChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)  
+			path = jpegChooser.getSelectedFile()+"";
 		return path;
 	}
 	
@@ -235,7 +245,7 @@ public class SoloPane extends JPanel
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		temp = iProcessor.resizeImage(input, 150, 150);
+		temp = iProcessor.resizeImage(input, 200, 200);
 		inputLabel.setIcon(new ImageIcon(temp));
 		updateUI();
 	}

@@ -9,10 +9,8 @@ import dataset.Data;
 
 import abcnn.MLPNetwork;
 
-import ui.ABCNNTab;
-
-public class ABC{
-	
+public class ABC
+{	
 	private int runtime 	 	= 0,
 				maxCycle 	 	= 0,
 				dimension 		 = 0,
@@ -84,9 +82,9 @@ public class ABC{
 	{
     	input_data = trainingData.getInputVector();
 		output_data = trainingData.getOutputVector();
-		double start = System.currentTimeMillis();
 		
 		for( int run = 0; run < runtime; run++ ) {
+			double start = System.currentTimeMillis();
 			initializePopulation();
 			memorizeBestSource();
 			
@@ -97,12 +95,8 @@ public class ABC{
 				memorizeBestSource();
 				sendScoutBees();
 				trainPane.incrementCycle(cycle+1);
-				//System.out.println("cycle: "+(cycle+1));
 			}
 			trainPane.incrementRuntime(run+1);
-			//for( int i = 0; i < GlobalParams.length; i++ )
-				//System.out.println( GlobalParams[i] );
-			
 			GlobalMins[run] = GlobalMin;
 			meanRun += GlobalMin;
 			
@@ -111,11 +105,12 @@ public class ABC{
 				bestMin = GlobalMin;
 				bestIndex = run;
 			}
+			double elapsedTime = (System.currentTimeMillis() - start) / 1000;
+			
+			trainPane.displayResult(/*bestMin*/GlobalMin, Params[bestIndex], elapsedTime, run+1);
 			//abcnnPane.print("run "+(run+1)+": "+GlobalMin+"\n");
 		}
-		double elapsedTime = (System.currentTimeMillis() - start) / 1000;
 		
-		trainPane.displayResult(bestMin, Params[bestIndex], elapsedTime);
 		JOptionPane.showMessageDialog(trainPane, "Finished training the network.");
 		
 	}
@@ -169,22 +164,6 @@ public class ABC{
 
 	private void sendOnlookerBees() 
 	{
-		//System.out.println("Onlooker Bees:");
-		/*int t = 0, i = 0;
-		double r;
-		while( t < foodNumber ) {
-			r = (   (double)Math.random()*32767 / ((double)(32767)+(double)(1)) );
-			if( r < prob[i]  ) {
-				t++;
-				neighborhoodSearch(i);
-				evaluatePopulation();
-				greedySelection(i);
-			}
-			i++;
-			if(i == foodNumber)
-	        	i = 0;
-		}*/
-		
 		for( int i = 0; i < employedBeeSize; i++ ) {
 			double r = (   (double)Math.random()*32767 / ((double)(32767)+(double)(1)) );
 			if( r < prob[i]  ) {
@@ -201,32 +180,12 @@ public class ABC{
 
 	private void sendScoutBees() 
 	{
-		//sortByFitness();
-		//for( int i = 0; i < employedBeeSize; i++ )
-		//	System.out.println( fitness[i] +" "+scouts[i]);
-		
+		int[] indicesOfSorted = sortByFitness();
 		for( int i = 0; i < scoutBeeSize; i++ ) {
-			
+			neighborhoodSearch(indicesOfSorted[i]);
+			evaluatePopulation();
+			greedySelection(indicesOfSorted[i]);
 		}
-		/*int maxtrialindex = 0;
-		for( int i=1; i < employedBeeSize; i++ ) {
-			if(trial[i] > trial[maxtrialindex])
-				maxtrialindex = i;
-		}
-		if(trial[maxtrialindex] >= limit)
-			initializeEachFood(maxtrialindex);		// only one bee becomes a scout bee ?
-		/*int  ctr = 0;
-		for( int i = 0; i < foodNumber; i++ ) {
-			if( trial[i] >= limit ) {
-				initializeEachFood(i);
-				neighborhoodSearch(i);
-				evaluatePopulation();
-				greedySelection(i);
-				ctr++;
-			}
-			//System.out.println( trial[i] );
-		}
-		System.out.println("SCOUT: "+ctr);*/
 	}
 
 	private void neighborhoodSearch(int foodIndex) 
@@ -243,9 +202,6 @@ public class ABC{
         
         /*v_{ij}=x_{ij}+\phi_{ij}*(x_{kj}-x_{ij}) */
         solution[param2change] = Foods[foodIndex][param2change]+(Foods[foodIndex][param2change]-Foods[neighbour][param2change])*(r-0.5)*2;
-        
-        //System.out.println("i: " + foodIndex + "\th: " + neighbour + "\tj: " + param2change + "\tr: "+ r + 
-        //		"\tVij: " + solution[param2change] + "\tXij: " + Foods[foodIndex][param2change] +"\tXhj: "+Foods[neighbour][param2change]);
 	}
 	
 	/**
@@ -260,17 +216,13 @@ public class ABC{
 	
 	private void greedySelection(int foodIndex) 
 	{
-		//System.out.println( "fitness current: "+fitness[foodIndex] +"\tfitness new: "+FitnessSol );
-		
         if( FitnessSol >= fitness[foodIndex] ) {
-        	//System.out.println( "Replace current solution." );
         	trial[foodIndex] = 0;
         	for( int j = 0; j < dimension; j++ )
         		Foods[foodIndex][j] = solution[j];
         	
         	MSE[foodIndex] = ObjValSol;
         	fitness[foodIndex] = FitnessSol;
-        	//System.out.println(foodIndex);
         }
         else
             trial[foodIndex] = trial[foodIndex]+1;
@@ -304,34 +256,39 @@ public class ABC{
 		return result;
 	}
 	
-	int[] scouts;
+	int[] indices;
 	
-	private void sortByFitness() 
+	/**
+	 * 
+	 * @return the indices of the food sources sorted by fitness ASCENDING
+	 */
+	private int[] sortByFitness() 
 	{
-		scouts = new int[employedBeeSize];
+		indices = new int[employedBeeSize];
 		for( int i = 0; i < employedBeeSize; i++ ) 
-			scouts[i] = i;
+			indices[i] = i;
 		
-		int temp;
-		double[] tempFitness = fitness.clone();
-		double temp2;
+		int tempIndex;
+		double[] fitnessClone = fitness.clone();
+		double tempFitness; 
 		
 		for( int i = 0; i < employedBeeSize - 1; i++ ) {
 			for( int j = 0; j < employedBeeSize - 1; j++ ) {
-				if( tempFitness[j] > tempFitness[j+1] ) {
-					temp2 = tempFitness[j];
-					temp = scouts[j];
-					tempFitness[j] = tempFitness[j+1];
-					scouts[j] = scouts[j+1];
-					tempFitness[j+1] = temp2;
-					scouts[j+1] = temp;
+				if( fitnessClone[j] > fitnessClone[j+1] ) {
+					tempFitness = fitnessClone[j];
+					tempIndex = indices[j];
+					fitnessClone[j] = fitnessClone[j+1];
+					indices[j] = indices[j+1];
+					fitnessClone[j+1] = tempFitness;
+					indices[j+1] = tempIndex;
 				}
 			}
 		}
+		return indices;
 	}
 	
 	/***********************************/
-	/*                                 */
+	/*	    POST TRAINING METHODS      */
 	/***********************************/
 	
 	public double[] getSolution()
@@ -351,7 +308,7 @@ public class ABC{
 	}
 	
 	public static void main(String[] args) {
-		ABC abc = new ABC(1, 10, 11, 0, 126);
+		ABC abc = new ABC(1, 1, 5, 0, 66);
 		
 		ArrayList<String> filename = new ArrayList<String>();
 		filename.add("f1");

@@ -8,13 +8,17 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import static abcnn.NNConstants.DIMENSIONS;
 
-import util.FileTypeFilter;
-import util2.FileChooser;
-import util2.SolutionWriter;
+import utilities.Debugger;
+import utilities.FileTypeFilter;
+import utilities.SolutionWriter;
 
 import custom.MainButton;
 import custom.MyTextField;
@@ -26,7 +30,6 @@ public class TrainPane extends JPanel
 {
 	private static TrainPane instance = null;
 	
-	private FileChooser chooser = FileChooser.getInstance();
 	private Data trainData;
 	
 	private JSpinner runtimeSpinner, cycleSpinner, 
@@ -49,7 +52,6 @@ public class TrainPane extends JPanel
 	public TrainPane() 
 	{
 		frame = Frame.getInstance();
-		
 		setLayout(null);		
 		
 		JButton backButton = new MainButton("src/images/back.png", "src/images/backHover.png");
@@ -59,12 +61,21 @@ public class TrainPane extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				frame.setView(frame.getNextView(0));
+				//frame.setSize(700, 600);
 			}
 		});
 		
+		JLabel label = new JLabel("ABC-NN TRAINING");
+		label.setFont(new Font("Century Gothic", Font.PLAIN, 24));
+		label.setForeground(Color.WHITE);
+		label.setBounds(145, 46, 300, 30);
+		add(label);
+		
+		
+		
 		JPanel panel1 = new JPanel();
 		panel1.setBackground(new Color(255, 204, 51));
-		panel1.setBounds(205, 38, 124, 30);
+		panel1.setBounds(205, 118, 124, 30);
 		add(panel1);
 		
 		JLabel label1 = new JLabel("Training Data");
@@ -73,7 +84,7 @@ public class TrainPane extends JPanel
 		panel1.add(label1);
 		
 		final JTextField textField1 = new MyTextField("click to select test data");
-		textField1.setBounds(330, 38, 261, 30);
+		textField1.setBounds(330, 118, 261, 30);
 		textField1.setBorder(null);
 		textField1.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		textField1.setBorder(BorderFactory.createCompoundBorder( textField1.getBorder(),
@@ -88,7 +99,7 @@ public class TrainPane extends JPanel
 		
 		JButton cButton = new MainButton("src/images/pencil.png", "src/images/pencil.png");
 		cButton.setBorderPainted(false);
-		cButton.setBounds(598, 38, 35, 33);
+		cButton.setBounds(598, 118, 35, 33);
 		add(cButton);
 		cButton.addActionListener(new ActionListener() {
 			@Override
@@ -97,20 +108,20 @@ public class TrainPane extends JPanel
 			}
 		});
 		
-		JPanel line1 = new JPanel();
-		line1.setBackground(new Color(255, 204, 51));
-		line1.setBounds(205, 100, 415, 1);
-		add(line1);
+		JPanel line = new JPanel();
+		line.setBackground(new Color(255, 204, 51));
+		line.setBounds(145, 83, 475, 1);
+		add(line);
 		
 		JLabel label2 = new JLabel("ABC Parameters");
 		label2.setFont(new Font("Century Gothic", Font.PLAIN, 20));
 		label2.setForeground(Color.WHITE);
-		label2.setBounds(205, 119, 194, 25);
-		add(label2);
+		label2.setBounds(205, 159, 194, 25);
+		//add(label2);
 		
 		JPanel panel2 = new JPanel();
 		panel2.setBackground(new Color(255, 204, 51));
-		panel2.setBounds(207, 163, 124, 30);
+		panel2.setBounds(207, 193, 124, 30);
 		add(panel2);
 		
 		JLabel label3 = new JLabel("Employed Bees");
@@ -120,7 +131,7 @@ public class TrainPane extends JPanel
 		
 		employedSpinner = new JSpinner();
 		employedSpinner.setModel(new SpinnerNumberModel(new Integer(10), 1, null, new Integer(5)));
-		employedSpinner.setBounds(332, 163, 67, 30);
+		employedSpinner.setBounds(332, 193, 67, 30);
 		employedSpinner.setBorder(null);
 		employedSpinner.setFont(new Font("Century Gothic", Font.PLAIN, 15));
 		add(employedSpinner);
@@ -128,7 +139,7 @@ public class TrainPane extends JPanel
 		
 		JPanel panel3 = new JPanel();
 		panel3.setBackground(new Color(255, 204, 51));
-		panel3.setBounds(428, 163, 124, 30);
+		panel3.setBounds(428, 193, 124, 30);
 		add(panel3);
 		
 		JLabel label4 = new JLabel("Max Cycle");
@@ -139,14 +150,14 @@ public class TrainPane extends JPanel
 
 		cycleSpinner = new JSpinner();
 		cycleSpinner.setModel(new SpinnerNumberModel(new Integer(500), 1, null, new Integer(250)));
-		cycleSpinner.setBounds(553, 163, 67, 30);
+		cycleSpinner.setBounds(553, 193, 67, 30);
 		cycleSpinner.setBorder(null);
 		cycleSpinner.setFont(new Font("Century Gothic", Font.PLAIN, 15));
 		add(cycleSpinner);
 		
 		JPanel panel4 = new JPanel();
 		panel4.setBackground(new Color(255, 204, 51));
-		panel4.setBounds(207, 219, 124, 30);
+		panel4.setBounds(207, 249, 124, 30);
 		add(panel4);
 		
 		JLabel label5 = new JLabel("Onlooker Bees");
@@ -156,14 +167,14 @@ public class TrainPane extends JPanel
 
 		onlookerSpinner = new JSpinner();
 		onlookerSpinner.setModel(new SpinnerNumberModel(new Integer(15), 1, null, new Integer(5)));
-		onlookerSpinner.setBounds(332, 219, 67, 30);
+		onlookerSpinner.setBounds(332, 249, 67, 30);
 		onlookerSpinner.setBorder(null);
 		onlookerSpinner.setFont(new Font("Century Gothic", Font.PLAIN, 15));
 		add(onlookerSpinner);
 
 		JPanel panel5 = new JPanel();
 		panel5.setBackground(new Color(255, 204, 51));
-		panel5.setBounds(428, 219, 124, 30);
+		panel5.setBounds(428, 249, 124, 30);
 		add(panel5);
 		
 		JLabel label6 = new JLabel("Runtime");
@@ -173,7 +184,7 @@ public class TrainPane extends JPanel
 
 		runtimeSpinner = new JSpinner();
 		runtimeSpinner.setModel(new SpinnerNumberModel(new Integer(1), 1, null, new Integer(1)));
-		runtimeSpinner.setBounds(553, 219, 67, 30);
+		runtimeSpinner.setBounds(553, 249, 67, 30);
 		runtimeSpinner.setBorder(null);
 		runtimeSpinner.setFont(new Font("Century Gothic", Font.PLAIN, 15));
 		add(runtimeSpinner);
@@ -181,19 +192,19 @@ public class TrainPane extends JPanel
 		JLabel label7 = new JLabel("Cycle:");
 		label7.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		label7.setForeground(Color.WHITE);
-		label7.setBounds(261, 275, 50, 23);
+		label7.setBounds(261, 305, 50, 23);
 		label7.setHorizontalAlignment(SwingConstants.RIGHT);
 		add(label7);
 		
 		JLabel label8 = new JLabel("Run:");
 		label8.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		label8.setForeground(Color.WHITE);
-		label8.setBounds(261, 313, 50, 23);
+		label8.setBounds(261, 343, 50, 23);
 		label8.setHorizontalAlignment(SwingConstants.RIGHT);
 		add(label8);
 		
 		JPanel cPanel = new JPanel();
-		cPanel.setBounds(332, 275, 288, 26);
+		cPanel.setBounds(332, 305, 288, 26);
 		cPanel.setBackground(Color.WHITE);
 		cPanel.setLayout(null);
 		add(cPanel);
@@ -209,7 +220,7 @@ public class TrainPane extends JPanel
 		cPanel.add(cycleBar);
 		
 		runtimeBar = new JProgressBar();
-		runtimeBar.setBounds(332, 313, 288, 26);
+		runtimeBar.setBounds(332, 343, 288, 26);
 		runtimeBar.setForeground(Color.GRAY);
 		runtimeBar.setBorderPainted(false);
 		runtimeBar.setBackground(Color.WHITE);
@@ -217,37 +228,37 @@ public class TrainPane extends JPanel
 		
 		JPanel line2 = new JPanel();
 		line2.setBackground(new Color(255, 204, 51));
-		line2.setBounds(205, 359, 415, 1);
+		line2.setBounds(205, 390, 415, 1);
 		add(line2);
 		
 		JLabel label9 = new JLabel("Mean Square Error:");
 		label9.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		label9.setForeground(Color.WHITE);
-		label9.setBounds(202, 365, 151, 23);
+		label9.setBounds(202, 402, 151, 23);
 		label9.setHorizontalAlignment(SwingConstants.RIGHT);
 		add(label9);
 		
 		JLabel label10 = new JLabel("Training Time (sec):");
 		label10.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		label10.setForeground(Color.WHITE);
-		label10.setBounds(204, 393, 149, 23);
+		label10.setBounds(204, 430, 149, 23);
 		label10.setHorizontalAlignment(SwingConstants.RIGHT);
 		add(label10);
 		
 		mseLabel = new JLabel("0.0");
 		mseLabel.setFont(new Font("Century Gothic", Font.BOLD, 16));
 		mseLabel.setForeground(new Color(255, 204, 51));
-		mseLabel.setBounds(361, 365, 257, 23);
+		mseLabel.setBounds(361, 402, 257, 23);
 		add(mseLabel);
 		
 		timeLabel = new JLabel("0.0");
 		timeLabel.setFont(new Font("Century Gothic", Font.BOLD, 16));
 		timeLabel.setForeground(new Color(255, 204, 51));
-		timeLabel.setBounds(361, 393, 257, 23);
+		timeLabel.setBounds(361, 430, 257, 23);
 		add(timeLabel);
 		
 		final ProgressPane progressPane = new ProgressPane(); 
-		progressPane.setLocation(0, 425);
+		progressPane.setLocation(0, 475);
 		this.add(progressPane);
 		
 		JButton loadButton = new JButton("LD");
@@ -294,9 +305,21 @@ public class TrainPane extends JPanel
 		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SolutionWriter fileSaver = new SolutionWriter();
-				fileSaver.saveFile(abc.getSolution());
+				JFileChooser chooser;
+				
+				FileFilter filter = new FileTypeFilter(".ttb", "Text files");
+				chooser = new JFileChooser("D:/kamatisan/");
+				chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+				chooser.setFileFilter(filter);
+				chooser.setAcceptAllFileFilterUsed(false);
+
+				if(chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+				    File file = chooser.getSelectedFile();
+				    SolutionWriter fileSaver = new SolutionWriter(file);
+					fileSaver.saveFile(abc.getSolution());
+				}
 			}
+				
 		});
 		
 	}
@@ -335,11 +358,29 @@ public class TrainPane extends JPanel
 	
 	}
 	
-	public void displayResult(double MSE, double[] solution, double elapsedTime) 
+	public void displayResult(double MSE, double[] solution, double elapsedTime, int runTime) 
 	{
-		System.out.println("DISPLAY!");
+		System.out.println("run:"+runTime+"/t MSE: "+MSE+"/t time: "+elapsedTime);
 		mseLabel.setText(""+MSE);
 		timeLabel.setText(""+elapsedTime);
+		
+		File file = new File("D:/kamatisan/Experiments/Exp1-Params/EmployedBeeExp/solution_"+runTime+".ttb");
+		SolutionWriter fileSaver = new SolutionWriter(file);
+		fileSaver.saveFile(solution);
+		
+		File results = new File("D:/kamatisan/Experiments/Exp1-Params/EmployedBeeExp/results.txt");
+		if(!results.exists()) {
+			try {
+				results.createNewFile();
+			} catch (IOException e) {
+				Debugger.printError("Error creating results.txt");
+			}
+		}
+		try {
+		    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(results, true)));
+		    out.print(""+runTime+"\t\t"+elapsedTime+"\t\t"+MSE);
+		    out.close();
+		} catch (IOException e) {}
 	}
 	
 	public void initComponents() 

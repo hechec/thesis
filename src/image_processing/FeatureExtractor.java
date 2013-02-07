@@ -10,53 +10,46 @@ import colorspace.CIELab;
 import colorspace.HSI;
 import colorspace.RGBChannel;
 
+/**
+ * Class that extracts color features from the processed image
+ * @author Harvey Jake G. Opena
+ *
+ */
 public class FeatureExtractor 
 {
-	
+	/**
+	 * Extracts the average RED component of the RGB image.
+	 * @param image
+	 * @return Average red
+	 */
 	public static double computeMeanRed(BufferedImage image) 
 	{
 		BufferedImage redImage = RGBChannel.toRGBChannel(image, RGBChannel.RED);
 		return getAverage(redImage, RGBChannel.RED);
 	}
-
+	
+	/**
+	 * Extracts the average GREEN component of the RGB image.
+	 * @param image
+	 * @return Average green
+	 */
 	public static double computeMeanGreen(BufferedImage image) 
 	{
 		BufferedImage greenImage = RGBChannel.toRGBChannel(image, RGBChannel.GREEN);		
 		return getAverage(greenImage, RGBChannel.GREEN);
 	}
 	
-	public static double getAverage(BufferedImage grayImage, int color) 
-	{
-		//BufferedImage grayImage = GrayScale.toGray(image);
-		double sum = 0, ctr = 0;
-		int width = grayImage.getWidth(),
-			height = grayImage.getHeight();
-		
-		int value = 0;
-		
-		for( int i = 0; i < height; i++ ) 
-			for( int j = 0; j < width; j++ ) {
-				Color c = new Color(grayImage.getRGB(j, i));
-				if( color == RGBChannel.RED )
-					value = c.getRed();
-				else if( color == RGBChannel.GREEN )
-					value = c.getGreen();
-				if( value != 0 ) {
-					sum += value;
-					ctr++;
-				}
-					
-			}
-		
-		return ctr != 0 ? sum/ctr : 0;
-	}
-
+	/**
+	 * Extracts the average RED-GREEN DIFFERENCE of the RGB image.
+	 * @param image
+	 * @return Average red-green
+	 */
 	public static double computeMeanRG(BufferedImage image) 
 	{
 		//BufferedImage redGray =  GrayScale.toGray(RGBChannel.toRGBChannel(image, RGBChannel.RED));
 		//BufferedImage greenGray = GrayScale.toGray(RGBChannel.toRGBChannel(image, RGBChannel.GREEN));
-		BufferedImage redImage =  RGBChannel.toRGBChannel(image, RGBChannel.RED);
-		BufferedImage greenImage = RGBChannel.toRGBChannel(image, RGBChannel.GREEN);
+		//BufferedImage redImage =  RGBChannel.toRGBChannel(image, RGBChannel.RED);
+		//BufferedImage greenImage = RGBChannel.toRGBChannel(image, RGBChannel.GREEN);
 		
 		double sum = 0, ctr = 0;
 		int width = image.getWidth(),
@@ -73,7 +66,12 @@ public class FeatureExtractor
 
 		return ctr != 0 ? sum/ctr : 0;
 	}
-
+	
+	/**
+	 * Extracts the average a* (from L*a*b*) component of the image
+	 * @param image
+	 * @return Average a*
+	 */
 	public static double computeMeanA(BufferedImage image) 
 	{
 		double sum = 0;
@@ -98,6 +96,11 @@ public class FeatureExtractor
 		return ctr != 0 ? sum/ctr : 0;
 	}
 
+	/**
+	 * Extracts the average HUE (from HSI) component of the image.
+	 * @param image
+	 * @return Average hue 
+	 */	
 	public static double computeMeanHue(BufferedImage image) 
 	{
 		double sum = 0;
@@ -116,6 +119,32 @@ public class FeatureExtractor
 					ctr++;
 				}
 			}
+		return ctr != 0 ? sum/ctr : 0;
+	}
+	
+	private static double getAverage(BufferedImage grayImage, int color) 
+	{
+		//BufferedImage grayImage = GrayScale.toGray(image);
+		double sum = 0, ctr = 0;
+		int width = grayImage.getWidth(),
+			height = grayImage.getHeight();
+		
+		int value = 0;
+		
+		for( int i = 0; i < height; i++ ) 
+			for( int j = 0; j < width; j++ ) {
+				Color c = new Color(grayImage.getRGB(j, i));
+				if( color == RGBChannel.RED )
+					value = c.getRed();
+				else if( color == RGBChannel.GREEN )
+					value = c.getGreen();
+				if( value != 0 ) {
+					sum += value;
+					ctr++;
+				}
+					
+			}
+		
 		return ctr != 0 ? sum/ctr : 0;
 	}
 	

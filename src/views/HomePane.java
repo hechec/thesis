@@ -125,7 +125,7 @@ public class HomePane extends JPanel
 		    }
 		};
 		footerPane.setBackground(Color.DARK_GRAY);
-		footerPane.setBounds(0, 425, 700, 50);
+		footerPane.setBounds(0, 475, 700, 50);
 		this.add(footerPane);
 		footerPane.setLayout(null);
 		

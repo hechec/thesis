@@ -30,8 +30,8 @@ public class BackgroundRemover
 	public BufferedImage removeBackground(BufferedImage image) 
 	{	
 		blueChannel = RGBChannel.toRGBChannel(image, RGBChannel.BLUE);
-		filteredBlue = MeanFilter.filter(blueChannel);
-		grayscale = GrayScale.toGray(filteredBlue);
+		//filteredBlue = MeanFilter.filter(blueChannel);
+		grayscale = GrayScale.toGray(blueChannel);
 		binaryMask = OtsuThreshold.binarize(grayscale);
 		segmented = Masking.extract(image, binaryMask);
 		return segmented;
@@ -61,6 +61,5 @@ public class BackgroundRemover
 	{
 		return segmented;
 	}
-
 
 }

@@ -1,4 +1,4 @@
-package ui.dialogs;
+package old.ui.dialogs;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
