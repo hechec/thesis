@@ -8,13 +8,16 @@ import java.text.DecimalFormat;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
-import abcnn.Result;
+import core.Classifier;
+import core.Result;
 
 import utilities.Debugger;
 import utilities.FileTypeFilter;
+import utilities.GlobalVariables;
 import utilities.OutputLayerHelper;
 import utilities.ResultWriter;
 import utilities.SolutionReader;
+import views.dialog.MessageDialog;
 import views.dialog.ResultViewerDialog;
 
 import custom.MainButton;
@@ -48,16 +51,16 @@ public class BatchPane extends JPanel
 		setLayout(null);		
 		
 		FileFilter filter = new FileTypeFilter(".data", "Text files");
-		dataChooser = new JFileChooser("D:/kamatisan");
+		dataChooser = new JFileChooser();
 		dataChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		dataChooser.setFileFilter(filter);
 		
 		FileFilter filter2 = new FileTypeFilter(".ttb", "Text files");
-		ttbChooser = new JFileChooser("D:/kamatisan/");
+		ttbChooser = new JFileChooser();
 		ttbChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		ttbChooser.setFileFilter(filter2);
 		
-		JButton backButton = new MainButton("src/images/back.png", "src/images/backHover.png");
+		JButton backButton = new MainButton("/images/back.png", "/images/backHover.png");
 		backButton.setBounds(10, 0, 71, 51);
 		this.add(backButton, 0);
 		backButton.addActionListener(new ActionListener() {
@@ -70,7 +73,8 @@ public class BatchPane extends JPanel
 		JLabel label = new JLabel("BATCH CLASSIFICATION");
 		label.setFont(new Font("Century Gothic", Font.PLAIN, 24));
 		label.setForeground(Color.WHITE);
-		label.setBounds(145, 46, 300, 30);
+		label.setBounds(145, 46, 475, 30);
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
 		add(label);
 		
 		JPanel line = new JPanel();
@@ -107,7 +111,7 @@ public class BatchPane extends JPanel
 		fileLabel.setBounds(4, 0, 260, 30);
 		fPanel.add(fileLabel);
 		
-		JButton cButton = new MainButton("src/images/pencil.png", "src/images/pencil.png");
+		JButton cButton = new MainButton("/images/pencil.png", "/images/pencil.png");
 		cButton.setBorderPainted(false);
 		cButton.setBounds(595, 135, 35, 33);
 		add(cButton);
@@ -143,7 +147,7 @@ public class BatchPane extends JPanel
 			}
 		});	
 		
-		JButton tButton = new MainButton("src/images/pencil.png", "src/images/pencil.png");
+		JButton tButton = new MainButton("/images/pencil.png", "/images/pencil.png");
 		tButton.setBounds(595, 195, 35, 33);
 		add(tButton);
 		tButton.addActionListener(new ActionListener() {
@@ -198,8 +202,13 @@ public class BatchPane extends JPanel
 		add(percentLabel);
 		percentLabel.setVisible(false);
 		
-		JButton viewButton = new JButton("View Results");
-		viewButton.setBounds(208, 410, 124, 30);
+		JPanel line3 = new JPanel();
+		line3.setBackground(new Color(255, 204, 51));
+		line3.setBounds(145, 390, 475, 1);
+		//add(line3);
+		
+		JButton viewButton = new JButton("VIEW RESULTS");
+		viewButton.setBounds(500, 410, 110, 40);
 		add(viewButton);
 		viewButton.addActionListener(new ActionListener() {
 			@Override
@@ -207,14 +216,12 @@ public class BatchPane extends JPanel
 				if(testData != null && result != null) {
 					ResultViewerDialog rvDialog = new ResultViewerDialog(testData, result);
 					rvDialog.setVisible(true);
-				}
-				else {
-					Debugger.printError("Cannot show results.");
-				}
+				} else 
+					new MessageDialog("Ooops. Nothing to view.").setVisible(true);
 			}
 		});
 		
-		JButton saveButton = new JButton("Save Results");
+		/*JButton saveButton = new JButton("Save Results");
 		saveButton.setBounds(350, 410, 124, 30);
 		add(saveButton);
 		saveButton.addActionListener(new ActionListener() {
@@ -230,47 +237,49 @@ public class BatchPane extends JPanel
 				}
 				
 			}
-		});
+		});*/
 		
 		final ProgressPane progressPane = new ProgressPane(); 
 		progressPane.setLocation(0, 475);
 		this.add(progressPane);
 		
-		JButton loadButton = new JButton("LOAD");
-		loadButton.setBounds(20, 90, 80, 30);
-		add(loadButton);
-		loadButton.addActionListener(new ActionListener() {
+		JButton prepareButton = new JButton("PREPARE");
+		prepareButton.setBounds(210, 410, 110, 40);
+		add(prepareButton);
+		prepareButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-				final File file = new File(""+textField1.getText());
 				
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						DataReader dl = new DataReader(progressPane, file);
-						testData = dl.read();
-					}
-				}).start();
+				if(!textField1.getText().isEmpty()) {
+					final File file = new File(""+textField1.getText());
+					if(file.exists()) {
+						new Thread(new Runnable() {
+							@Override
+							public void run() {
+								DataReader dl = new DataReader(progressPane, file);
+								testData = dl.read();
+							}
+						}).start();
+					} else 
+						new MessageDialog("Ooops. The file does not exist.").setVisible(true);
+				} else 
+					new MessageDialog("Ooops. Please enter test data.").setVisible(true);
 			}
 		});
 		
 		JButton testButton = new JButton("TEST");
-		testButton.setBounds(20, 130, 80, 30);
+		testButton.setBounds(320, 410, 180, 40);
 		add(testButton);
 		testButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(solution != null && testData != null) {
 					test();
-				}
-				else {
-					System.out.println("Oooops!");
-				}
+				} else 
+					new MessageDialog("Ooops. Please prepare before testing.").setVisible(true);
 			}
 		});
 		
-		//chooser.setIsFiltered(false);
 	}
 	
 	/**

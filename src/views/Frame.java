@@ -1,6 +1,5 @@
 package views;
 
-import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
@@ -8,17 +7,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.LookAndFeel;
-import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
+import utilities.GlobalVariables;
 import custom.MainButton;
 
 public class Frame extends JFrame 
@@ -28,7 +26,9 @@ public class Frame extends JFrame
 	private JPanel contentPane;
 	private JPanel thePanel;
 	
-	private JPanel[] panels = new JPanel[7];
+	private JPanel[] panels = new JPanel[8];
+	
+	private URL bgPath = getClass().getResource("/images/bg.png");
 
 	public Frame() 
 	{
@@ -43,11 +43,11 @@ public class Frame extends JFrame
 		        super.paintComponent(g);
 				Image image = null;
 				try {                
-					image = ImageIO.read(new File("src/images/bg.png"));
+					image = ImageIO.read(bgPath);
 		        } catch (IOException ex) {
-		        	System.out.println("Check background image.");
+		        	//System.out.println("Check background image.");
 		        }
-		        g.drawImage(image, 0, 0, null);          
+		        g.drawImage(image, 0, 0, null);   
 		    }
 		};
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -60,7 +60,7 @@ public class Frame extends JFrame
 		thePanel.setLayout(null);
 		contentPane.add(thePanel);
 		
-		JButton exitButton = new MainButton("src/images/close.png", "src/images/closeHover.png");
+		JButton exitButton = new MainButton("/images/close.png", "/images/closeHover.png");
 		exitButton.setBorderPainted(false);
 		exitButton.setBounds(661, 1, 38, 23);
 		contentPane.add(exitButton, 0);
@@ -70,7 +70,7 @@ public class Frame extends JFrame
 				System.exit(JFrame.EXIT_ON_CLOSE);
 			}
 		});
-		JButton minimizeButton = new MainButton("src/images/minimize.png", "src/images/minimizeHover.png");
+		JButton minimizeButton = new MainButton("/images/minimize.png", "/images/minimizeHover.png");
 		minimizeButton.setBounds(621, 1, 38, 23);
 		contentPane.add(minimizeButton, 0);
 		minimizeButton.addActionListener(new ActionListener() {
@@ -105,9 +105,13 @@ public class Frame extends JFrame
 		panels[5].setBounds(0, 0, 700, 525);
 		panels[5].setOpaque(false);
 		
-		panels[6] = ResizerPane.getInstance();
+		panels[6] = ExperimentPane.getInstance();
 		panels[6].setBounds(0, 0, 700, 525);
 		panels[6].setOpaque(false);
+		
+		panels[7] = ResizerPane.getInstance();
+		panels[7].setBounds(0, 0, 700, 525);
+		panels[7].setOpaque(false);
 		
 		contentPane.addMouseMotionListener(new MouseMotionListener() {
 			boolean startDrag = false;
@@ -128,6 +132,7 @@ public class Frame extends JFrame
 					dragFrame(original, e.getPoint());
 			}
 		});		
+		
 	}
 	
 	private void dragFrame(Point original, Point newPoint) 
@@ -141,6 +146,8 @@ public class Frame extends JFrame
 		thePanel.removeAll();
 		thePanel.add(currentPanel);
 		thePanel.updateUI();
+		if(currentPanel instanceof BatchPane || currentPanel instanceof SoloPane) 
+			GlobalVariables.setMode(GlobalVariables.STANDARD_RUN);
 	}
 	
 	public JPanel getNextView(int index)

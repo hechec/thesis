@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -18,11 +19,13 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.plaf.metal.MetalIconFactory.FileIcon16;
 
 import utilities.FileTypeFilter;
 import utilities.ResultWriter;
+import views.dialog.MessageDialog;
 
 import custom.MainButton;
 import custom.MyTextField;
@@ -49,7 +52,7 @@ public class RandomizerPane extends JPanel
 		frame = Frame.getInstance();
 		setLayout(null);	
 	
-		JButton backButton = new MainButton("src/images/back.png", "src/images/backHover.png");
+		JButton backButton = new MainButton("/images/back.png", "/images/backHover.png");
 		backButton.setBounds(10, 0, 71, 51);
 		this.add(backButton, 0);
 		backButton.addActionListener(new ActionListener() {
@@ -59,10 +62,11 @@ public class RandomizerPane extends JPanel
 			}
 		});
 		
-		JLabel label = new JLabel("Data Set Randomizer");
+		JLabel label = new JLabel("DATASET RANDOMIZER");
 		label.setFont(new Font("Century Gothic", Font.PLAIN, 24));
 		label.setForeground(Color.WHITE);
-		label.setBounds(145, 46, 300, 30);
+		label.setBounds(145, 46, 475, 30);
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
 		add(label);
 		
 		JPanel line = new JPanel();
@@ -72,7 +76,7 @@ public class RandomizerPane extends JPanel
 		
 		JPanel cpanel = new JPanel();
 		cpanel.setBackground(new Color(255, 204, 51));
-		cpanel.setBounds(205, 117, 124, 30);
+		cpanel.setBounds(205, 130, 124, 30);
 		add(cpanel);
 		
 		JLabel cLabel = new JLabel("Data Set");
@@ -82,15 +86,15 @@ public class RandomizerPane extends JPanel
 		cpanel.add(cLabel);
 		
 		directoryField = new MyTextField("click to select directory");
-		directoryField.setBounds(330, 117, 260, 30);
+		directoryField.setBounds(330, 130, 260, 30);
 		directoryField.setBorder(null);
 		directoryField.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		directoryField.setBorder(BorderFactory.createCompoundBorder( directoryField.getBorder(),
 					BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 		add(directoryField);
 		
-		JButton tButton = new MainButton("src/images/pencil.png", "src/images/pencil.png");
-		tButton.setBounds(595, 117, 35, 33);
+		JButton tButton = new MainButton("/images/pencil.png", "/images/pencil.png");
+		tButton.setBounds(595, 130, 35, 33);
 		add(tButton);
 		tButton.addActionListener(new ActionListener() {
 			@Override
@@ -149,8 +153,15 @@ public class RandomizerPane extends JPanel
 		label4.setBounds(572, 280, 50, 21);
 		add(label4);
 		
-		JButton randomize = new JButton("Randomize");
-		randomize.setBounds(20, 200, 90, 30);
+		JPanel line2 = new JPanel();
+		line2.setBackground(new Color(255, 204, 51));
+		line2.setBounds(145, 400, 475, 1);
+		add(line2);
+		
+		
+		JButton randomize = new JButton("RANDOMIZE");
+		randomize.setBounds(315, 330, 124, 50);
+		randomize.setFont(new Font("Century Gothic", Font.PLAIN, 15));
 		add(randomize);
 		randomize.addActionListener(new ActionListener() {
 			@Override
@@ -165,36 +176,37 @@ public class RandomizerPane extends JPanel
 						DataWriter dataWriter2 = new DataWriter(testingField.getText());
 						boolean b2 = dataWriter2.write(dataRandomizer.getTestSet());
 						if(b1 & b2) {
-							JOptionPane.showMessageDialog(null, "Success :)");
+							new MessageDialog("You have successfully created a random dataset.").setVisible(true);
 						}
 						else
-							JOptionPane.showMessageDialog(null, "Fail :(");
+							new MessageDialog("Error. Something went wrong while randomizing.").setVisible(true);
 					}
 				}
 				else
-					JOptionPane.showMessageDialog(null, "Oopppps! :p");
+					new MessageDialog("Ooops. Please enter the necessary data.").setVisible(true);
 			}
 		});
 		
+		final URL footerUrl = getClass().getResource("/images/footer.png");
 		JPanel footerPane = new JPanel() {
 			@Override
 		    public void paintComponent(Graphics g) {
 				 Graphics2D g2 = (Graphics2D) g;
 				Image image = null;
 				try {                
-					image = ImageIO.read(new File("src/images/footer.png"));
+					image = ImageIO.read(footerUrl);
 		        } catch (IOException ex) {
-		        	System.out.println("Check footer image.");
+		        	//System.out.println("Check footer image.");
 		        }
 		        g2.drawImage(image, 0, 0, null);          
 		    }
 		};
 		footerPane.setBackground(Color.DARK_GRAY);
-		footerPane.setBounds(0, 425, 700, 50);
+		footerPane.setBounds(0, 475, 700, 50);
 		this.add(footerPane);
 		footerPane.setLayout(null);
 		
-		chooser = new JFileChooser("D:/kamatisan");
+		chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 	}	
 	

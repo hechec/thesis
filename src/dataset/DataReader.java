@@ -1,5 +1,7 @@
 package dataset;
 
+import imageprocessing.ImageProcessor;
+
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +16,6 @@ import javax.swing.JOptionPane;
 
 import utilities.Debugger;
 import utilities.FileHelper;
-import views.ImageProcessor;
 import views.ProgressPane;
 
 public class DataReader extends FileHelper
@@ -37,7 +38,6 @@ public class DataReader extends FileHelper
 		this.progressPane = progressPane;
 		iProcessor = new ImageProcessor();
 	}
-	
 
 	/**
 	 * reads .data file containing absolute paths of images and extracts features from each image
@@ -77,8 +77,8 @@ public class DataReader extends FileHelper
 		} 
 		inputVector = iProcessor.createInputVectorArray(input_list, progressPane);
     	outputVector = iProcessor.createOutputVector(output_list);
-    	
-    	JOptionPane.showMessageDialog(null, "Loaded "+count +" images.");
+
+    	//JOptionPane.showMessageDialog(null, "Loaded "+count +" images.");
 
 		return new Data(filename, inputVector, outputVector);
 	}

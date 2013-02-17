@@ -4,16 +4,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import com.sun.xml.internal.ws.Closeable;
-
-import abcnn.Result;
-
-
+import core.Result;
 import custom.MainButton;
 import dataset.Data;
 
@@ -41,17 +38,19 @@ public class ResultViewerDialog extends JDialog
 		setSize(550, 500);
 		setUndecorated(true);
 		setLocation(0, 0);
+		
+		final URL bgUrl = getClass().getResource("/images/bg.png");
 		contentPane = new JPanel() {
 			@Override
 		    public void paintComponent(Graphics g) {
 		        super.paintComponent(g);
 				Image image = null;
 				try {                
-					image = ImageIO.read(new File("src/images/bg.png"));
+					image = ImageIO.read(bgUrl);
 		        } catch (IOException ex) {
-		        	System.out.println("Check background image.");
+		        	//System.out.println("Check background image.");
 		        }
-		        //g.drawImage(image, 0, 0, null);          
+		       //g.drawImage(image, 0, 0, null);          
 		    }
 		};
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -71,7 +70,7 @@ public class ResultViewerDialog extends JDialog
 		titleLabel.setForeground(Color.WHITE);
 		topPanel.add(titleLabel);
 		
-		JButton exitButton = new MainButton("src/images/close.png", "src/images/closeHover.png");
+		JButton exitButton = new MainButton("/images/close.png", "/images/closeHover.png");
 		exitButton.setBorderPainted(false);
 		exitButton.setBounds(511, 1, 38, 24);
 		topPanel.add(exitButton, 0);

@@ -1,7 +1,8 @@
 package views;
 
-import image_processing.FeatureExtractor;
-import image_processing.OtsuThreshold;
+import imageprocessing.FeatureExtractor;
+import imageprocessing.ImageProcessor;
+import imageprocessing.OtsuThreshold;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -27,11 +28,13 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import core.Result;
+
 import custom.MainButton;
 
 import utilities.Debugger;
 import utilities.FileTypeFilter;
-import abcnn.Result;
+import views.dialog.MessageDialog;
 
 public class BRemoverPane extends JPanel
 {
@@ -40,7 +43,7 @@ public class BRemoverPane extends JPanel
 	private Frame frame;
 	private ImageProcessor iProcessor = new ImageProcessor();
 	
-	private JFileChooser chooser = new JFileChooser("D:/");
+	private JFileChooser chooser = new JFileChooser();
 	private FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("", "jpg", "jpeg");
 	
 	private JLabel filenameLabel, inputLabel;
@@ -60,7 +63,7 @@ public class BRemoverPane extends JPanel
 		frame = Frame.getInstance();
 		setLayout(null);		
 		
-		JButton backButton = new MainButton("src/images/back.png", "src/images/backHover.png");
+		JButton backButton = new MainButton("/images/back.png", "/images/backHover.png");
 		backButton.setBounds(10, 0, 71, 51);
 		this.add(backButton, 0);
 		backButton.addActionListener(new ActionListener() {
@@ -95,7 +98,7 @@ public class BRemoverPane extends JPanel
 		//filenameLabel.setOpaque(true);
 		add(filenameLabel);
 		
-		JButton tButton = new MainButton("src/images/pencil.png", "src/images/pencil.png");
+		JButton tButton = new MainButton("/images/pencil.png", "/images/pencil.png");
 		tButton.setBounds(640, 230, 35, 33);
 		add(tButton);
 		tButton.addActionListener(new ActionListener() {
@@ -180,8 +183,8 @@ public class BRemoverPane extends JPanel
 		scrollPane.setBounds(15, 285, 670, 220);	
 		add(scrollPane);
 		
-		JButton removeButton = new JButton("REMOVE");
-		removeButton.setBounds(20, 200, 80, 40);
+		JButton removeButton = new JButton("EXTRACT");
+		removeButton.setBounds(18, 230, 90, 40);
 		add(removeButton);
 		removeButton.addActionListener(new ActionListener() {
 			@Override
@@ -220,14 +223,10 @@ public class BRemoverPane extends JPanel
 	{
 		if(temp != null) {
 			processed = iProcessor.process(temp, 190, 190);
-			//outputLabel.setIcon(new ImageIcon(processed));
-			//showFeatures(processed);
 			showProcess();
 			showFeatures();
-			//if( chckbxShowHistogram.isSelected() ) {
-			//	histogramDialog.create(OtsuThreshold.hist, OtsuThreshold.thresh);
-			//}
-		}
+		} else 
+			new MessageDialog("Ooops. Please select input image.").setVisible(true);
 	}
 	
 	private void showProcess() 

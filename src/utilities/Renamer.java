@@ -29,10 +29,11 @@ public class Renamer
 		return true;
 	}
 	
+	/*
 	public static void main(String[] args) {
 		Renamer renamer = new Renamer();
 		File file = new File("D:/kamatisan/RESIZED/");
 		System.out.println(renamer.rename(file));
 	}
-	
+	*/
 }

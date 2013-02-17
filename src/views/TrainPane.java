@@ -7,6 +7,9 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 
+import core.ABC;
+
+
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,10 +17,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import static abcnn.NNConstants.DIMENSIONS;
-
 import utilities.Debugger;
 import utilities.FileTypeFilter;
+import utilities.GlobalVariables;
 import utilities.SolutionWriter;
 
 import custom.MainButton;
@@ -54,7 +56,7 @@ public class TrainPane extends JPanel
 		frame = Frame.getInstance();
 		setLayout(null);		
 		
-		JButton backButton = new MainButton("src/images/back.png", "src/images/backHover.png");
+		JButton backButton = new MainButton("/images/back.png", "/images/backHover.png");
 		backButton.setBounds(10, 0, 71, 51);
 		this.add(backButton, 0);
 		backButton.addActionListener(new ActionListener() {
@@ -97,7 +99,7 @@ public class TrainPane extends JPanel
 			}
 		});		
 		
-		JButton cButton = new MainButton("src/images/pencil.png", "src/images/pencil.png");
+		JButton cButton = new MainButton("/images/pencil.png", "/images/pencil.png");
 		cButton.setBorderPainted(false);
 		cButton.setBounds(598, 118, 35, 33);
 		add(cButton);
@@ -146,10 +148,9 @@ public class TrainPane extends JPanel
 		label4.setFont(new Font("Century Gothic", Font.PLAIN, 15));
 		label4.setBounds(0, 0, 78, 23);
 		panel3.add(label4);
-		
 
 		cycleSpinner = new JSpinner();
-		cycleSpinner.setModel(new SpinnerNumberModel(new Integer(500), 1, null, new Integer(250)));
+		cycleSpinner.setModel(new SpinnerNumberModel(new Integer(750), 1, null, new Integer(250)));
 		cycleSpinner.setBounds(553, 193, 67, 30);
 		cycleSpinner.setBorder(null);
 		cycleSpinner.setFont(new Font("Century Gothic", Font.PLAIN, 15));
@@ -282,7 +283,7 @@ public class TrainPane extends JPanel
 			}
 		});
 		
-		JButton playButton = new StopPlayButton("src/images/start.png", "src/images/startHover.png", "src/images/end.png", "src/images/endHover.png");
+		JButton playButton = new StopPlayButton("/images/start.png", "/images/startHover.png", "/images/end.png", "/images/endHover.png");
 		playButton.setBounds(28, 191, 60, 60);
 		this.add(playButton, 0);
 		playButton.addActionListener(new ActionListener() {
@@ -348,10 +349,11 @@ public class TrainPane extends JPanel
 			final int employedBeeSize, final int onlookerBeeSize) 
 	{
 		initComponents();
+		GlobalVariables.setStructure(5, 5);
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				abc = new ABC(runtime, maxCycle, employedBeeSize, onlookerBeeSize, DIMENSIONS); 
+				abc = new ABC(runtime, maxCycle, employedBeeSize, onlookerBeeSize, GlobalVariables.DIMENSIONS); 
 				abc.train(trainingData);
 			}
 		}).start();
@@ -360,11 +362,11 @@ public class TrainPane extends JPanel
 	
 	public void displayResult(double MSE, double[] solution, double elapsedTime, int runTime) 
 	{
-		System.out.println("run:"+runTime+"/t MSE: "+MSE+"/t time: "+elapsedTime);
+		//System.out.println("run:"+runTime+"/t MSE: "+MSE+"/t time: "+elapsedTime);
 		mseLabel.setText(""+MSE);
 		timeLabel.setText(""+elapsedTime);
 		
-		File file = new File("D:/kamatisan/Experiments/Exp1-Params/EmployedBeeExp/solution_"+runTime+".ttb");
+		/*File file = new File("D:/kamatisan/Experiments/Exp1-Params/EmployedBeeExp/solution_"+runTime+".ttb");
 		SolutionWriter fileSaver = new SolutionWriter(file);
 		fileSaver.saveFile(solution);
 		
@@ -381,6 +383,7 @@ public class TrainPane extends JPanel
 		    out.print(""+runTime+"\t\t"+elapsedTime+"\t\t"+MSE);
 		    out.close();
 		} catch (IOException e) {}
+		*/
 	}
 	
 	public void initComponents() 

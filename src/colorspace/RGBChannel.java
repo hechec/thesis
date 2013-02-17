@@ -43,15 +43,4 @@ public class RGBChannel
 		return 0x0000FF00;  //green
 	}
 
-	public static void main(String[] args) {
-		
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(new File("C:/Users/hechec/Desktop/try.jpg"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 }

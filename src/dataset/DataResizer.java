@@ -1,5 +1,7 @@
 package dataset;
 
+import imageprocessing.ImageProcessor;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,7 +11,6 @@ import javax.imageio.ImageIO;
 
 import utilities.Debugger;
 import utilities.FileHelper;
-import views.ImageProcessor;
 import views.ProgressPane;
 import views.ResizerPane;
 

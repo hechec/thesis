@@ -7,9 +7,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import core.Result;
+
 import dataset.Data;
 
-import abcnn.Result;
 
 public class ResultWriter 
 {

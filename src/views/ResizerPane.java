@@ -18,8 +18,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import utilities.Debugger;
+import views.dialog.MessageDialog;
 
 import custom.MainButton;
 import custom.MyTextField;
@@ -48,7 +50,7 @@ public class ResizerPane extends JPanel
 		frame = Frame.getInstance();
 		setLayout(null);	
 	
-		JButton backButton = new MainButton("src/images/back.png", "src/images/backHover.png");
+		JButton backButton = new MainButton("/images/back.png", "/images/backHover.png");
 		backButton.setBounds(10, 0, 71, 51);
 		this.add(backButton, 0);
 		backButton.addActionListener(new ActionListener() {
@@ -58,10 +60,11 @@ public class ResizerPane extends JPanel
 			}
 		});
 		
-		JLabel label = new JLabel("Image Resizer");
+		JLabel label = new JLabel("DATASET RESIZER");
 		label.setFont(new Font("Century Gothic", Font.PLAIN, 24));
 		label.setForeground(Color.WHITE);
-		label.setBounds(145, 46, 300, 30);
+		label.setBounds(145, 46, 475, 30);
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
 		add(label);
 		
 		JPanel line = new JPanel();
@@ -71,7 +74,7 @@ public class ResizerPane extends JPanel
 		
 		JPanel cpanel = new JPanel();
 		cpanel.setBackground(new Color(255, 204, 51));
-		cpanel.setBounds(205, 117, 124, 30);
+		cpanel.setBounds(145, 130, 124, 30);
 		add(cpanel);
 
 		JLabel cLabel = new JLabel("Source");
@@ -81,15 +84,15 @@ public class ResizerPane extends JPanel
 		cpanel.add(cLabel);
 		
 		sourceField = new MyTextField("click to select directory");
-		sourceField.setBounds(330, 117, 260, 30);
+		sourceField.setBounds(270, 130, 320, 30);
 		sourceField.setBorder(null);
 		sourceField.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		sourceField.setBorder(BorderFactory.createCompoundBorder(sourceField.getBorder(),
 					BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 		add(sourceField);
 
-		JButton button1 = new MainButton("src/images/pencil.png", "src/images/pencil.png");
-		button1.setBounds(595, 117, 35, 33);
+		JButton button1 = new MainButton("/images/pencil.png", "/images/pencil.png");
+		button1.setBounds(595, 130, 35, 33);
 		add(button1);
 		button1.addActionListener(new ActionListener() {
 			@Override
@@ -98,9 +101,15 @@ public class ResizerPane extends JPanel
 			}
 		});
 		
+		JLabel label2 = new JLabel("The directory where your dataset is located");
+		label2.setBounds(270, 158, 260, 30);
+		label2.setForeground(Color.WHITE);
+		label2.setFont(new Font(null, Font.ITALIC, 12));
+		add(label2);
+		
 		JPanel cpanel2 = new JPanel();
 		cpanel2.setBackground(new Color(255, 204, 51));
-		cpanel2.setBounds(205, 200, 124, 30);
+		cpanel2.setBounds(145, 200, 124, 30);
 		add(cpanel2);
 
 		JLabel cLabel2 = new JLabel("Destination");
@@ -110,14 +119,14 @@ public class ResizerPane extends JPanel
 		cpanel2.add(cLabel2);
 		
 		destinationField = new MyTextField("click to select directory");
-		destinationField.setBounds(330, 200, 260, 30);
+		destinationField.setBounds(270, 200, 320, 30);
 		destinationField.setBorder(null);
 		destinationField.setFont(new Font("Century Gothic", Font.PLAIN, 16));
 		destinationField.setBorder(BorderFactory.createCompoundBorder(destinationField.getBorder(),
 					BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 		add(destinationField);
-			
-		JButton button2 = new MainButton("src/images/pencil.png", "src/images/pencil.png");
+		
+		JButton button2 = new MainButton("/images/pencil.png", "/images/pencil.png");
 		button2.setBounds(595, 200, 35, 33);
 		add(button2);
 		button2.addActionListener(new ActionListener() {
@@ -127,25 +136,44 @@ public class ResizerPane extends JPanel
 			}	
 		});
 		
+		JLabel label3 = new JLabel("The directory where you want to store the resized dataset");
+		label3.setBounds(270, 228, 320, 30);
+		label3.setForeground(Color.WHITE);
+		label3.setFont(new Font(null, Font.ITALIC, 12));
+		add(label3);
+		
 		progressPane = new ProgressPane(); 
-		progressPane.setLocation(0, 425);
+		progressPane.setLocation(0, 475);
 		this.add(progressPane);
 		
-		JButton resizeButton = new JButton("Resize");
-		resizeButton.setBounds(20, 150, 70, 60);
+		JButton resizeButton = new JButton("RESIZE");
+		resizeButton.setBounds(305, 290, 124, 50);
+		resizeButton.setFont(new Font("Century Gothic", Font.PLAIN, 18));
 		add(resizeButton);
 		resizeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(!sourceField.getText().isEmpty() && !destinationField.getText().isEmpty() ) {   
-					resize();
+					File sourceFile = new File(sourceField.getText());
+					File destFile = new File(destinationField.getText());
+					if(!sourceFile.exists()) 
+						new MessageDialog("Ooops. Source file does not exist.").setVisible(true);
+					else if(!destFile.exists())
+						new MessageDialog("Ooops. Destination file does not exist.").setVisible(true);
+					else
+						resize(sourceFile, destFile);
+				} else {
+					new MessageDialog("Ooops. Please enter both source and destination folder.").setVisible(true);
 				}
-				else 
-					Debugger.printError("Ooops! Enter both source and destination directory.");
 			}
 		});
 		
-		chooser = new JFileChooser("D:/kamatisan/");
+		JPanel line2 = new JPanel();
+		line2.setBackground(new Color(255, 204, 51));
+		line2.setBounds(145, 360, 475, 1);
+		add(line2);
+		
+		chooser = new JFileChooser("");
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		
 	}
@@ -157,13 +185,11 @@ public class ResizerPane extends JPanel
 		}
 	}	
 	
-	private void resize()
+	private void resize(final File sourceFile, final File destFile)
 	{
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				File sourceFile = new File(sourceField.getText());
-				File destFile = new File(destinationField.getText());
 				DataResizer dataResizer = new DataResizer(sourceFile, destFile);
 				boolean flag = dataResizer.resize();
 				if(flag) {

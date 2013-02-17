@@ -1,7 +1,5 @@
 package utilities;
 
-import static abcnn.NNConstants.DIMENSIONS;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,12 +8,14 @@ import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
+
+
 public class SolutionReader 
 {
 	
 	public static double[] read(File file) 
 	{
-		double[] solution = new double[DIMENSIONS];
+		double[] solution = new double[GlobalVariables.DIMENSIONS];
 		
 		BufferedReader bufferedReader = null;
 		try {
@@ -31,7 +31,11 @@ public class SolutionReader
 		}catch (NumberFormatException e) {
 			JOptionPane.showMessageDialog(null, "Cannot convert to network weights.", "Error Message", JOptionPane.WARNING_MESSAGE);
 			return null;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			JOptionPane.showMessageDialog(null, "Please check the dimension of the solution.", "Error Message", JOptionPane.WARNING_MESSAGE);
+			return null;
 		}
+		
 		catch (IOException e) {
 			return null;
 		}finally {

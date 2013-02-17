@@ -5,9 +5,10 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import core.Result;
+
 import dataset.Data;
 
-import abcnn.Result;
 
 public class MainPage extends JPanel
 {

@@ -7,13 +7,15 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import views.dialog.ClassifierChooser;
 
 import custom.MainButton;
 
@@ -34,38 +36,39 @@ public class HomePane extends JPanel
 		frame = Frame.getInstance();
 		setLayout(null);
 		
-		JButton trainButton = new MainButton("src/images/trainButton.png", "src/images/trainHover.png");
-		trainButton.setBounds(130, 117, 140, 140);
+		JButton trainButton = new MainButton("/images/trainButton.png", "/images/trainHover.png");
+		trainButton.setBounds(130, 135, 140, 140);
 		this.add(trainButton, 0);
 		trainButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				frame.setView(frame.getNextView(1));
+				frame.setView(frame.getNextView(6));
 			}
 		});
 		
-		JButton soloButton = new MainButton("src/images/classifyButton.png", "src/images/classifyHover.png");
-		soloButton.setBounds(285, 117, 140, 140);
+		JButton soloButton = new MainButton("/images/classifyButton.png", "/images/classifyHover.png");
+		soloButton.setBounds(285, 135, 140, 140);
 		this.add(soloButton, 0);
 		soloButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				frame.setView(frame.getNextView(3));
+				new ClassifierChooser().setVisible(true);	
+				//frame.setView(frame.getNextView(3));
 			}
 		});
 		
-		JButton batchButton = new MainButton("src/images/batchButton.png", "src/images/batchHover.png");
-		batchButton.setBounds(440, 117, 140, 140);
-		this.add(batchButton, 0);
-		batchButton.addActionListener(new ActionListener() {
+		JButton aboutButton = new MainButton("/images/aboutButton.png", "/images/aboutHover.png");
+		aboutButton.setBounds(440, 290, 140, 140);
+		this.add(aboutButton, 0);
+		aboutButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				frame.setView(frame.getNextView(2));
 			}
 		});
 		
-		JButton removeButton = new MainButton("src/images/removeBGButton.png", "src/images/removeBGHover.png");
-		removeButton.setBounds(285, 272, 140, 140);
+		JButton removeButton = new MainButton("/images/removeBGButton.png", "/images/removeBGHover.png");
+		//removeButton.setBounds(285, 272, 140, 140);
+		removeButton.setBounds(440, 135, 140, 140);
 		this.add(removeButton, 0);
 		removeButton.addActionListener(new ActionListener() {
 			@Override
@@ -74,18 +77,19 @@ public class HomePane extends JPanel
 			}
 		});
 		
-		JButton resizeButton = new MainButton("src/images/resizeButton.png", "src/images/resizeHover.png");
-		resizeButton.setBounds(130, 272, 140, 140);
+		JButton resizeButton = new MainButton("/images/resizeButton.png", "/images/resizeHover.png");
+		resizeButton.setBounds(130, 290, 140, 140);
 		this.add(resizeButton, 0);
 		resizeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				frame.setView(frame.getNextView(6));
+				frame.setView(frame.getNextView(7));
 			}
 		});
 		
-		JButton randomizeButton = new MainButton("src/images/randomizeButton.png", "src/images/randomizeHover.png");
-		randomizeButton.setBounds(440, 272, 140, 140);
+		JButton randomizeButton = new MainButton("/images/randomizeButton.png", "/images/randomizeHover.png");
+		//randomizeButton.setBounds(440, 272, 140, 140);
+		randomizeButton.setBounds(285, 290, 140, 140);
 		this.add(randomizeButton, 0);
 		randomizeButton.addActionListener(new ActionListener() {
 			@Override
@@ -94,6 +98,7 @@ public class HomePane extends JPanel
 			}
 		});
 		
+		final URL logoUrl = getClass().getResource("/images/title_logo.png");
 		
 		JPanel title = new JPanel() {
 			@Override
@@ -101,9 +106,9 @@ public class HomePane extends JPanel
 		        Graphics2D g2 = (Graphics2D) g;
 				Image image = null;
 				try {                
-					image = ImageIO.read(new File("src/images/title_logo.png"));
+					image = ImageIO.read(logoUrl);
 		        } catch (IOException ex) {
-		        	System.out.println("Check logo image.");
+		        	//System.out.println("Check logo image.");
 		        }
 		        g2.drawImage(image, 0, 0, null);          
 		    }
@@ -111,15 +116,17 @@ public class HomePane extends JPanel
 		title.setBounds(61, 7, 488, 90);
 		this.add(title, 0);
 		
+		final URL footerUrl = getClass().getResource("/images/footer.png");
+		
 		JPanel footerPane = new JPanel() {
 			@Override
 		    public void paintComponent(Graphics g) {
 				 Graphics2D g2 = (Graphics2D) g;
 				Image image = null;
 				try {                
-					image = ImageIO.read(new File("src/images/footer.png"));
+					image = ImageIO.read(footerUrl);
 		        } catch (IOException ex) {
-		        	System.out.println("Check footer image.");
+		        	//System.out.println("Check footer image.");
 		        }
 		        g2.drawImage(image, 0, 0, null);          
 		    }

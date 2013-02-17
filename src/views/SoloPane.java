@@ -1,5 +1,7 @@
 package views;
 
+import imageprocessing.ImageProcessor;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -11,15 +13,19 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import utilities.FileChooser;
+import core.Classifier;
+
 import utilities.FileTypeFilter;
+import utilities.GlobalVariables;
 import utilities.SolutionReader;
+import views.dialog.MessageDialog;
 
 import custom.MainButton;
 
@@ -58,16 +64,16 @@ public class SoloPane extends JPanel
 		setLayout(null);		
 		
 		FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("", "jpg", "jpeg");
-		jpegChooser = new JFileChooser("D:/kamatisan/");
+		jpegChooser = new JFileChooser();
 		jpegChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		jpegChooser.setFileFilter(fileFilter);
 		
 		FileFilter filter2 = new FileTypeFilter(".ttb", "Text files");
-		ttbChooser = new JFileChooser("D:/kamatisan/");
+		ttbChooser = new JFileChooser();
 		ttbChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		ttbChooser.setFileFilter(filter2);
 		
-		JButton backButton = new MainButton("src/images/back.png", "src/images/backHover.png");
+		JButton backButton = new MainButton("/images/back.png", "/images/backHover.png");
 		backButton.setBounds(10, 0, 71, 51);
 		this.add(backButton, 0);
 		backButton.addActionListener(new ActionListener() {
@@ -80,7 +86,8 @@ public class SoloPane extends JPanel
 		JLabel label = new JLabel("SOLO CLASSIFICATION");
 		label.setFont(new Font("Century Gothic", Font.PLAIN, 24));
 		label.setForeground(Color.WHITE);
-		label.setBounds(145, 46, 300, 30);
+		label.setBounds(145, 46, 475, 30);
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
 		add(label);
 		
 		JPanel line = new JPanel();
@@ -88,15 +95,9 @@ public class SoloPane extends JPanel
 		line.setBounds(145, 83, 475, 1);
 		add(line);
 		
-		JLabel dLabel = new JLabel("Data");
-		dLabel.setFont(new Font("Century Gothic", Font.PLAIN, 20));
-		dLabel.setForeground(Color.WHITE);
-		dLabel.setBounds(388, 91, 54, 30);
-		add(dLabel);
-		
 		JPanel cpanel = new JPanel();
 		cpanel.setBackground(new Color(255, 204, 51));
-		cpanel.setBounds(205, 135, 124, 30);
+		cpanel.setBounds(205, 120, 124, 30);
 		add(cpanel);
 		
 		JLabel cLabel = new JLabel("Classifier");
@@ -107,7 +108,7 @@ public class SoloPane extends JPanel
 		
 		JPanel fPanel = new JPanel();
 		fPanel.setBackground(Color.LIGHT_GRAY);
-		fPanel.setBounds(330, 135, 260, 30);
+		fPanel.setBounds(330, 120, 260, 30);
 		fPanel.setLayout(null);
 		add(fPanel);
 		
@@ -117,9 +118,9 @@ public class SoloPane extends JPanel
 		fileLabel.setBounds(4, 0, 260, 30);
 		fPanel.add(fileLabel);
 		
-		JButton cButton = new MainButton("src/images/pencil.png", "src/images/pencil.png");
+		JButton cButton = new MainButton("/images/pencil.png", "/images/pencil.png");
 		cButton.setBorderPainted(false);
-		cButton.setBounds(595, 135, 35, 33);
+		cButton.setBounds(595, 120, 35, 33);
 		add(cButton);
 		cButton.addActionListener(new ActionListener() {
 			@Override
@@ -130,7 +131,7 @@ public class SoloPane extends JPanel
 		
 		JPanel ipanel = new JPanel();
 		ipanel.setBackground(new Color(255, 204, 51));
-		ipanel.setBounds(205, 181, 124, 30);
+		ipanel.setBounds(205, 165, 124, 30);
 		add(ipanel);
 		
 		JLabel iLabel = new JLabel("Input");
@@ -140,14 +141,14 @@ public class SoloPane extends JPanel
 		ipanel.add(iLabel);
 		
 		inputLabel = new JLabel();
-		inputLabel.setBounds(330, 181, 200, 200);
+		inputLabel.setBounds(330, 165, 200, 200);
 		inputLabel.setMinimumSize(new Dimension(150, 150));
 		inputLabel.setBackground(Color.WHITE);
 		inputLabel.setOpaque(true);
 		add(inputLabel);
 		
-		JButton tButton = new MainButton("src/images/pencil.png", "src/images/pencil.png");
-		tButton.setBounds(535, 350, 35, 33);
+		JButton tButton = new MainButton("/images/pencil.png", "/images/pencil.png");
+		tButton.setBounds(535, 335, 35, 33);
 		add(tButton);
 		tButton.addActionListener(new ActionListener() {
 			@Override
@@ -160,40 +161,41 @@ public class SoloPane extends JPanel
 		
 		mLabel = new JLabel();
 		mLabel.setFont(new Font("Century Gothic", Font.PLAIN, 16));
-		mLabel.setBounds(205, 388, 412, 21);
+		mLabel.setBounds(205, 373, 412, 21);
 		mLabel.setForeground(Color.WHITE);
 		mLabel.setHorizontalAlignment(JLabel.CENTER);
 		add(mLabel);
 		
-		mLabel.setText("D:/kamatisan/testing/1/tomato.jpg");
+		mLabel.setText("tomato.jpg");
 		
 		JPanel line2 = new JPanel();
 		line2.setBackground(new Color(255, 204, 51));
-		line2.setBounds(145, 421, 475, 1);
+		line2.setBounds(145, 405, 475, 1);
 		add(line2);
 		
 		JLabel rLabel = new JLabel("Classification:");
 		rLabel.setFont(new Font("Century Gothic", Font.PLAIN, 16));
-		rLabel.setBounds(280, 438, 118, 21);
+		rLabel.setBounds(150, 430, 118, 21);
 		rLabel.setForeground(Color.WHITE);
 		rLabel.setHorizontalAlignment(JLabel.CENTER);
 		add(rLabel);
 		
 		classLabel = new JLabel("--");
 		classLabel.setFont(new Font("Century Gothic", Font.BOLD, 20));
-		classLabel.setBounds(405, 436, 118, 21);
+		classLabel.setBounds(275, 428, 118, 21);
 		classLabel.setForeground(Color.WHITE);
 		add(classLabel);
 		
+		final URL footerUrl = getClass().getResource("/images/footer.png");
 		JPanel footerPane = new JPanel() {
 			@Override
 		    public void paintComponent(Graphics g) {
 				 Graphics2D g2 = (Graphics2D) g;
 				Image image = null;
 				try {                
-					image = ImageIO.read(new File("src/images/footer.png"));
+					image = ImageIO.read(footerUrl);
 		        } catch (IOException ex) {
-		        	System.out.println("Check footer image.");
+		        	//System.out.println("Check footer image.");
 		        }
 		        g2.drawImage(image, 0, 0, null);          
 		    }
@@ -204,16 +206,16 @@ public class SoloPane extends JPanel
 		footerPane.setLayout(null);
 		
 		JButton testButton = new JButton("TEST");
-		testButton.setBounds(20, 130, 80, 30);
+		testButton.setBounds(520, 420, 100, 40);
+		testButton.setFont(new Font("Century Gothic", Font.PLAIN, 15));
 		add(testButton);
 		testButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(solution != null && input != null) {
 					test();
-				}
-				else {
-					System.out.println("Oooops!");
+				} else {
+					new MessageDialog("Ooops. Please select a classifier and input image.").setVisible(true);
 				}
 			}
 		});
@@ -252,6 +254,7 @@ public class SoloPane extends JPanel
 	
 	private void test() {
 		classLabel.setText("...");
+		GlobalVariables.setMode(GlobalVariables.STANDARD_RUN);
 		new Thread(new Runnable() {
 			@Override
 			public void run() {

@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -16,6 +17,7 @@ import javax.swing.plaf.basic.BasicProgressBarUI;
 public class ProgressPane extends JPanel
 {
 	private JProgressBar progressBar;
+	private URL footerUrl = getClass().getResource("/images/footer.png");
 	
 	public ProgressPane() 
 	{
@@ -38,9 +40,9 @@ public class ProgressPane extends JPanel
 		Graphics2D g2 = (Graphics2D) g;
 		Image image = null;
 		try {                
-			image = ImageIO.read(new File("src/images/footer.png"));
+			image = ImageIO.read(footerUrl);
         } catch (IOException ex) {
-        	System.out.println("Check footer image.");
+        	//System.out.println("Check footer image.");
         }
         g2.drawImage(image, 0, 0, null);          
     }

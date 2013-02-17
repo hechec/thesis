@@ -1,6 +1,5 @@
 package custom;
 
-import java.awt.AlphaComposite;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -9,9 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -24,12 +23,14 @@ public class MainButton extends JButton
 	
 	public MainButton(String source, String source2) 
 	{
+		URL sourceUrl = getClass().getResource(source);
+		URL sourceUrl2 = getClass().getResource(source2);
 		setBorderPainted(false);		
 		try {                
-			normal = ImageIO.read(new File(""+source));
-			hover = ImageIO.read(new File(""+source2));
+			normal = ImageIO.read(sourceUrl);
+			hover = ImageIO.read(sourceUrl2);
         } catch (IOException ex) {
-        	System.out.println("Check main button image source.");
+        	//System.out.println("Check main button image source.");
         }
 		
 		addActionListener(new ActionListener() {
@@ -69,11 +70,13 @@ public class MainButton extends JButton
 	}
 
 	public void updateIcons(String source, String source2) {
+		URL sourceUrl = getClass().getResource(source);
+		URL sourceUrl2 = getClass().getResource(source2);
 		try {                
-			normal = ImageIO.read(new File(""+source));
-			hover = ImageIO.read(new File(""+source2));
+			normal = ImageIO.read(sourceUrl);
+			hover = ImageIO.read(sourceUrl2);
         } catch (IOException ex) {
-        	System.out.println("Check main button image source.");
+        	//System.out.println("Check main button image source.");
         }		
 		repaint();
 	}
