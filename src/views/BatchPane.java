@@ -287,21 +287,32 @@ public class BatchPane extends JPanel
 	 */
 	private void test() 
 	{
-		Classifier classifier = new Classifier(solution);
-		result = classifier.test_batch(testData.getInputVector(), OutputLayerHelper.normalize(testData.getOutputVector()));
 		
-		float acc = result.getAccuracy(); 
-		if(acc > 90 )
-			percentLabel.setForeground(new Color(102, 255, 0));
-		else
-			percentLabel.setForeground(new Color(255, 51, 51));
+		//File file = new File("D:/kamatisan/Experiments/CURRENT/ABCNN_Effectiveness/fixed");
+		//File[] sols = file.listFiles();
 		
-		DecimalFormat df = new DecimalFormat("#.##");
-		percentLabel.setText( df.format((double)acc)+" %" );
+		//for( int i = 0; i < sols.length; i++ ) {
 		
-		correctLabel.setText( result.getScore() +"" );
-		incorrectLabel.setText( result.size() - result.getScore()+"" );
-		percentLabel.setVisible(true);
+			//File file2 = new File(sols[i].getAbsolutePath());
+			//solution = SolutionReader.read(file2);
+				
+			Classifier classifier = new Classifier(solution);
+			result = classifier.test_batch(testData.getInputVector(), OutputLayerHelper.normalize(testData.getOutputVector()));
+			
+			float acc = result.getAccuracy(); 
+			
+			//result.printErrors();
+			
+			if(acc > 90 )
+				percentLabel.setForeground(new Color(102, 255, 0));
+			else
+				percentLabel.setForeground(new Color(255, 51, 51));
+
+			DecimalFormat df = new DecimalFormat("#.##");
+			percentLabel.setText( df.format((double)acc)+" %" );
+			correctLabel.setText( result.getScore() +"" );
+			incorrectLabel.setText( result.size() - result.getScore()+"" );
+			percentLabel.setVisible(true);
 	}
 	
 	/**

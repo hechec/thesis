@@ -10,6 +10,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import views.Frame;
+
 import core.Result;
 import custom.MainButton;
 import dataset.Data;
@@ -35,12 +37,17 @@ public class ResultViewerDialog extends JDialog
 	public ResultViewerDialog(Data testData, Result result) 
 	{
 		instance = this;
+		
+		final Frame frame = Frame.getInstance();
 		setSize(550, 500);
 		setUndecorated(true);
-		setLocation(0, 0);
+		//setLocation(0, 0);
+		setLocationRelativeTo(frame);
+		getContentPane().setBackground(Color.WHITE);
+		getContentPane().setLayout(null);
 		
 		final URL bgUrl = getClass().getResource("/images/bg.png");
-		contentPane = new JPanel() {
+		JPanel panel = new JPanel() {
 			@Override
 		    public void paintComponent(Graphics g) {
 		        super.paintComponent(g);
@@ -50,18 +57,20 @@ public class ResultViewerDialog extends JDialog
 		        } catch (IOException ex) {
 		        	//System.out.println("Check background image.");
 		        }
-		       //g.drawImage(image, 0, 0, null);          
+		       g.drawImage(image, 0, 0, null);          
 		    }
 		};
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
+			
+		panel.setBounds(5, 5, 540, 490);
+		panel.setLayout(null);
+		getContentPane().add(panel);
+		
 		
 		JPanel topPanel = new JPanel();
 		topPanel.setBackground(Color.BLACK);
 		topPanel.setBounds(0, 0, 550, 32);
 		topPanel.setLayout(null);
-		contentPane.add(topPanel);
+		panel.add(topPanel);
 		//topPanel.setOpaque(false);
 		
 		JLabel titleLabel = new JLabel("Results Viewer");
@@ -72,7 +81,7 @@ public class ResultViewerDialog extends JDialog
 		
 		JButton exitButton = new MainButton("/images/close.png", "/images/closeHover.png");
 		exitButton.setBorderPainted(false);
-		exitButton.setBounds(511, 1, 38, 24);
+		exitButton.setBounds(506, 1, 38, 24);
 		topPanel.add(exitButton, 0);
 		exitButton.addActionListener(new ActionListener() {
 			@Override
@@ -82,7 +91,7 @@ public class ResultViewerDialog extends JDialog
 
 		});
 		
-		contentPane.addMouseMotionListener(new MouseMotionListener() {
+		panel.addMouseMotionListener(new MouseMotionListener() {
 			boolean startDrag = false;
 			Point original = null;
 			
@@ -110,7 +119,7 @@ public class ResultViewerDialog extends JDialog
 		thePanel.setOpaque(false);
 		thePanel.setBounds(0, 50, 550, 400);
 		thePanel.setLayout(null);
-		contentPane.add(thePanel);
+		panel.add(thePanel);
 	
 		mainPage = new MainPage();
 		mainPage.setBounds(0, 0, 550, 400);

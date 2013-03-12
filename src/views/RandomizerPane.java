@@ -16,17 +16,14 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.plaf.metal.MetalIconFactory.FileIcon16;
 
-import utilities.FileTypeFilter;
-import utilities.ResultWriter;
+import com.sun.org.apache.xpath.internal.functions.Function;
+
 import views.dialog.MessageDialog;
-
+import views.dialog.ResultLocationChooser;
 import custom.MainButton;
 import custom.MyTextField;
 import dataset.DataRandomizer;
@@ -37,7 +34,7 @@ public class RandomizerPane extends JPanel
 	private static RandomizerPane instance = null;
 	private Frame frame;
 	
-	private JTextField directoryField;
+	private JTextField directoryField, testingField, trainingField;
 	private JFileChooser chooser;
 	
 	public static RandomizerPane  getInstance() 
@@ -114,7 +111,7 @@ public class RandomizerPane extends JPanel
 		label1.setBounds(0, 0, 75, 30);
 		panel.add(label1);
 		
-		final JTextField trainingField = new MyTextField("Enter train data filename");
+		trainingField = new MyTextField("Enter train data filename");
 		trainingField.setBounds(330, 226, 240, 30);
 		trainingField.setBorder(null);
 		trainingField.setFont(new Font("Century Gothic", Font.PLAIN, 16));
@@ -139,7 +136,7 @@ public class RandomizerPane extends JPanel
 		label3.setBounds(0, 0, 75, 30);
 		panel2.add(label3);
 		
-		final JTextField testingField = new MyTextField("Enter test data filename");
+		testingField = new MyTextField("Enter test data filename");
 		testingField.setBounds(330, 274, 240, 30);
 		testingField.setBorder(null);
 		testingField.setFont(new Font("Century Gothic", Font.PLAIN, 16));
@@ -167,22 +164,8 @@ public class RandomizerPane extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(!directoryField.getText().isEmpty() && !trainingField.getText().isEmpty() && !testingField.getText().isEmpty()) {
-					File dataFile = new File(directoryField.getText());
-					DataRandomizer dataRandomizer = new DataRandomizer(dataFile);
-					boolean success = dataRandomizer.randomize();
-					if(success) {
-						DataWriter dataWriter = new DataWriter(trainingField.getText());
-						boolean b1 = dataWriter.write(dataRandomizer.getTrainSet());
-						DataWriter dataWriter2 = new DataWriter(testingField.getText());
-						boolean b2 = dataWriter2.write(dataRandomizer.getTestSet());
-						if(b1 & b2) {
-							new MessageDialog("You have successfully created a random dataset.").setVisible(true);
-						}
-						else
-							new MessageDialog("Error. Something went wrong while randomizing.").setVisible(true);
-					}
-				}
-				else
+					new ResultLocationChooser(ResultLocationChooser.RANDOMIZE).setVisible(true);
+				}else
 					new MessageDialog("Ooops. Please enter the necessary data.").setVisible(true);
 			}
 		});
@@ -215,6 +198,25 @@ public class RandomizerPane extends JPanel
 		
 		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) { 
 			directoryField.setText(chooser.getSelectedFile().getAbsolutePath());
+		}
+	}
+	
+	
+	public void randomize(File destfile) 
+	{
+		File dataFile = new File(directoryField.getText());
+		DataRandomizer dataRandomizer = new DataRandomizer(dataFile);
+		boolean success = dataRandomizer.randomize();
+		if(success) {
+			DataWriter dataWriter = new DataWriter(new File(destfile.getAbsolutePath()+"/"+trainingField.getText()+".data"));
+			boolean b1 = dataWriter.write(dataRandomizer.getTrainSet());
+			DataWriter dataWriter2 = new DataWriter(new File(destfile.getAbsolutePath()+"/"+testingField.getText()+".data"));
+			boolean b2 = dataWriter2.write(dataRandomizer.getTestSet());
+			if(b1 & b2) {
+				new MessageDialog("You have successfully created a random dataset.").setVisible(true);
+			}
+			else
+				new MessageDialog("Error. Something went wrong while randomizing.").setVisible(true);
 		}
 	}
 	

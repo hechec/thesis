@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import views.dialog.AboutDialog;
 import views.dialog.ClassifierChooser;
 
 import custom.MainButton;
@@ -63,6 +64,7 @@ public class HomePane extends JPanel
 		aboutButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				new AboutDialog().setVisible(true);
 			}
 		});
 		
@@ -113,7 +115,7 @@ public class HomePane extends JPanel
 		        g2.drawImage(image, 0, 0, null);          
 		    }
 		};
-		title.setBounds(61, 7, 488, 90);
+		title.setBounds(80, 10, 488, 150);
 		this.add(title, 0);
 		
 		final URL footerUrl = getClass().getResource("/images/footer.png");

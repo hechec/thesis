@@ -6,10 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
-
-
 public class SolutionWriter 
 {
 	

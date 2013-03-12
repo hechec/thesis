@@ -1,5 +1,6 @@
 package dataset;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class Data 
@@ -42,6 +43,11 @@ public class Data
 	public int size() 
 	{
 		return filename.size();
+	}
+
+	public String getFilename2(int index) {
+		File file = new File(filename.get(index));
+		return file.getName();
 	}
 	
 }

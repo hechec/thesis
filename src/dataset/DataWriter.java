@@ -11,9 +11,9 @@ public class DataWriter
 {
 	private File dataFile;
 	
-	public DataWriter(String filename) 
+	public DataWriter(File file) 
 	{
-		dataFile = new File("D:/kamatisan/Data/"+filename+".data");
+		dataFile = file;
 	}
 	
 	public boolean write(ArrayList<String> files) 

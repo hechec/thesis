@@ -70,12 +70,14 @@ public class MainPage extends JPanel
 		
 		JPanel linePanel = new JPanel();
 		linePanel.setBounds(46, 52, 400, 2);
-		add(linePanel);
+		linePanel.setOpaque(false);
+		//add(linePanel);
 		
 		resultPanel = new JPanel();
 		//resultPanel.setOpaque(false);
 		resultPanel.setLayout(null);
 		resultPanel.setBounds(46, 55, 500, 310);
+		resultPanel.setOpaque(false);
 		add(resultPanel);
 
 	}
@@ -87,6 +89,7 @@ public class MainPage extends JPanel
 		
 		PagerPanel pagerPanel = new PagerPanel();
 		pagerPanel.setBounds(46, 370, 460, 30);
+		pagerPanel.setOpaque(false);
 		add(pagerPanel);
 		
 		int numberOfPages = (int)(result.size()/10)+1;
@@ -103,7 +106,7 @@ public class MainPage extends JPanel
 		int firstIndex = (currentPage-1)*10;
 		
 		for( int i = firstIndex, y = 0; i < firstIndex + 10 && i < result.size(); i++, y += 31 ) {
-			Entry e = new Entry(i+1, testData.getFilename(i), testData.getFilename(i), result.getExpected(i)+"", result.getActual(i)+"");
+			Entry e = new Entry(i+1, testData.getFilename(i), testData.getFilename2(i), result.getExpected(i), result.getActual(i));
 			e.setBounds(0, y, 500, 30);
 			resultPanel.add(e);
 		}

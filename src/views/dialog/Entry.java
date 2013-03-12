@@ -19,14 +19,16 @@ public class Entry extends JPanel
 	
 	private JLabel[] components = new JLabel[4];
 	
-	public Entry(int number, String absolutePath, String filename, String expected, String actual)
+	private String[] stages = {"Green", "Breakers", "Turning", "Pink", "Light Red", "Red"};
+	
+	public Entry(int number, String absolutePath, String filename, int expected, int actual)
 	{
 		setPreferredSize(new Dimension(500, 30));
 		setOpaque(false);
 		setLayout(null);
 		setToolTipText(absolutePath);
 		
-		if(expected.equals(actual)) {
+		if(expected == actual) {
 			normalColor = new Color(85, 176, 106);
 		}
 		else {
@@ -51,7 +53,7 @@ public class Entry extends JPanel
 		label1.setOpaque(true);
 		add(label1);
 		
-		label2 = new JLabel(expected);
+		label2 = new JLabel(stages[expected]);
 		label2.setFont(new Font("Century Gothic", Font.PLAIN, 14));
 		label2.setForeground(Color.WHITE);
 		label2.setBounds(268, 0, 95, 30);
@@ -60,7 +62,7 @@ public class Entry extends JPanel
 		label2.setHorizontalAlignment(SwingConstants.CENTER);
 		add(label2);
 		
-		label3 = new JLabel(actual);
+		label3 = new JLabel(stages[actual]);
 		label3.setFont(new Font("Century Gothic", Font.PLAIN, 14));
 		label3.setForeground(Color.WHITE);
 		label3.setBounds(364, 0, 95, 30);
@@ -104,7 +106,6 @@ public class Entry extends JPanel
 		
 	}
 	
-
 	private void updateColor(Color color) 
 	{
 		for( int i = 0; i < components.length; i++ ) 

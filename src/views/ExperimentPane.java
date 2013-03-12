@@ -302,7 +302,7 @@ public class ExperimentPane extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(hasData) {
-					new ResultLocationChooser().setVisible(true);
+					new ResultLocationChooser(ResultLocationChooser.EXPERIMENATION).setVisible(true);
 				} else {
 					new MessageDialog("Oooops. Click prepare before optimizing.").setVisible(true);
 				}

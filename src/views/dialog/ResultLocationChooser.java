@@ -21,14 +21,15 @@ import javax.swing.JTextField;
 
 import views.ExperimentPane;
 import views.Frame;
+import views.RandomizerPane;
 import custom.MainButton;
 
 public class ResultLocationChooser extends JDialog 
 {
+	public static final int EXPERIMENATION = 0;
+	public static final int RANDOMIZE = 1;
 	
-	private final JPanel contentPanel = new JPanel();
-
-	public ResultLocationChooser() 
+	public ResultLocationChooser(final int MODE) 
 	{
 		final Frame frame = Frame.getInstance();
 		
@@ -97,7 +98,7 @@ public class ResultLocationChooser extends JDialog
 			}
 		});
 		
-		JButton optimizeButton = new JButton("OPTIMIZE");
+		JButton optimizeButton = new JButton(MODE == EXPERIMENATION ? "OPTIMIZE" : "RANDOMIZE");
 		optimizeButton.setBounds(120, 136, 100, 35);
 		panel.add(optimizeButton);
 		optimizeButton.addActionListener(new ActionListener() {
@@ -105,7 +106,10 @@ public class ResultLocationChooser extends JDialog
 			public void actionPerformed(ActionEvent e) {
 				File file = new File(textField.getText());
 				if(file.exists()) {
-					ExperimentPane.getInstance().train(file);
+					if(MODE == EXPERIMENATION)
+						ExperimentPane.getInstance().train(file);
+					else
+						RandomizerPane.getInstance().randomize(file);
 				} 
 				dispose();
 			}
@@ -114,7 +118,7 @@ public class ResultLocationChooser extends JDialog
 	}
 	
 	public static void main(String[] a) {
-		new ResultLocationChooser().setVisible(true);
+		//new ResultLocationChooser().setVisible(true);
 	}
 
 }
