@@ -74,7 +74,7 @@ public class ExperimentPane extends JPanel
 	
 	private FileFilter filter = new FileTypeFilter(".data", "Text files");
 	private JFileChooser chooser = new JFileChooser();
-
+	private File trainFile = null, testFile = null;
 	
 	public static ExperimentPane getInstance() 
 	{
@@ -137,7 +137,9 @@ public class ExperimentPane extends JPanel
 		textField1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				selectDirectory(textField1);
+				trainFile = selectDirectory();
+				if(trainFile.exists())
+					textField1.setText(trainFile.getName());
 			}
 		});	
 		
@@ -162,7 +164,9 @@ public class ExperimentPane extends JPanel
 		textField2.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				selectDirectory(textField2);
+				testFile = selectDirectory();
+				if(testFile.exists())
+					textField2.setText(testFile.getName());
 			}
 		});	
 		
@@ -320,17 +324,17 @@ public class ExperimentPane extends JPanel
 		prepareButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if( !textField1.getText().equals("") && !textField2.getText().equals("")) {
+				if( trainFile.exists() && testFile.exists() ) {
 					initNetwork();
 					new Thread( new Runnable() {
 						@Override
 						public void run() {
-							File file = new File(""+textField1.getText());
-							DataReader dl = new DataReader(progressPane, file);
+							//File file = new File(""+textField1.getText());
+							DataReader dl = new DataReader(progressPane, trainFile);
 							trainData = dl.read();
 							
-							File file2 = new File(""+textField2.getText());
-							DataReader dl2 = new DataReader(progressPane, file2);
+							//File file2 = new File(""+textField2.getText());
+							DataReader dl2 = new DataReader(progressPane, testFile);
 							testData = dl2.read();	
 							
 							hasData = true;
@@ -454,11 +458,12 @@ public class ExperimentPane extends JPanel
 		chooser.setFileFilter(filter);
 	}
 	
-	private void selectDirectory(JTextField textField) 
+	private File selectDirectory() 
 	{
-		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-			textField.setText(chooser.getSelectedFile().getAbsolutePath());
-		}
+		String path = "";
+		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
+			path += chooser.getSelectedFile().getAbsolutePath();
+		return new File(path);
 	}
 	
 	public void initComponents() 

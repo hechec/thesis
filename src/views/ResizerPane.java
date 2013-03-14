@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -19,6 +21,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
+import com.sun.org.apache.bcel.internal.classfile.SourceFile;
 
 import utilities.Debugger;
 import views.dialog.MessageDialog;
@@ -37,6 +41,7 @@ public class ResizerPane extends JPanel
 	private JTextField destinationField;
 	
 	private JFileChooser chooser;
+	private File sourceFile = null, destinationFile = null;
 	
 	public static ResizerPane  getInstance() 
 	{
@@ -90,6 +95,12 @@ public class ResizerPane extends JPanel
 		sourceField.setBorder(BorderFactory.createCompoundBorder(sourceField.getBorder(),
 					BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 		add(sourceField);
+		sourceField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				selectSourceFile();
+			}
+		});
 
 		JButton button1 = new MainButton("/images/pencil.png", "/images/pencil.png");
 		button1.setBounds(595, 130, 35, 33);
@@ -97,7 +108,7 @@ public class ResizerPane extends JPanel
 		button1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				selectDirectory(sourceField);
+				selectSourceFile();
 			}
 		});
 		
@@ -125,6 +136,12 @@ public class ResizerPane extends JPanel
 		destinationField.setBorder(BorderFactory.createCompoundBorder(destinationField.getBorder(),
 					BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 		add(destinationField);
+		destinationField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				selectDestinationFile();
+			}
+		});
 		
 		JButton button2 = new MainButton("/images/pencil.png", "/images/pencil.png");
 		button2.setBounds(595, 200, 35, 33);
@@ -132,7 +149,7 @@ public class ResizerPane extends JPanel
 		button2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				selectDirectory(destinationField);
+				selectDestinationFile();
 			}	
 		});
 		
@@ -153,15 +170,15 @@ public class ResizerPane extends JPanel
 		resizeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!sourceField.getText().isEmpty() && !destinationField.getText().isEmpty() ) {   
-					File sourceFile = new File(sourceField.getText());
-					File destFile = new File(destinationField.getText());
-					if(!sourceFile.exists()) 
-						new MessageDialog("Ooops. Source file does not exist.").setVisible(true);
-					else if(!destFile.exists())
-						new MessageDialog("Ooops. Destination file does not exist.").setVisible(true);
-					else
-						resize(sourceFile, destFile);
+				if(sourceFile.exists() && destinationFile.exists()) {   
+					//File sourceFile = new File(sourceField.getText());
+					//File destFile = new File(destinationField.getText());
+					//if(!sourceFile.exists()) 
+					//	new MessageDialog("Ooops. Source file does not exist.").setVisible(true);
+					//else if(!destFile.exists())
+					//	new MessageDialog("Ooops. Destination file does not exist.").setVisible(true);
+					//else
+						resize(sourceFile, destinationFile);
 				} else {
 					new MessageDialog("Ooops. Please enter both source and destination folder.").setVisible(true);
 				}
@@ -178,11 +195,12 @@ public class ResizerPane extends JPanel
 		
 	}
 
-	private void selectDirectory(JTextField textField) 
+	private File selectDirectory() 
 	{
-		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) { 
-			textField.setText(chooser.getSelectedFile().getAbsolutePath());
-		}
+		String path = "";
+		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
+			path += chooser.getSelectedFile().getAbsolutePath();
+		return new File(path);
 	}	
 	
 	private void resize(final File sourceFile, final File destFile)
@@ -193,15 +211,30 @@ public class ResizerPane extends JPanel
 				DataResizer dataResizer = new DataResizer(sourceFile, destFile);
 				boolean flag = dataResizer.resize();
 				if(flag) {
-					JOptionPane.showMessageDialog(null, "Success :)");
+					new MessageDialog("You have successfully resized your dataset.").setVisible(true);
 				}
 				else {
-					JOptionPane.showMessageDialog(null, "Something went wrong.", "Error", JOptionPane.WARNING_MESSAGE);
+					new MessageDialog("Something went wrong :(").setVisible(true);
 				}
 			}
 		}).start();
 		
 	}
+	
+
+	private void selectSourceFile() 
+	{
+		sourceFile = selectDirectory();
+		if(sourceFile.exists())
+			sourceField.setText(sourceFile.getName());
+	}		
+	
+	private void selectDestinationFile() 
+	{
+		destinationFile = selectDirectory();
+		if(destinationFile.exists())
+			destinationField.setText(destinationFile.getName());
+	}		
 	
 	public ProgressPane getProgressPane()
 	{

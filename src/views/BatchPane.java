@@ -37,6 +37,7 @@ public class BatchPane extends JPanel
 	
 	private JFileChooser dataChooser, ttbChooser;
 	private JLabel fileLabel, percentLabel, correctLabel, incorrectLabel;
+	private File dataFile = null;
 	
 	public static BatchPane getInstance() 
 	{
@@ -143,7 +144,9 @@ public class BatchPane extends JPanel
 		textField1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				selectDirectory(textField1);
+				dataFile = selectDataFile();
+				if(dataFile.exists())
+					textField1.setText(dataFile.getName());
 			}
 		});	
 		
@@ -251,12 +254,11 @@ public class BatchPane extends JPanel
 			public void actionPerformed(ActionEvent e) {
 				
 				if(!textField1.getText().isEmpty()) {
-					final File file = new File(""+textField1.getText());
-					if(file.exists()) {
+					if(dataFile.exists()) {
 						new Thread(new Runnable() {
 							@Override
 							public void run() {
-								DataReader dl = new DataReader(progressPane, file);
+								DataReader dl = new DataReader(progressPane, dataFile);
 								testData = dl.read();
 							}
 						}).start();
@@ -322,18 +324,16 @@ public class BatchPane extends JPanel
 	private void selectClassifier()
 	{
 		if (ttbChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
-			fileLabel.setText(ttbChooser.getSelectedFile()+"");
+			fileLabel.setText(ttbChooser.getSelectedFile().getName()+"");
 			solution = SolutionReader.read(ttbChooser.getSelectedFile());
 		}
 	}
 	
-	private void selectDirectory(JTextField textField) 
-	{
-		JFileChooser chooser = new JFileChooser("D:/");	
-		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) 
-			textField.setText(chooser.getSelectedFile()+"");
+	private File selectDataFile() {
+		String path = "";
+		if (dataChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) 
+			path += dataChooser.getSelectedFile().getAbsolutePath();
+		return new File(path);
 	}
-	
 	
 }

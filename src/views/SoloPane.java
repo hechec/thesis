@@ -153,9 +153,9 @@ public class SoloPane extends JPanel
 		tButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String path = selectInput();
-				if(!path.equals("--"))
-					showInput(path);
+				File file = selectInput();
+				if(file.exists())
+					showInput(file);
 			}
 		});
 		
@@ -226,24 +226,24 @@ public class SoloPane extends JPanel
 	{
 		
 		if (ttbChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
-			fileLabel.setText(ttbChooser.getSelectedFile()+"");
+			fileLabel.setText(ttbChooser.getSelectedFile().getName()+"");
 			solution = SolutionReader.read(ttbChooser.getSelectedFile());
 		}
 	}
 
-	private String selectInput() 
+	private File selectInput() 
 	{
-		String path = "--";
+		String path = "";
 		if (jpegChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)  
 			path = jpegChooser.getSelectedFile()+"";
-		return path;
+		return new File(path);
 	}
 	
-	private void showInput(String path) {
-		mLabel.setText(path);
+	private void showInput(File inputFile) {
+		mLabel.setText(inputFile.getName());
 		BufferedImage temp = null;
 		try {
-			input = ImageIO.read(new File(path));
+			input = ImageIO.read(inputFile);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -36,6 +38,8 @@ public class RandomizerPane extends JPanel
 	
 	private JTextField directoryField, testingField, trainingField;
 	private JFileChooser chooser;
+	
+	private File dataFile = null;
 	
 	public static RandomizerPane  getInstance() 
 	{
@@ -89,6 +93,13 @@ public class RandomizerPane extends JPanel
 		directoryField.setBorder(BorderFactory.createCompoundBorder( directoryField.getBorder(),
 					BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 		add(directoryField);
+		directoryField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				selectDirectory();
+			}
+		});
+
 		
 		JButton tButton = new MainButton("/images/pencil.png", "/images/pencil.png");
 		tButton.setBounds(595, 130, 35, 33);
@@ -195,16 +206,16 @@ public class RandomizerPane extends JPanel
 	
 	private void selectDirectory()
 	{
-		
+		String path = "";
 		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) { 
-			directoryField.setText(chooser.getSelectedFile().getAbsolutePath());
+			path = chooser.getSelectedFile().getAbsolutePath();
 		}
+		dataFile = new File(path);
+		directoryField.setText(dataFile.getName());		
 	}
-	
 	
 	public void randomize(File destfile) 
 	{
-		File dataFile = new File(directoryField.getText());
 		DataRandomizer dataRandomizer = new DataRandomizer(dataFile);
 		boolean success = dataRandomizer.randomize();
 		if(success) {
