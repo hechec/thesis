@@ -17,8 +17,8 @@ import utilities.GlobalVariables;
 import utilities.OutputLayerHelper;
 import utilities.ResultWriter;
 import utilities.SolutionReader;
-import views.dialog.MessageDialog;
 import views.dialog.ResultViewerDialog;
+import views.optionpane.MessageDialog;
 
 import custom.MainButton;
 import custom.MyTextField;
@@ -37,6 +37,8 @@ public class BatchPane extends JPanel
 	
 	private JFileChooser dataChooser, ttbChooser;
 	private JLabel fileLabel, percentLabel, correctLabel, incorrectLabel;
+	private JButton prepareButton, classifyButton, viewResultsButton;
+	
 	private File dataFile = null;
 	
 	public static BatchPane getInstance() 
@@ -144,9 +146,9 @@ public class BatchPane extends JPanel
 		textField1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				dataFile = selectDataFile();
-				if(dataFile.exists())
-					textField1.setText(dataFile.getName());
+				String path = selectDataFile();
+				if(new File(path).exists())
+					textField1.setText(path);
 			}
 		});	
 		
@@ -156,10 +158,9 @@ public class BatchPane extends JPanel
 		tButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (dataChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-					textField1.setText(dataChooser.getSelectedFile().getAbsolutePath());
-				}
-				//selectDirectory(textField1);
+				String path = selectDataFile();
+				if(new File(path).exists())
+					textField1.setText(path);
 			}
 		});
 		
@@ -210,10 +211,10 @@ public class BatchPane extends JPanel
 		line3.setBounds(145, 390, 475, 1);
 		//add(line3);
 		
-		JButton viewButton = new JButton("VIEW RESULTS");
-		viewButton.setBounds(500, 410, 110, 40);
-		add(viewButton);
-		viewButton.addActionListener(new ActionListener() {
+		viewResultsButton = new JButton("VIEW RESULTS");
+		viewResultsButton.setBounds(500, 410, 110, 40);
+		add(viewResultsButton);
+		viewResultsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(testData != null && result != null) {
@@ -246,75 +247,65 @@ public class BatchPane extends JPanel
 		progressPane.setLocation(0, 475);
 		this.add(progressPane);
 		
-		JButton prepareButton = new JButton("PREPARE");
+		prepareButton = new JButton("PREPARE");
 		prepareButton.setBounds(210, 410, 110, 40);
 		add(prepareButton);
 		prepareButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-				if(!textField1.getText().isEmpty()) {
-					if(dataFile.exists()) {
-						new Thread(new Runnable() {
-							@Override
-							public void run() {
-								DataReader dl = new DataReader(progressPane, dataFile);
-								testData = dl.read();
-							}
-						}).start();
-					} else 
-						new MessageDialog("Ooops. The file does not exist.").setVisible(true);
+				dataFile = new File(textField1.getText().trim());
+				if(dataFile.exists()) {
+					setComponents(false);
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							DataReader dl = new DataReader(progressPane, dataFile);
+							testData = dl.read();
+							setComponents(true);
+						}
+					}).start();
 				} else 
-					new MessageDialog("Ooops. Please enter test data.").setVisible(true);
+					new MessageDialog("Ooops. Please select a data file.").setVisible(true);
 			}
 		});
 		
-		JButton testButton = new JButton("TEST");
-		testButton.setBounds(320, 410, 180, 40);
-		add(testButton);
-		testButton.addActionListener(new ActionListener() {
+		classifyButton = new JButton("CLASSIFY");
+		classifyButton.setBounds(320, 410, 180, 40);
+		add(classifyButton);
+		classifyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(solution != null && testData != null) {
-					test();
-				} else 
-					new MessageDialog("Ooops. Please prepare before testing.").setVisible(true);
+				if(solution == null)
+					new MessageDialog("Ooops. Please select a classifier").setVisible(true);
+				else if(testData == null)
+					new MessageDialog("Ooops. Please prepare before testing.").setVisible(true);	
+				else
+					classifyBatch();
 			}
 		});
 		
 	}
 	
 	/**
-	 *  test set of input images
+	 *  classify set of input images
 	 */
-	private void test() 
+	private void classifyBatch() 
 	{
+		Classifier classifier = new Classifier(solution);
+		result = classifier.test_batch(testData.getInputVector(), OutputLayerHelper.normalize(testData.getOutputVector()));
 		
-		//File file = new File("D:/kamatisan/Experiments/CURRENT/ABCNN_Effectiveness/fixed");
-		//File[] sols = file.listFiles();
+		float acc = result.getAccuracy(); 
 		
-		//for( int i = 0; i < sols.length; i++ ) {
-		
-			//File file2 = new File(sols[i].getAbsolutePath());
-			//solution = SolutionReader.read(file2);
-				
-			Classifier classifier = new Classifier(solution);
-			result = classifier.test_batch(testData.getInputVector(), OutputLayerHelper.normalize(testData.getOutputVector()));
-			
-			float acc = result.getAccuracy(); 
-			
-			//result.printErrors();
-			
-			if(acc > 90 )
-				percentLabel.setForeground(new Color(102, 255, 0));
-			else
-				percentLabel.setForeground(new Color(255, 51, 51));
+		if(acc > 90 )
+			percentLabel.setForeground(new Color(102, 255, 0));
+		else
+			percentLabel.setForeground(new Color(255, 51, 51));
 
-			DecimalFormat df = new DecimalFormat("#.##");
-			percentLabel.setText( df.format((double)acc)+" %" );
-			correctLabel.setText( result.getScore() +"" );
-			incorrectLabel.setText( result.size() - result.getScore()+"" );
-			percentLabel.setVisible(true);
+		DecimalFormat df = new DecimalFormat("#.##");
+		percentLabel.setText( df.format((double)acc)+" %" );
+		correctLabel.setText( result.getScore() +"" );
+		incorrectLabel.setText( result.size() - result.getScore()+"" );
+		percentLabel.setVisible(true);
 	}
 	
 	/**
@@ -329,11 +320,18 @@ public class BatchPane extends JPanel
 		}
 	}
 	
-	private File selectDataFile() {
+	private String selectDataFile() {
 		String path = "";
 		if (dataChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) 
 			path += dataChooser.getSelectedFile().getAbsolutePath();
-		return new File(path);
+		return path;
+	}
+	
+	private void setComponents(boolean b)
+	{
+		prepareButton.setEnabled(b);
+		classifyButton.setEnabled(b);
+		viewResultsButton.setEnabled(b);
 	}
 	
 }

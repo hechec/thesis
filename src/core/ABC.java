@@ -2,7 +2,7 @@ package core;
 
 import java.util.Random;
 import views.ExperimentPane;
-import views.dialog.MessageDialog;
+import views.optionpane.MessageDialog;
 
 import dataset.Data;
 
@@ -43,6 +43,8 @@ public class ABC
 	private double[][] input_data;
 	private double[][] output_data;
 	
+	private boolean pause = false, terminate = false; 
+	
 	public ABC(int runtime, int maxCycle, int employedBeeSize, 
 			int onlookerBeeSize, int dimension) 
 	{
@@ -80,17 +82,30 @@ public class ABC
 		output_data = trainingData.getOutputVector();
 		
 		for( int run = 0; run < runtime; run++ ) {
+			if(pause) {
+				continue;
+			}
+			if(terminate) {
+				break;
+			}			
 			double start = System.currentTimeMillis();
 			initializePopulation();
 			memorizeBestSource();
 			
-			for( int cycle = 0; cycle < maxCycle; cycle++ ) {
+			for( int cycle = 0; cycle < maxCycle; ) {
+				if(pause) {
+					continue;
+				}
+				if(terminate) {
+					break;
+				}
 				sendEmployedBees();
 				calculateProbabilities();
 				sendOnlookerBees();
 				memorizeBestSource();
 				sendScoutBees();
 				ExperimentPane.getInstance().incrementCycle(cycle+1);
+				cycle++;
 			}
 			ExperimentPane.getInstance().incrementRuntime(run+1);
 			GlobalMins[run] = GlobalMin;
@@ -105,7 +120,11 @@ public class ABC
 			
 			ExperimentPane.getInstance().returnResult(/*bestMin*/GlobalMin, Params[bestIndex], elapsedTime, run+1);
 		}
-		new MessageDialog("Done optimizing.").setVisible(true);
+		ExperimentPane.getInstance().resetButtons();
+		if(terminate)
+			new MessageDialog("The optimization has been stopped.").setVisible(true);
+		else
+			new MessageDialog("Done optimizing.").setVisible(true);
 	}
 	
 	/**
@@ -286,6 +305,21 @@ public class ABC
 	public MLPNetwork getBestBee() 
 	{
 		return new MLPNetwork( Params[bestIndex] );
+	}
+	
+	public void pause()
+	{
+		pause = true;
+	}
+	
+	public void resume()
+	{
+		pause = false;
+	}
+	
+	public void terminate()
+	{
+		terminate = true;
 	}
 
 	/*public static void main(String[] args) {

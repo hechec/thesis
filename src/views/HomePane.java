@@ -1,12 +1,15 @@
 package views;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.URL;
 
@@ -58,13 +61,13 @@ public class HomePane extends JPanel
 			}
 		});
 		
-		JButton aboutButton = new MainButton("/images/aboutButton.png", "/images/aboutHover.png");
-		aboutButton.setBounds(440, 290, 140, 140);
-		this.add(aboutButton, 0);
-		aboutButton.addActionListener(new ActionListener() {
+		JButton helpButton = new MainButton("/images/helpButton.png", "/images/helpHover.png");
+		helpButton.setBounds(440, 290, 140, 140);
+		this.add(helpButton, 0);
+		helpButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new AboutDialog().setVisible(true);
+				//
 			}
 		});
 		
@@ -142,9 +145,41 @@ public class HomePane extends JPanel
 		lblNewLabel.setForeground(Color.WHITE);
 		lblNewLabel.setFont(new Font("Century Gothic", Font.BOLD, 13));
 		lblNewLabel.setBounds(10, 11, 413, 28);
-		footerPane.add(lblNewLabel);
+		//footerPane.add(lblNewLabel);
 		
-
+		JButton aboutButton = new JButton("About");
+		aboutButton.setForeground(Color.WHITE);
+		aboutButton.setFont(new Font("Century Gothic", Font.BOLD, 13));
+		aboutButton.setBounds(10, 11, 70, 30);
+		aboutButton.setBorderPainted(false);
+		aboutButton.setBorder(null);
+		aboutButton.setContentAreaFilled(false);
+		footerPane.add(aboutButton);
+		aboutButton.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				setCursor(new Cursor(Cursor.HAND_CURSOR));
+			}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
+		aboutButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new AboutDialog().setVisible(true);
+			}
+		});
 	}
 	
 }

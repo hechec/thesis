@@ -11,7 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-public class Entry extends JPanel
+public class ResultRowPanel extends JPanel
 {
 	private JLabel label1, label2, label3;
 	
@@ -21,7 +21,7 @@ public class Entry extends JPanel
 	
 	private String[] stages = {"Green", "Breakers", "Turning", "Pink", "Light Red", "Red"};
 	
-	public Entry(int number, String absolutePath, String filename, int expected, int actual)
+	public ResultRowPanel(int number, String absolutePath, String filename, int expected, int actual)
 	{
 		setPreferredSize(new Dimension(500, 30));
 		setOpaque(false);

@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
@@ -41,8 +43,9 @@ import utilities.GlobalVariables;
 import utilities.OutputLayerHelper;
 import utilities.SolutionWriter;
 import views.dialog.ColorFeatureChooser;
-import views.dialog.MessageDialog;
 import views.dialog.ResultLocationChooser;
+import views.optionpane.ConfirmationDialog;
+import views.optionpane.MessageDialog;
 
 import custom.MainButton;
 import custom.MyTextField;
@@ -61,6 +64,7 @@ public class ExperimentPane extends JPanel
 	
 	private JButton selectFeaturesButton;
 	private JLabel featuresLabel;
+	private JButton stopButton, optimizeButton, prepareButton;
 	
 	private boolean hasData = false;
 	
@@ -71,10 +75,12 @@ public class ExperimentPane extends JPanel
 	public static int EXPERIMENT = EXP_1;
 	
 	private File masterFile = null;
-	
+
+	private ArrayList<String> features = new ArrayList<String>();
+
 	private FileFilter filter = new FileTypeFilter(".data", "Text files");
 	private JFileChooser chooser = new JFileChooser();
-	private File trainFile = null, testFile = null;
+	private File trainFile = new File(""), testFile = new File("");
 	
 	public static ExperimentPane getInstance() 
 	{
@@ -137,12 +143,12 @@ public class ExperimentPane extends JPanel
 		textField1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				trainFile = selectDirectory();
-				if(trainFile.exists())
-					textField1.setText(trainFile.getName());
+				String path = selectDirectory();
+				if(new File(path).exists())
+					textField1.setText(path);
 			}
 		});	
-		
+				
 		JPanel panel2 = new JPanel();
 		panel2.setBackground(new Color(255, 204, 51));
 		panel2.setBounds(320, 177, 107, 27);
@@ -164,9 +170,9 @@ public class ExperimentPane extends JPanel
 		textField2.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				testFile = selectDirectory();
-				if(testFile.exists())
-					textField2.setText(testFile.getName());
+				String path = selectDirectory();
+				if(new File(path).exists())
+					textField2.setText(path);
 			}
 		});	
 		
@@ -299,7 +305,7 @@ public class ExperimentPane extends JPanel
 		runtimeBar.setBackground(Color.WHITE);
 		rPanel.add(runtimeBar);
 		
-		JButton optimizeButton = new JButton("OPTIMIZE");
+		optimizeButton = new JButton("OPTIMIZE");
 		optimizeButton.setBounds(550, 430, 100, 35);
 		add(optimizeButton);
 		optimizeButton.addActionListener(new ActionListener() {
@@ -313,18 +319,31 @@ public class ExperimentPane extends JPanel
 			}
 		});
 		
+		stopButton = new JButton("STOP");
+		stopButton.setBounds(550, 430, 100, 35);
+		stopButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				abc.pause();
+				new ConfirmationDialog(getInstance(), "Are you sure you want to stop optimizing?").setVisible(true);				
+			}
+		});
+		//add(stopButton);
 		
 		final ProgressPane progressPane = new ProgressPane(); 
 		progressPane.setLocation(0, 475);
 		this.add(progressPane);
 		
-		JButton prepareButton = new JButton("PREPARE");
+		prepareButton = new JButton("PREPARE");
 		prepareButton.setBounds(385, 430, 100, 35);
 		add(prepareButton);
 		prepareButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if( trainFile.exists() && testFile.exists() ) {
+				trainFile = new File(textField1.getText().trim());
+				testFile = new File(textField2.getText().trim());
+				if( trainFile.exists() && testFile.exists() ) {		
+					setComponents(false);
 					initNetwork();
 					new Thread( new Runnable() {
 						@Override
@@ -339,6 +358,7 @@ public class ExperimentPane extends JPanel
 							
 							hasData = true;
 							new MessageDialog("Done preparing.").setVisible(true);
+							setComponents(true);
 						}
 						
 					}).start();
@@ -458,15 +478,15 @@ public class ExperimentPane extends JPanel
 		chooser.setFileFilter(filter);
 	}
 	
-	private File selectDirectory() 
+	private String selectDirectory() 
 	{
 		String path = "";
 		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
 			path += chooser.getSelectedFile().getAbsolutePath();
-		return new File(path);
+		return path;
 	}
 	
-	public void initComponents() 
+	public void resetComponents() 
 	{
 		cycleBar.setMinimum(0);
 		cycleBar.setMaximum((int)cycleSpinner.getValue());
@@ -474,6 +494,7 @@ public class ExperimentPane extends JPanel
 		runtimeBar.setMaximum((int)runtimeSpinner.getValue());	
 		cycleBar.setValue(0);
 		runtimeBar.setValue(0);
+		updateUI();
 	}
 	
 	public void incrementCycle(int percent) 
@@ -489,7 +510,10 @@ public class ExperimentPane extends JPanel
 	public void train(File file)
 	{
 		this.masterFile = file;
-		initComponents();
+		remove(optimizeButton);
+		add(stopButton);
+		prepareButton.setEnabled(false);
+		resetComponents();
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -580,7 +604,6 @@ public class ExperimentPane extends JPanel
 		selectFeaturesButton.setEnabled(false);
 	}
 
-	
 	public void setColorFeatures(DefaultListModel<String> listModel) 
 	{
 		String string = "";
@@ -599,6 +622,30 @@ public class ExperimentPane extends JPanel
 		return features;
 	}
 	
-	private ArrayList<String> features = new ArrayList<String>();
+	private void setComponents(boolean b) 
+	{
+		optimizeButton.setEnabled(b);
+		prepareButton.setEnabled(b);
+	}
+	
+	public void confirmNo() 
+	{
+		abc.resume();		
+	}
+
+	public void confirmYes() 
+	{
+		resetButtons();
+		resetComponents();
+		abc.terminate();
+	}
+	
+	public void resetButtons()
+	{
+		remove(stopButton);
+		add(optimizeButton);
+		setComponents(true);
+		updateUI();
+	}
 
 }

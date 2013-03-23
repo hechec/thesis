@@ -25,7 +25,7 @@ import core.Classifier;
 import utilities.FileTypeFilter;
 import utilities.GlobalVariables;
 import utilities.SolutionReader;
-import views.dialog.MessageDialog;
+import views.optionpane.MessageDialog;
 
 import custom.MainButton;
 
@@ -205,7 +205,7 @@ public class SoloPane extends JPanel
 		this.add(footerPane);
 		footerPane.setLayout(null);
 		
-		JButton testButton = new JButton("TEST");
+		JButton testButton = new JButton("CLASSIFY");
 		testButton.setBounds(520, 420, 100, 40);
 		testButton.setFont(new Font("Century Gothic", Font.PLAIN, 15));
 		add(testButton);

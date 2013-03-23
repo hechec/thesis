@@ -22,10 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import com.sun.org.apache.bcel.internal.classfile.SourceFile;
-
-import utilities.Debugger;
-import views.dialog.MessageDialog;
+import views.optionpane.MessageDialog;
 
 import custom.MainButton;
 import custom.MyTextField;
@@ -39,6 +36,7 @@ public class ResizerPane extends JPanel
 	private ProgressPane progressPane;
 	private JTextField sourceField;
 	private JTextField destinationField;
+	private JButton resizeButton;
 	
 	private JFileChooser chooser;
 	private File sourceFile = null, destinationFile = null;
@@ -163,22 +161,17 @@ public class ResizerPane extends JPanel
 		progressPane.setLocation(0, 475);
 		this.add(progressPane);
 		
-		JButton resizeButton = new JButton("RESIZE");
+		resizeButton = new JButton("RESIZE");
 		resizeButton.setBounds(305, 290, 124, 50);
 		resizeButton.setFont(new Font("Century Gothic", Font.PLAIN, 18));
 		add(resizeButton);
 		resizeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				sourceFile = new File(sourceField.getText().trim());
+				destinationFile = new File(destinationField.getText().trim());
 				if(sourceFile.exists() && destinationFile.exists()) {   
-					//File sourceFile = new File(sourceField.getText());
-					//File destFile = new File(destinationField.getText());
-					//if(!sourceFile.exists()) 
-					//	new MessageDialog("Ooops. Source file does not exist.").setVisible(true);
-					//else if(!destFile.exists())
-					//	new MessageDialog("Ooops. Destination file does not exist.").setVisible(true);
-					//else
-						resize(sourceFile, destinationFile);
+					resize(sourceFile, destinationFile);
 				} else {
 					new MessageDialog("Ooops. Please enter both source and destination folder.").setVisible(true);
 				}
@@ -195,16 +188,17 @@ public class ResizerPane extends JPanel
 		
 	}
 
-	private File selectDirectory() 
+	private String selectDirectory() 
 	{
 		String path = "";
 		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
 			path += chooser.getSelectedFile().getAbsolutePath();
-		return new File(path);
+		return path;
 	}	
 	
 	private void resize(final File sourceFile, final File destFile)
 	{
+		resizeButton.setEnabled(false);
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -216,6 +210,7 @@ public class ResizerPane extends JPanel
 				else {
 					new MessageDialog("Something went wrong :(").setVisible(true);
 				}
+				resizeButton.setEnabled(true);
 			}
 		}).start();
 		
@@ -224,16 +219,16 @@ public class ResizerPane extends JPanel
 
 	private void selectSourceFile() 
 	{
-		sourceFile = selectDirectory();
-		if(sourceFile.exists())
-			sourceField.setText(sourceFile.getName());
+		String path = selectDirectory();
+		if(new File(path).exists())
+			sourceField.setText(path);
 	}		
 	
 	private void selectDestinationFile() 
 	{
-		destinationFile = selectDirectory();
-		if(destinationFile.exists())
-			destinationField.setText(destinationFile.getName());
+		String path = selectDirectory();
+		if(new File(path).exists())
+			destinationField.setText(path);
 	}		
 	
 	public ProgressPane getProgressPane()

@@ -22,10 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import com.sun.org.apache.xpath.internal.functions.Function;
-
-import views.dialog.MessageDialog;
 import views.dialog.ResultLocationChooser;
+import views.optionpane.MessageDialog;
 import custom.MainButton;
 import custom.MyTextField;
 import dataset.DataRandomizer;
@@ -174,10 +172,14 @@ public class RandomizerPane extends JPanel
 		randomize.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!directoryField.getText().isEmpty() && !trainingField.getText().isEmpty() && !testingField.getText().isEmpty()) {
+				dataFile = new File(directoryField.getText());
+				if(!dataFile.exists())
+					new MessageDialog("Ooops. Please enter the data set.").setVisible(true);
+				else if(trainingField.getText().isEmpty() || testingField.getText().isEmpty())
+					new MessageDialog("Ooops. Please enter training and test data filenames.").setVisible(true);
+				else
 					new ResultLocationChooser(ResultLocationChooser.RANDOMIZE).setVisible(true);
-				}else
-					new MessageDialog("Ooops. Please enter the necessary data.").setVisible(true);
+				
 			}
 		});
 		
@@ -207,11 +209,10 @@ public class RandomizerPane extends JPanel
 	private void selectDirectory()
 	{
 		String path = "";
-		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) { 
+		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)  
 			path = chooser.getSelectedFile().getAbsolutePath();
-		}
-		dataFile = new File(path);
-		directoryField.setText(dataFile.getName());		
+		if(new File(path).exists())
+			directoryField.setText(path);		
 	}
 	
 	public void randomize(File destfile) 

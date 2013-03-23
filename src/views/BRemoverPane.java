@@ -34,7 +34,7 @@ import custom.MainButton;
 
 import utilities.Debugger;
 import utilities.FileTypeFilter;
-import views.dialog.MessageDialog;
+import views.optionpane.MessageDialog;
 
 public class BRemoverPane extends JPanel
 {
@@ -183,7 +183,7 @@ public class BRemoverPane extends JPanel
 		scrollPane.setBounds(15, 285, 670, 220);	
 		add(scrollPane);
 		
-		JButton removeButton = new JButton("EXTRACT");
+		JButton removeButton = new JButton("PROCESS");
 		removeButton.setBounds(18, 230, 90, 40);
 		add(removeButton);
 		removeButton.addActionListener(new ActionListener() {

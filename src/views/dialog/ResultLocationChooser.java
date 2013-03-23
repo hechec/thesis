@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -22,6 +24,7 @@ import javax.swing.JTextField;
 import views.ExperimentPane;
 import views.Frame;
 import views.RandomizerPane;
+import views.optionpane.MessageDialog;
 import custom.MainButton;
 
 public class ResultLocationChooser extends JDialog 
@@ -74,6 +77,9 @@ public class ResultLocationChooser extends JDialog
 		label.setForeground(Color.WHITE);
 		label.setBounds(50, 50, 220, 30);
 		panel.add(label);
+
+		final JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		
 		final JTextField textField = new JTextField();
 		textField.setBounds(50, 80, 220, 30);
@@ -82,9 +88,14 @@ public class ResultLocationChooser extends JDialog
 		textField.setBorder(BorderFactory.createCompoundBorder( textField.getBorder(),
 					BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 		panel.add(textField);
-		
-		final JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		textField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+					textField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+				}
+			}
+		});
 		
 		JButton browseButton = new JButton("..");
 		browseButton.setBounds(275, 80, 30, 30);
@@ -98,10 +109,10 @@ public class ResultLocationChooser extends JDialog
 			}
 		});
 		
-		JButton optimizeButton = new JButton(MODE == EXPERIMENATION ? "OPTIMIZE" : "RANDOMIZE");
-		optimizeButton.setBounds(120, 136, 100, 35);
-		panel.add(optimizeButton);
-		optimizeButton.addActionListener(new ActionListener() {
+		JButton button = new JButton(MODE == EXPERIMENATION ? "OPTIMIZE" : "RANDOMIZE");
+		button.setBounds(120, 136, 100, 35);
+		panel.add(button);
+		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				File file = new File(textField.getText());
@@ -110,15 +121,14 @@ public class ResultLocationChooser extends JDialog
 						ExperimentPane.getInstance().train(file);
 					else
 						RandomizerPane.getInstance().randomize(file);
-				} 
-				dispose();
+					dispose();
+				} else {
+					new MessageDialog("Oooops. Please select a directory.").setVisible(true);
+				}
+				
 			}
 		});
 		
 	}
 	
-	public static void main(String[] a) {
-		//new ResultLocationChooser().setVisible(true);
-	}
-
 }

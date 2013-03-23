@@ -21,6 +21,7 @@ import custom.MainButton;
 
 import views.ExperimentPane;
 import views.Frame;
+import views.optionpane.MessageDialog;
 
 public class ColorFeatureChooser extends JDialog 
 {
@@ -137,6 +138,10 @@ public class ColorFeatureChooser extends JDialog
 		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if(model2.isEmpty()) {
+					new MessageDialog("Oooops. Please select at least one color feature.").setVisible(true);
+					return;
+				}
 				ExperimentPane.getInstance().setColorFeatures(model2);
 				dispose();
 			}

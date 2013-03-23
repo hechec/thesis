@@ -1,24 +1,19 @@
 package views.dialog;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 import custom.MainButton;
 
@@ -26,7 +21,6 @@ import views.Frame;
 
 public class ClassifierChooser extends JDialog 
 {
-	
 	
 	private final JPanel contentPanel = new JPanel();
 	

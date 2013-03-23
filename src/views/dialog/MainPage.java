@@ -106,7 +106,7 @@ public class MainPage extends JPanel
 		int firstIndex = (currentPage-1)*10;
 		
 		for( int i = firstIndex, y = 0; i < firstIndex + 10 && i < result.size(); i++, y += 31 ) {
-			Entry e = new Entry(i+1, testData.getFilename(i), testData.getFilename2(i), result.getExpected(i), result.getActual(i));
+			ResultRowPanel e = new ResultRowPanel(i+1, testData.getFilename(i), testData.getFilename2(i), result.getExpected(i), result.getActual(i));
 			e.setBounds(0, y, 500, 30);
 			resultPanel.add(e);
 		}

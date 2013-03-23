@@ -1,14 +1,11 @@
-package views.dialog;
+package views.optionpane;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -17,18 +14,12 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 import views.Frame;
 import custom.MainButton;
 
 public class MessageDialog extends JDialog {
 
-	private final JPanel contentPanel = new JPanel();
-
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		try {
 			MessageDialog dialog = new MessageDialog("");
