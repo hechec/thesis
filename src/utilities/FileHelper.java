@@ -23,9 +23,9 @@ public class FileHelper
 			while (reader.readLine() != null) count++;
 				reader.close();
 		} catch (FileNotFoundException e) {
-			Debugger.printError("File not found: \""+dataFile.getAbsolutePath()+"\"");
+			//Debugger.printError("File not found: \""+dataFile.getAbsolutePath()+"\"");
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return count;
 	}

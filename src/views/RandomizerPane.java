@@ -24,6 +24,7 @@ import javax.swing.SwingConstants;
 
 import views.dialog.ResultLocationChooser;
 import views.optionpane.MessageDialog;
+import custom.ImagePane;
 import custom.MainButton;
 import custom.MyTextField;
 import dataset.DataRandomizer;
@@ -184,19 +185,8 @@ public class RandomizerPane extends JPanel
 		});
 		
 		final URL footerUrl = getClass().getResource("/images/footer.png");
-		JPanel footerPane = new JPanel() {
-			@Override
-		    public void paintComponent(Graphics g) {
-				 Graphics2D g2 = (Graphics2D) g;
-				Image image = null;
-				try {                
-					image = ImageIO.read(footerUrl);
-		        } catch (IOException ex) {
-		        	//System.out.println("Check footer image.");
-		        }
-		        g2.drawImage(image, 0, 0, null);          
-		    }
-		};
+		JPanel footerPane = new ImagePane(footerUrl);
+		
 		footerPane.setBackground(Color.DARK_GRAY);
 		footerPane.setBounds(0, 475, 700, 50);
 		this.add(footerPane);

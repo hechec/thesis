@@ -14,7 +14,6 @@ import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
-import utilities.Debugger;
 import utilities.FileHelper;
 import views.ProgressPane;
 
@@ -67,13 +66,13 @@ public class DataReader extends FileHelper
         		filename.add(fname);
 			}			
 		} catch (IIOException e) {
-			Debugger.printError("Can't read file: "+fname);
+			//Debugger.printError("Can't read file: "+fname);
 		} catch (FileNotFoundException e) {
-			Debugger.printError("File not found: "+fname);
+			//Debugger.printError("File not found: "+fname);
 		} catch (IOException e) {			
 			//
 		} catch (NumberFormatException e) {
-			Debugger.printError("Can't convert to integer: "+file.getParentFile().getName());	
+			//Debugger.printError("Can't convert to integer: "+file.getParentFile().getName());	
 		} 
 		inputVector = iProcessor.createInputVectorArray(input_list, progressPane);
     	outputVector = iProcessor.createOutputVector(output_list);

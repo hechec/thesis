@@ -2,6 +2,7 @@ package views;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -10,7 +11,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
@@ -21,6 +24,7 @@ import javax.swing.JPanel;
 import views.dialog.AboutDialog;
 import views.dialog.ClassifierChooser;
 
+import custom.ImagePane;
 import custom.MainButton;
 
 public class HomePane extends JPanel
@@ -67,7 +71,14 @@ public class HomePane extends JPanel
 		helpButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//
+				if (Desktop.isDesktopSupported()) {
+				    try {
+				    	File f = new java.io.File(Frame.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+						f = new java.io.File(f.getParent()+"/User's Manual.pdf");
+						Desktop.getDesktop().open(f);
+				    } catch (URISyntaxException e1) {} 
+				      catch (IOException e1) {}
+				}
 			}
 		});
 		
@@ -105,37 +116,13 @@ public class HomePane extends JPanel
 		
 		final URL logoUrl = getClass().getResource("/images/title_logo.png");
 		
-		JPanel title = new JPanel() {
-			@Override
-		    public void paintComponent(Graphics g) {
-		        Graphics2D g2 = (Graphics2D) g;
-				Image image = null;
-				try {                
-					image = ImageIO.read(logoUrl);
-		        } catch (IOException ex) {
-		        	//System.out.println("Check logo image.");
-		        }
-		        g2.drawImage(image, 0, 0, null);          
-		    }
-		};
+		JPanel title = new ImagePane(logoUrl);
 		title.setBounds(80, 10, 488, 150);
 		this.add(title, 0);
 		
 		final URL footerUrl = getClass().getResource("/images/footer.png");
 		
-		JPanel footerPane = new JPanel() {
-			@Override
-		    public void paintComponent(Graphics g) {
-				 Graphics2D g2 = (Graphics2D) g;
-				Image image = null;
-				try {                
-					image = ImageIO.read(footerUrl);
-		        } catch (IOException ex) {
-		        	//System.out.println("Check footer image.");
-		        }
-		        g2.drawImage(image, 0, 0, null);          
-		    }
-		};
+		JPanel footerPane = new ImagePane(footerUrl);
 		footerPane.setBackground(Color.DARK_GRAY);
 		footerPane.setBounds(0, 475, 700, 50);
 		this.add(footerPane);

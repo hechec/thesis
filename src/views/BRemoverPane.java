@@ -32,7 +32,6 @@ import core.Result;
 
 import custom.MainButton;
 
-import utilities.Debugger;
 import utilities.FileTypeFilter;
 import views.optionpane.MessageDialog;
 
@@ -212,7 +211,7 @@ public class BRemoverPane extends JPanel
 		try {
 			input = ImageIO.read(inputFile);
 		} catch (IOException e1) {
-			Debugger.printError("IO error in "+this.getClass().getName());
+			//Debugger.printError("IO error in "+this.getClass().getName());
 		}
 		temp = iProcessor.resizeImage(input, 190, 190);
 		inputLabel.setIcon(new ImageIcon(temp));

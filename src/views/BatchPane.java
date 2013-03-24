@@ -11,7 +11,6 @@ import javax.swing.filechooser.FileFilter;
 import core.Classifier;
 import core.Result;
 
-import utilities.Debugger;
 import utilities.FileTypeFilter;
 import utilities.GlobalVariables;
 import utilities.OutputLayerHelper;

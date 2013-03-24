@@ -36,8 +36,6 @@ import core.ABC;
 import core.Classifier;
 import core.Result;
 
-
-import utilities.Debugger;
 import utilities.FileTypeFilter;
 import utilities.GlobalVariables;
 import utilities.OutputLayerHelper;
@@ -342,17 +340,19 @@ public class ExperimentPane extends JPanel
 			public void actionPerformed(ActionEvent e) {
 				trainFile = new File(textField1.getText().trim());
 				testFile = new File(textField2.getText().trim());
-				if( trainFile.exists() && testFile.exists() ) {		
+				if( trainFile.exists() && testFile.exists() ) {	
+					if(EXPERIMENT == EXP_3 && features.size() == 0) {
+						new MessageDialog("Oooops. Please select at least one color feature").setVisible(true);
+						return;
+					}
 					setComponents(false);
 					initNetwork();
 					new Thread( new Runnable() {
 						@Override
 						public void run() {
-							//File file = new File(""+textField1.getText());
 							DataReader dl = new DataReader(progressPane, trainFile);
 							trainData = dl.read();
 							
-							//File file2 = new File(""+textField2.getText());
 							DataReader dl2 = new DataReader(progressPane, testFile);
 							testData = dl2.read();	
 							
@@ -478,35 +478,6 @@ public class ExperimentPane extends JPanel
 		chooser.setFileFilter(filter);
 	}
 	
-	private String selectDirectory() 
-	{
-		String path = "";
-		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
-			path += chooser.getSelectedFile().getAbsolutePath();
-		return path;
-	}
-	
-	public void resetComponents() 
-	{
-		cycleBar.setMinimum(0);
-		cycleBar.setMaximum((int)cycleSpinner.getValue());
-		runtimeBar.setMinimum(0);
-		runtimeBar.setMaximum((int)runtimeSpinner.getValue());	
-		cycleBar.setValue(0);
-		runtimeBar.setValue(0);
-		updateUI();
-	}
-	
-	public void incrementCycle(int percent) 
-	{
-		cycleBar.setValue(percent);
-	}
-	
-	public void incrementRuntime(int percent) 
-	{
-		runtimeBar.setValue(percent);
-	}
-	
 	public void train(File file)
 	{
 		this.masterFile = file;
@@ -551,7 +522,7 @@ public class ExperimentPane extends JPanel
 			try {
 				resultFile.createNewFile();
 			} catch (IOException e) {
-				Debugger.printError("Error creating results.txt");
+				//Debugger.printError("Error creating results.txt");
 			}
 		}
 		
@@ -568,6 +539,36 @@ public class ExperimentPane extends JPanel
 		    out.close();
 		} catch (IOException e) {}
 	
+	}
+	
+
+	private String selectDirectory() 
+	{
+		String path = "";
+		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
+			path += chooser.getSelectedFile().getAbsolutePath();
+		return path;
+	}
+	
+	public void resetComponents() 
+	{
+		cycleBar.setMinimum(0);
+		cycleBar.setMaximum((int)cycleSpinner.getValue());
+		runtimeBar.setMinimum(0);
+		runtimeBar.setMaximum((int)runtimeSpinner.getValue());	
+		cycleBar.setValue(0);
+		runtimeBar.setValue(0);
+		updateUI();
+	}
+	
+	public void incrementCycle(int percent) 
+	{
+		cycleBar.setValue(percent);
+	}
+	
+	public void incrementRuntime(int percent) 
+	{
+		runtimeBar.setValue(percent);
 	}
 	
 	private void enableExp1()

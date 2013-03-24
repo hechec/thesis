@@ -3,6 +3,7 @@ package views;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -17,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import utilities.GlobalVariables;
+import custom.ImagePane;
 import custom.MainButton;
 
 public class Frame extends JFrame 
@@ -33,23 +35,13 @@ public class Frame extends JFrame
 	public Frame() 
 	{
 		instance = this;
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/images/icon.png")));
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(700, 550);
 		setUndecorated(true);
 		setLocationRelativeTo(null);
-		contentPane = new JPanel() {
-			@Override
-		    public void paintComponent(Graphics g) {
-		        super.paintComponent(g);
-				Image image = null;
-				try {                
-					image = ImageIO.read(bgPath);
-		        } catch (IOException ex) {
-		        	//System.out.println("Check background image.");
-		        }
-		        g.drawImage(image, 0, 0, null);   
-		    }
-		};
+		contentPane = new ImagePane(bgPath);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -84,10 +76,6 @@ public class Frame extends JFrame
 		panels[0].setBounds(0, 0, 700, 525);
 		panels[0].setOpaque(false);
 		thePanel.add(panels[0]);	
-		
-		panels[1] = TrainPane.getInstance();
-		panels[1].setBounds(0, 0, 700, 525);
-		panels[1].setOpaque(false);
 		
 		panels[2] = BatchPane.getInstance();
 		panels[2].setBounds(0, 0, 700, 525);

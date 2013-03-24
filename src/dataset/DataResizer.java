@@ -9,7 +9,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import utilities.Debugger;
 import utilities.FileHelper;
 import views.ProgressPane;
 import views.ResizerPane;
