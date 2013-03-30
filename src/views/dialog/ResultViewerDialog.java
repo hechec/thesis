@@ -18,16 +18,6 @@ public class ResultViewerDialog extends JDialog
 
 	private MainPage mainPage;
 	
-	public static void main(String[] args) {
-		try {
-			ResultViewerDialog dialog = new ResultViewerDialog(null, null);
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	public ResultViewerDialog(Data testData, Result result) 
 	{
 		instance = this;
@@ -62,7 +52,7 @@ public class ResultViewerDialog extends JDialog
 		
 		JButton exitButton = new MainButton("/images/close.png", "/images/closeHover.png");
 		exitButton.setBorderPainted(false);
-		exitButton.setBounds(506, 1, 38, 24);
+		exitButton.setBounds(501, 1, 38, 24);
 		topPanel.add(exitButton, 0);
 		exitButton.addActionListener(new ActionListener() {
 			@Override
@@ -107,6 +97,7 @@ public class ResultViewerDialog extends JDialog
 		mainPage.setOpaque(false);
 		thePanel.add(mainPage);
 		mainPage.showTable(testData, result);
+	
 	}
 	
 	private void dragFrame(Point original, Point newPoint) 

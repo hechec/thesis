@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -21,7 +22,9 @@ public class ResultRowPanel extends JPanel
 	
 	private String[] stages = {"Green", "Breakers", "Turning", "Pink", "Light Red", "Red"};
 	
-	public ResultRowPanel(int number, String absolutePath, String filename, int expected, int actual)
+	ImageTooltip imageTooltip;  
+	
+	public ResultRowPanel(int number, final String absolutePath, String filename, int expected, int actual)
 	{
 		setPreferredSize(new Dimension(500, 30));
 		setOpaque(false);
@@ -90,17 +93,36 @@ public class ResultRowPanel extends JPanel
 			@Override
 			public void mouseExited(MouseEvent e) {
 				updateColor(normalColor);
+				imageTooltip.dispose();
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				setCursor(new Cursor(Cursor.HAND_CURSOR));
 				updateColor(Color.BLACK);
+				//imageTooltip = new ImageTooltip(absolutePath, e.getXOnScreen()-200, e.getYOnScreen()); 
+				//imageTooltip.setVisible(true);
 			}
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
+			}
+		});
+		
+		addMouseMotionListener(new MouseMotionListener() {
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				if(imageTooltip != null)
+					imageTooltip.dispose();
+				imageTooltip = new ImageTooltip(absolutePath, e.getXOnScreen()-200, e.getYOnScreen()); 
+				imageTooltip.setVisible(true);
+			}
+			
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 		
