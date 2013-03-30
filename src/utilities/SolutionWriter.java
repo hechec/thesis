@@ -28,9 +28,9 @@ public class SolutionWriter
 				bufferedWriter.newLine();
 			}
 		} catch (FileNotFoundException ex) {
-            ex.printStackTrace();
+           // ex.printStackTrace();
         } catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}finally {
             try {
                 if (bufferedWriter != null) {

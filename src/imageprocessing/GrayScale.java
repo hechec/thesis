@@ -35,15 +35,4 @@ public class GrayScale extends RGBManipulator
         return avg_gray;
 	}
 	
-	public static void main(String[] args) {
-		BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-		Color color = new Color(1, 11, 3);
-		image.setRGB(99, 99, color.getRGB());
-		System.out.println( color.getRed() +" "+color.getGreen()+" "+color.getBlue() );		
-		
-		image = GrayScale.toGray(image);
-		Color gray = new Color(image.getRGB(99, 99));
-		System.out.println( gray.getRed() +" "+gray.getGreen()+" "+gray.getBlue() );
-	}
-	
 }

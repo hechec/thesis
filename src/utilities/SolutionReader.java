@@ -6,9 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import javax.swing.JOptionPane;
-
-
+import views.optionpane.MessageDialog;
 
 public class SolutionReader 
 {
@@ -26,13 +24,13 @@ public class SolutionReader
 				solution[ctr++] = Double.parseDouble(str);
 			}
 		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(null, "No file found.", "Error Message", JOptionPane.WARNING_MESSAGE);
+			new MessageDialog("No file found.").setVisible(true);
 			return null;
 		}catch (NumberFormatException e) {
-			JOptionPane.showMessageDialog(null, "Cannot convert to network weights.", "Error Message", JOptionPane.WARNING_MESSAGE);
+			new MessageDialog("Cannot convert to network weights.").setVisible(true);
 			return null;
 		} catch (ArrayIndexOutOfBoundsException e) {
-			JOptionPane.showMessageDialog(null, "Please check the dimension of the solution.", "Error Message", JOptionPane.WARNING_MESSAGE);
+			new MessageDialog("Please check the dimension of the solution.").setVisible(true);
 			return null;
 		}
 		
@@ -44,7 +42,8 @@ public class SolutionReader
                 	bufferedReader.close();
                 }
             } catch (IOException ex) {
-                ex.printStackTrace();
+               return null;
+            	// ex.printStackTrace();
             }
 		}
 		return solution;

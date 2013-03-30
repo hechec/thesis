@@ -2,24 +2,18 @@ package views.dialog;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 
 import views.Frame;
-
 import core.Result;
+import custom.ImagePane;
 import custom.MainButton;
 import dataset.Data;
 
 public class ResultViewerDialog extends JDialog 
 {
 	private static ResultViewerDialog instance;
-	private JPanel contentPane;
 	private JPanel thePanel; 
 
 	private MainPage mainPage;
@@ -47,20 +41,7 @@ public class ResultViewerDialog extends JDialog
 		getContentPane().setLayout(null);
 		
 		final URL bgUrl = getClass().getResource("/images/bg.png");
-		JPanel panel = new JPanel() {
-			@Override
-		    public void paintComponent(Graphics g) {
-		        super.paintComponent(g);
-				Image image = null;
-				try {                
-					image = ImageIO.read(bgUrl);
-		        } catch (IOException ex) {
-		        	//System.out.println("Check background image.");
-		        }
-		       g.drawImage(image, 0, 0, null);          
-		    }
-		};
-			
+		JPanel panel = new ImagePane(bgUrl);
 		panel.setBounds(5, 5, 540, 490);
 		panel.setLayout(null);
 		getContentPane().add(panel);

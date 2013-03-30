@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
@@ -21,7 +19,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
@@ -351,13 +348,15 @@ public class ExperimentPane extends JPanel
 						@Override
 						public void run() {
 							DataReader dl = new DataReader(progressPane, trainFile);
-							trainData = dl.read();
-							
-							DataReader dl2 = new DataReader(progressPane, testFile);
-							testData = dl2.read();	
-							
-							hasData = true;
-							new MessageDialog("Done preparing.").setVisible(true);
+							if(dl.read()) {
+								trainData = dl.getData();
+								DataReader dl2 = new DataReader(progressPane, testFile);
+								if(dl2.read()) {
+									testData = dl2.getData();
+									hasData = true;
+									new MessageDialog("Done preparing.").setVisible(true);
+								}
+							}
 							setComponents(true);
 						}
 						

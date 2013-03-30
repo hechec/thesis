@@ -5,9 +5,6 @@ import imageprocessing.ImageProcessor;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -21,7 +18,6 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import core.Classifier;
-
 import utilities.FileTypeFilter;
 import utilities.GlobalVariables;
 import utilities.SolutionReader;

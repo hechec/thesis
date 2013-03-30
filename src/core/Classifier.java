@@ -1,6 +1,5 @@
 package core;
 
-
 public class Classifier 
 {	
 	private double[] solution;
@@ -36,4 +35,5 @@ public class Classifier
 				maxIndex = i;
 		return maxIndex;
 	}
+	
 }

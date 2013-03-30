@@ -2,15 +2,9 @@ package views;
 
 import imageprocessing.FeatureExtractor;
 import imageprocessing.ImageProcessor;
-import imageprocessing.OtsuThreshold;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -25,14 +19,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import core.Result;
-
 import custom.MainButton;
-
-import utilities.FileTypeFilter;
 import views.optionpane.MessageDialog;
 
 public class BRemoverPane extends JPanel

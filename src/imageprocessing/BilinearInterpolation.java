@@ -1,8 +1,6 @@
 package imageprocessing;
 
-import java.awt.FlowLayout;
 import java.awt.image.BufferedImage;
-import javax.swing.*;
 
 import static imageprocessing.ImageUtility.*;
 
@@ -67,6 +65,7 @@ public class BilinearInterpolation {
 	    return temp ;
 	}
 	
+	/*
 	private static int[] resizeNearestNeighbor(int[] pixels,int w1,int h1,int w2,int h2) {
 	    int[] temp = new int[w2*h2] ;
 	    // EDIT: added +1 to account for an early rounding problem
@@ -83,31 +82,6 @@ public class BilinearInterpolation {
 	        }                
 	    }                
 	    return temp ;
-	}
-		public static void main(String[] args) {
-		BufferedImage image = null;
-		image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+	}*/
 	
-		for( int y = 0; y < image.getHeight(); y++ )
-			for( int x = 0; x < image.getWidth(); x++ ){
-				int rgb = (100+x+y)<<16|(100+x+y)<<8|(100+x+y);
-				image.setRGB(x, y, rgb);	
-			}
-		
-		int[] pixels = to1DArray(image);
-		
-		int[] newPixels = resizeBilinear(pixels, image.getWidth(), image.getHeight(), 50, 50);
-		
-		
-		BufferedImage resized = toImage(newPixels, 50, 50);
-		
-		JFrame frame = new JFrame();
-		frame.getContentPane().setLayout(new FlowLayout());
-		frame.getContentPane().add(new JLabel(new ImageIcon(image)));
-		frame.getContentPane().add(new JLabel(new ImageIcon(resized)));
-		frame.pack();
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	}
-
 }

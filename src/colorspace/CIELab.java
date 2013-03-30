@@ -21,7 +21,7 @@ public class CIELab
 		BufferedImage converted = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_RGB);
 		int red = 0, green = 0, blue = 0, rgb = 0;
 		int[] lab = new int[3];
-		double[] lab2 = new double[3];
+		//double[] lab2 = new double[3];
 		
 		for( int i = 0; i < original.getHeight(); i++ ) 
 			for( int j = 0; j < original.getWidth(); j++ ){
@@ -44,13 +44,12 @@ public class CIELab
 		int[] lab = new int[3];
 		
 		int pixelValue;
-		int bgValue = mixColor(0, 0, 0);
+		//int bgValue = mixColor(0, 0, 0);
 		
 		for( int i = 0; i < original.getHeight(); i++ ) 
 			for( int j = 0; j < original.getWidth(); j++ ){
 				rgb = original.getRGB(j, i);
 				pixelValue = rgb & 0x00ffffff;
-				//System.out.println(pixelValue);
 				if( pixelValue == 0 )
 					converted.setRGB(j, i, mixColor(0, 0, 0));
 				else{

@@ -12,10 +12,10 @@ import java.util.ArrayList;
 
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 
 import utilities.FileHelper;
 import views.ProgressPane;
+import views.optionpane.MessageDialog;
 
 public class DataReader extends FileHelper
 {
@@ -43,11 +43,13 @@ public class DataReader extends FileHelper
 	 * 
 	 * @return Data 
 	 */
-	public Data read() 
+	public boolean read() 
 	{
 		int count = FileHelper.countFiles(dataFile);
 		progressPane.reset(count*2);
 		String fname = "";
+		File baseFile = DataLocationHandler.getBaseFolder();
+		//System.out.println(baseFile.getAbsolutePath());
 		File file = null;
 		try {
 			bufferedReader = new BufferedReader(new FileReader(dataFile));
@@ -55,30 +57,42 @@ public class DataReader extends FileHelper
         	BufferedImage image = null;
 			while( (fname = bufferedReader.readLine()) != null ) 
 			{
-				file = new File(fname);
+				file = new File(baseFile.getAbsolutePath()+"/"+fname);
         		image = ImageIO.read(file);
+        		if(image == null) {
+        			new MessageDialog(" Can't convert file to image: "+baseFile.getAbsolutePath()+File.separator+fname).setVisible(true);
+        			return false;
+        		}
         		image = iProcessor.resizeImage(image, ImageProcessor.WIDTH, ImageProcessor.HEIGHT);
         		classNumber =  Integer.parseInt(file.getParentFile().getName());
         		
         		input_list.add(image);
 	        	output_list.add(classNumber);
 	        	progressPane.incrementBar();
-        		filename.add(fname);
+        		filename.add(baseFile.getAbsolutePath()+"/"+fname);
 			}			
 		} catch (IIOException e) {
-			//Debugger.printError("Can't read file: "+fname);
+			new MessageDialog(" Can't read input file: "+baseFile.getAbsolutePath()+File.separator+fname).setVisible(true);
+			return false;
 		} catch (FileNotFoundException e) {
-			//Debugger.printError("File not found: "+fname);
+			new MessageDialog(" Can't read input file: "+baseFile.getAbsolutePath()+File.separator+fname).setVisible(true);
+			return false;
 		} catch (IOException e) {			
-			//
+			new MessageDialog(" Can't read input file: "+baseFile.getAbsolutePath()+File.separator+fname).setVisible(true);
+			return false;
 		} catch (NumberFormatException e) {
-			//Debugger.printError("Can't convert to integer: "+file.getParentFile().getName());	
+			new MessageDialog(" Cannot convert to integer (class number): "+baseFile.getAbsolutePath()+File.separator+fname).setVisible(true);
+			return false;
 		} 
 		inputVector = iProcessor.createInputVectorArray(input_list, progressPane);
     	outputVector = iProcessor.createOutputVector(output_list);
 
     	//JOptionPane.showMessageDialog(null, "Loaded "+count +" images.");
-
+		return true;
+	}
+	
+	public Data getData()
+	{
 		return new Data(filename, inputVector, outputVector);
 	}
 	

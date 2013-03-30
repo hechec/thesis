@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import utilities.GlobalVariables;
 
-import static utilities.NNConstants.*;
-
 public class MLPNetwork {
 	
 	private ArrayList<MLPLayer> layers;

@@ -4,25 +4,23 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import views.dialog.AboutDialog;
 import views.dialog.ClassifierChooser;
+import views.dialog.DatasetLocationChooser;
+import views.optionpane.MessageDialog;
 
 import custom.ImagePane;
 import custom.MainButton;
@@ -75,7 +73,10 @@ public class HomePane extends JPanel
 				    try {
 				    	File f = new java.io.File(Frame.class.getProtectionDomain().getCodeSource().getLocation().toURI());
 						f = new java.io.File(f.getParent()+"/User's Manual.pdf");
-						Desktop.getDesktop().open(f);
+						if(f.exists())
+							Desktop.getDesktop().open(f);
+						else 
+							new MessageDialog("Ooops. The user's manual does not exist.").setVisible(true);
 				    } catch (URISyntaxException e1) {} 
 				      catch (IOException e1) {}
 				}
@@ -117,7 +118,7 @@ public class HomePane extends JPanel
 		final URL logoUrl = getClass().getResource("/images/title_logo.png");
 		
 		JPanel title = new ImagePane(logoUrl);
-		title.setBounds(80, 10, 488, 150);
+		title.setBounds(80, 10, 600, 150);
 		this.add(title, 0);
 		
 		final URL footerUrl = getClass().getResource("/images/footer.png");
@@ -142,14 +143,7 @@ public class HomePane extends JPanel
 		aboutButton.setBorder(null);
 		aboutButton.setContentAreaFilled(false);
 		footerPane.add(aboutButton);
-		aboutButton.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-			@Override
+		aboutButton.addMouseListener(new MouseAdapter() {
 			public void mouseExited(MouseEvent e) {
 				setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			}
@@ -157,14 +151,35 @@ public class HomePane extends JPanel
 			public void mouseEntered(MouseEvent e) {
 				setCursor(new Cursor(Cursor.HAND_CURSOR));
 			}
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
 		});
 		aboutButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new AboutDialog().setVisible(true);
+			}
+		});
+	
+		JButton datasetButton = new JButton("Dataset");
+		datasetButton.setForeground(Color.WHITE);
+		datasetButton.setFont(new Font("Century Gothic", Font.BOLD, 13));
+		datasetButton.setBounds(80, 11, 70, 30);
+		datasetButton.setBorderPainted(false);
+		datasetButton.setBorder(null);
+		datasetButton.setContentAreaFilled(false);
+		footerPane.add(datasetButton);
+		datasetButton.addMouseListener(new MouseAdapter() {
+			public void mouseExited(MouseEvent e) {
+				setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				setCursor(new Cursor(Cursor.HAND_CURSOR));
+			}
+		});
+		datasetButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new DatasetLocationChooser("").setVisible(true);
 			}
 		});
 	}

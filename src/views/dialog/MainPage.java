@@ -9,7 +9,6 @@ import core.Result;
 
 import dataset.Data;
 
-
 public class MainPage extends JPanel
 {
 	private static MainPage instance = null;

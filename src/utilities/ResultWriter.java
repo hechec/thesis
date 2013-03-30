@@ -5,12 +5,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import core.Result;
-
 import dataset.Data;
-
 
 public class ResultWriter 
 {
@@ -29,9 +26,9 @@ public class ResultWriter
 				bufferedWriter.newLine();
 			}
 		} catch (FileNotFoundException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
         } catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}finally {
             try {
                 if (bufferedWriter != null) {

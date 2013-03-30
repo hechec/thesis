@@ -2,10 +2,7 @@ package dataset;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
-
-import utilities.FileHelper;
 
 /** 
  * Randomizes the  dataset; 70% for training and 30% for testing
@@ -51,9 +48,9 @@ public class DataRandomizer
 	        	
 	        	for( int i = 0; i < data.length; i++ ) {
 	        		if(arrayContains(trainIndices, i)) 
-	        			train_set.add(data[i].getAbsolutePath()); // add file to train data
+	        			train_set.add(data[i].getParentFile().getName()+File.separator+data[i].getName()); // add file to train data
 	        		else 
-	        			test_set.add(data[i].getAbsolutePath()); // add file to test data
+	        			test_set.add(data[i].getParentFile().getName()+File.separator+data[i].getName()); // add file to test data
 	        	}
 	        	
 	        }
@@ -95,14 +92,6 @@ public class DataRandomizer
 				return true;
 		return false;
 	
-	}
-	
-	public static void main(String[] args)
-	{
-		File file = new File("D:/kamatisan/testing_60");
-		
-		DataRandomizer randomizer = new DataRandomizer(file);
-		System.out.println(randomizer.randomize());
 	}
 	
 }

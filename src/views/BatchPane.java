@@ -12,9 +12,7 @@ import core.Classifier;
 import core.Result;
 
 import utilities.FileTypeFilter;
-import utilities.GlobalVariables;
 import utilities.OutputLayerHelper;
-import utilities.ResultWriter;
 import utilities.SolutionReader;
 import views.dialog.ResultViewerDialog;
 import views.optionpane.MessageDialog;
@@ -259,7 +257,8 @@ public class BatchPane extends JPanel
 						@Override
 						public void run() {
 							DataReader dl = new DataReader(progressPane, dataFile);
-							testData = dl.read();
+							if(dl.read())
+							testData = dl.getData();
 							setComponents(true);
 						}
 					}).start();

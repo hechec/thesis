@@ -25,6 +25,7 @@ import views.ExperimentPane;
 import views.Frame;
 import views.RandomizerPane;
 import views.optionpane.MessageDialog;
+import custom.ImagePane;
 import custom.MainButton;
 
 public class ResultLocationChooser extends JDialog 
@@ -44,19 +45,7 @@ public class ResultLocationChooser extends JDialog
 		getContentPane().setLayout(null);
 		
 		final URL bgUrl = getClass().getResource("/images/bg.png");
-		JPanel panel = new JPanel() {
-			@Override
-		    public void paintComponent(Graphics g) {
-		        super.paintComponent(g);
-				Image image = null;
-				try {                
-					image = ImageIO.read(bgUrl);
-		        } catch (IOException ex) {
-		        	//System.out.println("Check background image.");
-		        }
-		        g.drawImage(image, 0, 0, null);          
-		    }
-		};
+		JPanel panel = new ImagePane(bgUrl);
 		panel.setBounds(5, 5, 340, 190);
 		panel.setLayout(null);
 		getContentPane().add(panel);

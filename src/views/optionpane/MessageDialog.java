@@ -2,20 +2,17 @@ package views.optionpane;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.net.URL;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import views.Frame;
+import custom.ImagePane;
 import custom.MainButton;
 
 public class MessageDialog extends JDialog {
@@ -42,19 +39,7 @@ public class MessageDialog extends JDialog {
 		getContentPane().setLayout(null);
 		
 		final URL bgUrl = getClass().getResource("/images/bg.png");
-		JPanel panel = new JPanel() {
-			@Override
-		    public void paintComponent(Graphics g) {
-		        super.paintComponent(g);
-				Image image = null;
-				try {                
-					image = ImageIO.read(bgUrl);
-		        } catch (IOException ex) {
-		        	//System.out.println("Check background image.");
-		        }
-		        g.drawImage(image, 0, 0, null);          
-		    }
-		};
+		JPanel panel = new ImagePane(bgUrl);
 		panel.setBounds(5, 5, 290, 170);
 		panel.setLayout(null);
 		getContentPane().add(panel);

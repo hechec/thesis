@@ -15,7 +15,7 @@ public class ResultRowPanel extends JPanel
 {
 	private JLabel label1, label2, label3;
 	
-	private Color normalColor, hoverColor;
+	private Color normalColor;
 	
 	private JLabel[] components = new JLabel[4];
 	

@@ -2,14 +2,10 @@ package views.dialog;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.net.URL;
 
-import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -17,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
+import custom.ImagePane;
 import custom.MainButton;
 
 import views.ExperimentPane;
@@ -48,17 +45,7 @@ public class ColorFeatureChooser extends JDialog
 		getContentPane().setLayout(null);
 		
 		final URL bgUrl = getClass().getResource("/images/bg.png");
-		JPanel panel = new JPanel() {
-			@Override
-		    public void paintComponent(Graphics g) {
-		        super.paintComponent(g);
-				Image image = null;
-				try {                
-					image = ImageIO.read(bgUrl);
-		        } catch (IOException ex) { }
-		        g.drawImage(image, 0, 0, null);          
-		    }
-		};
+		JPanel panel = new ImagePane(bgUrl);
 		panel.setBounds(5, 5, 340, 290);
 		panel.setLayout(null);
 		getContentPane().add(panel);
